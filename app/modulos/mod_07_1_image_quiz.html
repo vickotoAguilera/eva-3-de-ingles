@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 7.1 - Quiz Visual con 9 Fotos Offline</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+const imageScenes = [
+      {
+        id: 1,
+        title: "Escena 1: Vacaciones Familiares en la Playa de Verano",
+        badge: "🏖️ Verano / Playa / Familia Feliz",
+        img: "img/family_beach_summer.jpg",
+        description: "Una familia disfrutando junta a la orilla del mar en un día soleado de verano, con arena dorada, mar turquesa y trajes de baño.",
+        questions: [
+          {
+            qId: 1,
+            text: "What season was it in this picture?",
+            textEs: "¿Qué estación del año era en esta foto?",
+            options: [
+              {
+                text: "It was summer.",
+                textEs: "Era verano ☀️",
+                correct: true,
+                why: "La familia está en la playa en trajes de baño con sol radiante y cielo azul despejado (summer = verano)."
+              },
+              {
+                text: "It was winter.",
+                textEs: "Era invierno ❄️",
+                correct: false,
+                why: "En invierno hay temperaturas bajas, nieve o abrigos gruesos, no trajes de baño ni playa soleada.",
+                exampleWhereCorrectEn: "It was winter, so we stayed inside next to the fireplace.",
+                exampleWhereCorrectEs: "Era invierno, por lo que nos quedamos adentro junto a la chimenea."
+              },
+              {
+                text: "It was fall / autumn.",
+                textEs: "Era otoño 🍂",
+                correct: false,
+                why: "En otoño las hojas de los árboles caen y el clima es templado o ventoso, no un día caluroso de baño en la costa.",
+                exampleWhereCorrectEn: "It was autumn, so the golden leaves fell from the trees in the park.",
+                exampleWhereCorrectEs: "Era otoño, por lo que las hojas doradas caían de los árboles en el parque."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the weather at the beach?",
+            textEs: "¿Cómo estuvo el clima en la playa?",
+            options: [
+              {
+                text: "The weather was sunny, warm, and clear.",
+                textEs: "El clima estuvo soleado, cálido y despejado.",
+                correct: true,
+                why: "En la foto se observa sol resplandeciente, agua tranquila y sin ninguna nube oscura (sunny and warm)."
+              },
+              {
+                text: "The weather was snowy, icy, and freezing cold.",
+                textEs: "El clima estuvo nevado y helado.",
+                correct: false,
+                why: "No hay nieve ni hielo en una playa tropical de arena en verano.",
+                exampleWhereCorrectEn: "The weather was snowy and freezing cold in the ski resort.",
+                exampleWhereCorrectEs: "El clima estuvo nevado y helado en el centro de esquí."
+              },
+              {
+                text: "It was dark, rainy, and very foggy.",
+                textEs: "Estaba oscuro, lluvioso y con mucha niebla.",
+                correct: false,
+                why: "El paisaje está completamente iluminado por la luz natural del sol sin lluvia.",
+                exampleWhereCorrectEn: "It was dark and rainy yesterday, so we watched movies at home.",
+                exampleWhereCorrectEs: "Estuvo oscuro y lluvioso ayer, por lo que vimos películas en casa."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were the family members happy or sad?",
+            textEs: "¿Estaban los familiares felices o tristes?",
+            options: [
+              {
+                text: "Yes, they were very happy, smiling, and having fun together!",
+                textEs: "¡Sí, estaban muy felices, sonriendo y divirtiéndose juntos!",
+                correct: true,
+                why: "Todos los integrantes están sonriendo abiertamente y jugando en armonía en la orilla del mar (they were happy)."
+              },
+              {
+                text: "No, they were sad, bored, and crying.",
+                textEs: "No, estaban tristes, aburridos y llorando.",
+                correct: false,
+                why: "Nadie en la foto está triste ni llorando; sus expresiones faciales son de alegría.",
+                exampleWhereCorrectEn: "The children were sad because their ice cream fell on the ground.",
+                exampleWhereCorrectEs: "Los niños estaban tristes porque su helado se cayó al suelo."
+              },
+              {
+                text: "No, they were angry and fighting.",
+                textEs: "No, estaban enojados y peleando.",
+                correct: false,
+                why: "Están compartiendo pacíficamente como una familia unida.",
+                exampleWhereCorrectEn: "The drivers were angry because of the terrible traffic jam.",
+                exampleWhereCorrectEs: "Los conductores estaban enojados debido al terrible taco vehicular."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did the family do on the beach?",
+            textEs: "¿Qué hizo la familia en la playa? (Pasado Simple)",
+            options: [
+              {
+                text: "They built a sandcastle and relaxed on the warm sand.",
+                textEs: "Construyeron un castillo de arena y se relajaron en la arena cálida.",
+                correct: true,
+                why: "En la arena se aprecian los baldes y el castillo de arena que modelaron (built a sandcastle)."
+              },
+              {
+                text: "They shoveled snow and skated on ice.",
+                textEs: "Palearon nieve y patinaron sobre hielo.",
+                correct: false,
+                why: "La arena de playa no tiene hielo ni nieve que palear.",
+                exampleWhereCorrectEn: "They shoveled snow in front of their garage in Canada.",
+                exampleWhereCorrectEs: "Palearon nieve frente a su garaje en Canadá."
+              },
+              {
+                text: "They wore winter parkas and drank hot soup.",
+                textEs: "Vistieron parkas de invierno y tomaron sopa caliente.",
+                correct: false,
+                why: "Están en traje de baño disfrutando el calor del sol.",
+                exampleWhereCorrectEn: "They wore winter parkas when they visited the South Pole.",
+                exampleWhereCorrectEs: "Vistieron parkas de invierno cuando visitaron el Polo Sur."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Were they happy at the beach?'</b>",
+          hint: "Escribe: <i>Yes, they were.</i> (o afirmativa con were)",
+          expected: "Yes, they were.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, they were") || v.includes("yes they were") || v.includes("they were happy")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Usaste la respuesta corta oficial en plural con were: <b>Yes, they were.</b>" };
+            }
+            if (v.includes("yes, they was") || v.includes("they was")) {
+              return { ok: true, status: 'tolerant', msg: "✔️ ¡Buena intención! Pero recuerda que con 'they' (ellos) se usa <b>were</b>, no was &rarr; <b>Yes, they were.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, they were.</b> (Sí, lo estaban)." };
+          }
+        }
+      },
+      {
+        id: 2,
+        title: "Escena 2: Vacaciones de Invierno en las Montañas Nevadas",
+        badge: "❄️ Invierno / Nieve / Muñeco de Nieve",
+        img: "img/winter_snow_mountain.jpg",
+        description: "Paisaje de alta montaña completamente cubierto de nieve blanca y pinos, con personas abrigadas con parkas y bufandas junto a un muñeco de nieve.",
+        questions: [
+          {
+            qId: 1,
+            text: "What season was it in the mountains?",
+            textEs: "¿Qué estación del año era en las montañas?",
+            options: [
+              {
+                text: "It was winter.",
+                textEs: "Era invierno ❄️",
+                correct: true,
+                why: "Todo el paisaje está cubierto de nieve blanca, pinos congelados y la gente usa ropa térmica pesada (winter = invierno)."
+              },
+              {
+                text: "It was summer.",
+                textEs: "Era verano ☀️",
+                correct: false,
+                why: "En verano no hay nieve acumulada en los valles ni personas en parkas térmicas jugando con muñecos de nieve.",
+                exampleWhereCorrectEn: "It was summer, so we swam in the warm ocean every afternoon.",
+                exampleWhereCorrectEs: "Era verano, por lo que nadamos en el océano templado todas las tardes."
+              },
+              {
+                text: "It was spring.",
+                textEs: "Era primavera 🌸",
+                correct: false,
+                why: "En primavera la nieve ya se derritió y florecen los campos verdes.",
+                exampleWhereCorrectEn: "It was spring, and colorful flowers bloomed across the garden.",
+                exampleWhereCorrectEs: "Era primavera, y flores coloridas florecieron por todo el jardín."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the weather in the snowy mountains?",
+            textEs: "¿Cómo era el clima en las montañas nevadas?",
+            options: [
+              {
+                text: "It was cold and snowy with freezing temperatures.",
+                textEs: "Estaba frío y nevado con temperaturas bajo cero.",
+                correct: true,
+                why: "Cae nieve suave, la nieve está intacta en el suelo y el vapor de la respiración condensa por el frío (cold and snowy)."
+              },
+              {
+                text: "It was sunny and extremely hot.",
+                textEs: "Estaba soleado y extremadamente caluroso.",
+                correct: false,
+                why: "Si hiciera calor extremo, la nieve y el muñeco de nieve se derretirían en minutos.",
+                exampleWhereCorrectEn: "It was sunny and hot in the desert at noon.",
+                exampleWhereCorrectEs: "Estuvo soleado y caluroso en el desierto al mediodía."
+              },
+              {
+                text: "It was tropical and humid.",
+                textEs: "Era tropical y húmedo.",
+                correct: false,
+                why: "Es un clima alpino polar de montaña, no una selva tropical lluviosa.",
+                exampleWhereCorrectEn: "The weather was tropical and humid in the rainforest.",
+                exampleWhereCorrectEs: "El clima era tropical y húmedo en la selva tropical."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were they happy despite the freezing cold?",
+            textEs: "¿Estaban felices a pesar del frío?",
+            options: [
+              {
+                text: "Yes, they were excited, cheerful, and laughing together.",
+                textEs: "¡Sí, estaban entusiasmados, alegres y riendo juntos!",
+                correct: true,
+                why: "Tienen expresiones de entusiasmo y diversión al jugar al aire libre en la nieve (they were happy and excited)."
+              },
+              {
+                text: "No, they were freezing to death and crying in pain.",
+                textEs: "No, estaban congelándose y llorando de dolor.",
+                correct: false,
+                why: "Cuentan con ropa de abrigo adecuada y están celebrando la temporada invernal con sonrisas.",
+                exampleWhereCorrectEn: "The lost hiker was freezing and terrified on the mountain.",
+                exampleWhereCorrectEs: "El excursionista perdido tenía mucho frío y estaba aterrorizado en la montaña."
+              },
+              {
+                text: "No, they were bored and wanted to go to sleep.",
+                textEs: "No, estaban aburridos y querían dormir.",
+                correct: false,
+                why: "Están jugando activamente en la nieve con mucha energía.",
+                exampleWhereCorrectEn: "The students were bored during the long, monotonous speech.",
+                exampleWhereCorrectEs: "Los estudiantes estaban aburridos durante el discurso largo y monótono."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did they do in the snow?",
+            textEs: "¿Qué hicieron en la nieve? (Pasado Simple)",
+            options: [
+              {
+                text: "They made a big snowman and had a snowball fight.",
+                textEs: "Hicieron un gran muñeco de nieve y jugaron una guerra de bolas de nieve.",
+                correct: true,
+                why: "En la foto se observa el muñeco de nieve con sombrero y bufanda que construyeron juntos (made a snowman)."
+              },
+              {
+                text: "They sunbathed on beach chairs and swam.",
+                textEs: "Tomaron sol en reposeras de playa y nadaron.",
+                correct: false,
+                why: "No se puede tomar sol en traje de baño sobre la nieve congelada.",
+                exampleWhereCorrectEn: "They sunbathed on beach chairs at the resort in Cancun.",
+                exampleWhereCorrectEs: "Tomaron sol en reposeras en el resort de Cancún."
+              },
+              {
+                text: "They harvested fresh strawberries in the orchard.",
+                textEs: "Cosecharon frutillas frescas en el huerto.",
+                correct: false,
+                why: "Las frutillas no crecen bajo un metro de nieve en invierno alpino.",
+                exampleWhereCorrectEn: "They harvested fresh strawberries during late spring.",
+                exampleWhereCorrectEs: "Cosecharon frutillas frescas a finales de primavera."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Was the weather cold and snowy in winter?'</b>",
+          hint: "Escribe: <i>Yes, it was.</i>",
+          expected: "Yes, it was.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, it was") || v.includes("yes it was")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Usaste la respuesta corta singular oficial con was: <b>Yes, it was.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, it was.</b> (Sí, lo estuvo)." };
+          }
+        }
+      },
+      {
+        id: 3,
+        title: "Escena 3: Tarde Lluviosa de Otoño en el Parque",
+        badge: "🍂 Otoño / Lluvia / Charcos y Paraguas",
+        img: "img/rainy_autumn_park.jpg",
+        description: "Personas caminando por un parque con árboles de hojas amarillas y anaranjadas bajo la lluvia, sosteniendo paraguas de colores y pisando charcos de agua en el suelo.",
+        questions: [
+          {
+            qId: 1,
+            text: "What season was it in this park?",
+            textEs: "¿Qué estación del año era en este parque?",
+            options: [
+              {
+                text: "It was fall / autumn.",
+                textEs: "Era otoño 🍂",
+                correct: true,
+                why: "Los árboles tienen hojas doradas y rojizas cayendo al piso mojado (fall / autumn = otoño)."
+              },
+              {
+                text: "It was hot summer.",
+                textEs: "Era verano caluroso ☀️",
+                correct: false,
+                why: "En verano los árboles son verdes intensos y la gente no camina con paraguas y chaquetas de lluvia.",
+                exampleWhereCorrectEn: "It was hot summer, so we ate cold watermelon under the shade.",
+                exampleWhereCorrectEs: "Era verano caluroso, por lo que comimos sandía fría bajo la sombra."
+              },
+              {
+                text: "It was snowy winter.",
+                textEs: "Era invierno nevado ❄️",
+                correct: false,
+                why: "Está lloviendo agua líquida (rain), no cayendo copos de nieve ni hay escarcha blanca.",
+                exampleWhereCorrectEn: "It was snowy winter, and the lake was completely frozen.",
+                exampleWhereCorrectEs: "Era invierno nevado, y el lago estaba completamente congelado."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the weather during their walk?",
+            textEs: "¿Cómo estuvo el clima durante su caminata?",
+            options: [
+              {
+                text: "It was rainy, wet, and windy.",
+                textEs: "Estaba lluvioso, mojado y ventoso.",
+                correct: true,
+                why: "Hay gotas de lluvia cayendo del cielo, charcos en los senderos y paraguas abiertos (rainy and wet)."
+              },
+              {
+                text: "It was clear, dry, and sunny.",
+                textEs: "Estaba despejado, seco y soleado.",
+                correct: false,
+                why: "El suelo está lleno de agua y charcos debido a la lluvia.",
+                exampleWhereCorrectEn: "The weather was dry and sunny throughout the entire weekend.",
+                exampleWhereCorrectEs: "El clima estuvo seco y soleado durante todo el fin de semana."
+              },
+              {
+                text: "There was a sandy dust storm.",
+                textEs: "Hubo una tormenta de polvo y arena.",
+                correct: false,
+                why: "Es un parque verde y arbolado en un día de lluvia, no un desierto árido.",
+                exampleWhereCorrectEn: "There was a heavy dust storm in the Sahara desert.",
+                exampleWhereCorrectEs: "Hubo una fuerte tormenta de polvo en el desierto del Sahara."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were they happy despite the rain?",
+            textEs: "¿Estaban felices a pesar de la lluvia?",
+            options: [
+              {
+                text: "Yes, they were cheerful, smiling, and enjoying the rain.",
+                textEs: "¡Sí, estaban alegres, sonriendo y disfrutando la lluvia!",
+                correct: true,
+                why: "Llevan botas para el agua y paraguas coloridos, riendo y jugando en los charcos (they were cheerful and happy)."
+              },
+              {
+                text: "No, they were terrified and screaming for help.",
+                textEs: "No, estaban aterrorizados y gritando por ayuda.",
+                correct: false,
+                why: "Es una lluvia suave de parque, no un desastre natural ni una inundación peligrosa.",
+                exampleWhereCorrectEn: "The villagers were terrified when the earthquake started.",
+                exampleWhereCorrectEs: "Los aldeanos estaban aterrorizados cuando comenzó el terremoto."
+              },
+              {
+                text: "No, they were angry and frustrated.",
+                textEs: "No, estaban enojados y frustrados.",
+                correct: false,
+                why: "Se ven relajados disfrutando el aire fresco del otoño.",
+                exampleWhereCorrectEn: "He was angry because his flight was canceled at the airport.",
+                exampleWhereCorrectEs: "Él estaba enojado porque su vuelo fue cancelado en el aeropuerto."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did they do in the rainy park?",
+            textEs: "¿Qué hicieron en el parque lluvioso? (Pasado Simple)",
+            options: [
+              {
+                text: "They held umbrellas, walked on wet trails, and jumped in puddles.",
+                textEs: "Sostuvieron paraguas, caminaron por senderos mojados y saltaron en charcos.",
+                correct: true,
+                why: "Usaron paraguas ('held umbrellas') y disfrutaron caminar entre las hojas mojadas ('walked on wet trails')."
+              },
+              {
+                text: "They skied down a steep snowy mountain.",
+                textEs: "Esquiaron por una montaña nevada empinada.",
+                correct: false,
+                why: "No se puede esquiar sobre pasto mojado y senderos de hojas de otoño.",
+                exampleWhereCorrectEn: "They skied down the mountain in the Swiss Alps.",
+                exampleWhereCorrectEs: "Esquiaron bajando la montaña en los Alpes Suizos."
+              },
+              {
+                text: "They swam across a wide river without clothes.",
+                textEs: "Nadaron a través de un río ancho sin ropa.",
+                correct: false,
+                why: "Están vestidos con abrigos, botas de agua y paraguas paseando por el parque.",
+                exampleWhereCorrectEn: "The athletes swam across the river in the triathlon race.",
+                exampleWhereCorrectEs: "Los atletas nadaron a través del río en la carrera de triatlón."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Did they use umbrellas in the rain?'</b>",
+          hint: "Escribe: <i>Yes, they did.</i> (con el auxiliar Did)",
+          expected: "Yes, they did.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, they did") || v.includes("yes they did")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Usaste la respuesta corta oficial en pasado con Did: <b>Yes, they did.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, they did.</b> (Sí, los usaron)." };
+          }
+        }
+      },
+      {
+        id: 4,
+        title: "Escena 4: Picnic Soleado con Flores de Primavera",
+        badge: "🌸 Primavera / Flores / Amigos en el Parque",
+        img: "img/spring_picnic_park.jpg",
+        description: "Un grupo de jóvenes y amigos compartiendo un picnic alegre en el pasto verde y fresco de un parque florido en un día templado de primavera.",
+        questions: [
+          {
+            qId: 1,
+            text: "What season was it in this green park?",
+            textEs: "¿Qué estación del año era en este parque verde?",
+            options: [
+              {
+                text: "It was spring.",
+                textEs: "Era primavera 🌸",
+                correct: true,
+                why: "El pasto está verde brillante, los árboles tienen brotes nuevos y las flores silvestres están abiertas (spring = primavera)."
+              },
+              {
+                text: "It was freezing winter.",
+                textEs: "Era invierno congelante ❄️",
+                correct: false,
+                why: "No hay nieve ni hielo; la gente está sentada directamente sobre el pasto verde en polera ligera.",
+                exampleWhereCorrectEn: "It was freezing winter, so the temperature dropped below zero.",
+                exampleWhereCorrectEs: "Era invierno congelante, por lo que la temperatura bajó de cero."
+              },
+              {
+                text: "It was late autumn.",
+                textEs: "Era otoño tardío 🍂",
+                correct: false,
+                why: "En otoño la vegetación se seca y los árboles pierden sus hojas; aquí todo está verde floreciente.",
+                exampleWhereCorrectEn: "In late autumn, the trees lost all their leaves before the frost.",
+                exampleWhereCorrectEs: "A finales de otoño, los árboles perdieron todas sus hojas antes de la escarcha."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the weather during the picnic?",
+            textEs: "¿Cómo estuvo el clima durante el picnic?",
+            options: [
+              {
+                text: "The weather was mild, pleasant, and sunny with fresh air.",
+                textEs: "El clima estuvo templado, agradable y soleado con aire fresco.",
+                correct: true,
+                why: "Es un día soleado ideal para almorzar sobre una manta al aire libre sin calor sofocante (mild and pleasant)."
+              },
+              {
+                text: "The weather was stormy with dangerous lightning.",
+                textEs: "El clima estuvo tormentoso con rayos peligrosos.",
+                correct: false,
+                why: "Nadie hace un picnic en el pasto abierto si hay tormentas eléctricas peligrosas.",
+                exampleWhereCorrectEn: "The weather was stormy with lightning, so we ran inside immediately.",
+                exampleWhereCorrectEs: "El clima estuvo tormentoso con rayos, por lo que corrimos adentro de inmediato."
+              },
+              {
+                text: "It was freezing cold with an arctic blizzard.",
+                textEs: "Estaba helado con una ventisca polar.",
+                correct: false,
+                why: "Están cómodamente relajados con ropa primaveral al sol.",
+                exampleWhereCorrectEn: "There was an arctic blizzard in the northern territory.",
+                exampleWhereCorrectEs: "Hubo una ventisca polar en el territorio del norte."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were the friends relaxed and happy?",
+            textEs: "¿Estaban los amigos relajados y felices?",
+            options: [
+              {
+                text: "Yes, they were very relaxed, peaceful, and happy.",
+                textEs: "¡Sí, estaban muy relajados, tranquilos y felices!",
+                correct: true,
+                why: "Están conversando, compartiendo fruta y sándwiches con rostros sonrientes y descansados (they were relaxed and happy)."
+              },
+              {
+                text: "No, they were stressed, scared, and running away.",
+                textEs: "No, estaban estresados, asustados y corriendo.",
+                correct: false,
+                why: "Están sentados pacíficamente sobre una manta de picnic.",
+                exampleWhereCorrectEn: "The hikers were stressed and scared when they heard wolves.",
+                exampleWhereCorrectEs: "Los senderistas estaban estresados y asustados cuando escucharon lobos."
+              },
+              {
+                text: "No, they were exhausted and miserable.",
+                textEs: "No, estaban exhaustos y sintiéndose mal.",
+                correct: false,
+                why: "Están pasando un momento de ocio alegre y reconfortante.",
+                exampleWhereCorrectEn: "The soldiers were exhausted and miserable after three days of marching.",
+                exampleWhereCorrectEs: "Los soldados estaban exhaustos y sintiéndose mal tras tres días de marcha."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did they do in the park?",
+            textEs: "¿Qué hicieron en el parque? (Pasado Simple)",
+            options: [
+              {
+                text: "They had a picnic, shared food, and talked under the trees.",
+                textEs: "Tuvieron un picnic, compartieron comida y conversaron bajo los árboles.",
+                correct: true,
+                why: "Comieron aperitivos juntos y disfrutaron de una charla amistosa al aire libre (had a picnic and talked)."
+              },
+              {
+                text: "They shoveled snow off a blocked mountain pass.",
+                textEs: "Palearon nieve de un paso de montaña bloqueado.",
+                correct: false,
+                why: "No hay nieve en el parque primaveral.",
+                exampleWhereCorrectEn: "The road crew shoveled snow off the mountain pass all morning.",
+                exampleWhereCorrectEs: "El equipo de vialidad paleó nieve del paso de montaña toda la mañana."
+              },
+              {
+                text: "They hid inside a cave because of a tornado.",
+                textEs: "Se escondieron en una cueva debido a un tornado.",
+                correct: false,
+                why: "Están al aire libre disfrutando del sol en un parque tranquilo.",
+                exampleWhereCorrectEn: "They hid inside an underground shelter because of the tornado siren.",
+                exampleWhereCorrectEs: "Se escondieron en un refugio subterráneo debido a la sirena de tornado."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Were the friends happy at the picnic?'</b>",
+          hint: "Escribe: <i>Yes, they were.</i>",
+          expected: "Yes, they were.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, they were") || v.includes("yes they were")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Respuesta corta oficial plural: <b>Yes, they were.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, they were.</b> (Sí, lo estaban)." };
+          }
+        }
+      },
+      {
+        id: 5,
+        title: "Escena 5: Campamento Bajo las Estrellas en la Montaña",
+        badge: "⛺ Camping / Montaña / Noche Estrellada",
+        img: "img/camping_tent_mountains.jpg",
+        description: "Una carpa iluminada en una meseta de montaña bajo un cielo nocturno despejado y repleto de estrellas brillantes, con aire fresco y cordillera de fondo.",
+        questions: [
+          {
+            qId: 1,
+            text: "What season was it for this mountain camping trip?",
+            textEs: "¿Qué estación era para este viaje de campamento en la montaña?",
+            options: [
+              {
+                text: "It was summer or early autumn.",
+                textEs: "Era verano o principios de otoño ⛺",
+                correct: true,
+                why: "En verano y principios de otoño las noches en la montaña son frescas pero ideales para acampar sin tormentas de nieve (summer / early autumn)."
+              },
+              {
+                text: "It was an extreme winter blizzard.",
+                textEs: "Era una tormenta de nieve extrema de invierno ❄️",
+                correct: false,
+                why: "No hay ventiscas ni nieve acumulada sobre la lona de la carpa; el cielo está despejado.",
+                exampleWhereCorrectEn: "It was an extreme winter blizzard, so camping was strictly forbidden.",
+                exampleWhereCorrectEs: "Era una tormenta extrema de invierno, por lo que acampar estaba prohibido."
+              },
+              {
+                text: "It was a stormy monsoon season.",
+                textEs: "Era una temporada de monzón tormentoso.",
+                correct: false,
+                why: "El cielo está totalmente despejado y lleno de estrellas, sin lluvia torrencial.",
+                exampleWhereCorrectEn: "During the monsoon season, rivers flooded the camping area.",
+                exampleWhereCorrectEs: "Durante la temporada de monzón, los ríos inundaron la zona de campamento."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the night weather in the mountains?",
+            textEs: "¿Cómo era el clima nocturno en las montañas?",
+            options: [
+              {
+                text: "The weather was cool, clear, and calm with a starry sky.",
+                textEs: "El clima estuvo fresco, despejado y tranquilo con cielo estrellado.",
+                correct: true,
+                why: "Se aprecian millones de estrellas sin nubes de tormenta y la carpa se mantiene firme sin viento fuerte (clear and starry)."
+              },
+              {
+                text: "It was hot and humid like a sauna.",
+                textEs: "Estaba caluroso y húmedo como un sauna.",
+                correct: false,
+                why: "En la alta montaña la noche siempre baja la temperatura y el aire es seco y frío.",
+                exampleWhereCorrectEn: "The jungle was hot and humid like a sauna all night.",
+                exampleWhereCorrectEs: "La selva estuvo calurosa y húmeda como un sauna toda la noche."
+              },
+              {
+                text: "There was blinding snow and hurricane winds.",
+                textEs: "Había nieve cegadora y vientos huracanados.",
+                correct: false,
+                why: "Las estrellas son visibles con total nitidez; no hay viento huracanado.",
+                exampleWhereCorrectEn: "The explorers faced blinding snow and hurricane winds on Everest.",
+                exampleWhereCorrectEs: "Los exploradores enfrentaron nieve cegadora y vientos huracanados en el Everest."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were the campers excited and peaceful?",
+            textEs: "¿Estaban los campistas entusiasmados y tranquilos?",
+            options: [
+              {
+                text: "Yes, they were very excited, peaceful, and amazed by nature.",
+                textEs: "¡Sí, estaban muy entusiasmados, tranquilos y maravillados por la naturaleza!",
+                correct: true,
+                why: "La experiencia de dormir bajo las estrellas en silencio total transmite paz y asombro (they were peaceful and amazed)."
+              },
+              {
+                text: "No, they were terrified of ghosts and screaming.",
+                textEs: "No, estaban aterrados por fantasmas y gritando.",
+                correct: false,
+                why: "Es una noche pacífica de conexión con la naturaleza y descanso.",
+                exampleWhereCorrectEn: "The little boy was terrified of ghosts in the dark basement.",
+                exampleWhereCorrectEs: "El niño pequeño estaba aterrado por fantasmas en el sótano oscuro."
+              },
+              {
+                text: "No, they were angry and complaining about mosquitoes.",
+                textEs: "No, estaban enojados y quejándose de los zancudos.",
+                correct: false,
+                why: "En el clima fresco de montaña el aire es limpio y agradable.",
+                exampleWhereCorrectEn: "The tourists were angry and complained about poor hotel service.",
+                exampleWhereCorrectEs: "Los turistas estaban enojados y se quejaron del mal servicio del hotel."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did they do during their mountain trip?",
+            textEs: "¿Qué hicieron durante su viaje a la montaña? (Pasado Simple)",
+            options: [
+              {
+                text: "They set up a tent, looked at the stars, and slept in warm sleeping bags.",
+                textEs: "Armaron una carpa, miraron las estrellas y durmieron en sacos de dormir abrigados.",
+                correct: true,
+                why: "Armaron la carpa ('set up a tent') y contemplaron la vía láctea ('looked at the stars')."
+              },
+              {
+                text: "They stayed at a luxury hotel and ordered room service.",
+                textEs: "Se quedaron en un hotel de lujo y pidieron servicio a la habitación.",
+                correct: false,
+                why: "Están acampando en la naturaleza virgen al aire libre, no en un hotel 5 estrellas.",
+                exampleWhereCorrectEn: "They stayed at a luxury hotel and ordered breakfast in bed.",
+                exampleWhereCorrectEs: "Se quedaron en un hotel de lujo y pidieron desayuno a la cama."
+              },
+              {
+                text: "They took a cruise ship across the Caribbean Sea.",
+                textEs: "Tomaron un crucero a través del Mar Caribe.",
+                correct: false,
+                why: "Están en la cima de una montaña, a miles de metros sobre el nivel del mar.",
+                exampleWhereCorrectEn: "They took a cruise ship to the Bahamas last winter.",
+                exampleWhereCorrectEs: "Tomaron un crucero a las Bahamas el invierno pasado."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Did they camp in the mountains?'</b>",
+          hint: "Escribe: <i>Yes, they did.</i>",
+          expected: "Yes, they did.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, they did") || v.includes("yes they did")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Respuesta corta oficial en pasado afirmativo: <b>Yes, they did.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, they did.</b> (Sí, acamparon)." };
+          }
+        }
+      },
+      {
+        id: 6,
+        title: "Escena 6: Tarde Lluviosa en Casa Mirando por la Ventana",
+        badge: "🌧️ Lluvia / Casa Cálida / Té Caliente y Relajo",
+        img: "img/cozy_rainy_window.jpg",
+        description: "Gotas de lluvia deslizándose por el vidrio de una ventana grande, con la vista de una ciudad lluviosa afuera mientras adentro hay un ambiente cálido y reconfortante.",
+        questions: [
+          {
+            qId: 1,
+            text: "What was the weather like outside the window?",
+            textEs: "¿Cómo estaba el clima afuera de la ventana?",
+            options: [
+              {
+                text: "It was rainy, cloudy, and wet outside.",
+                textEs: "Estaba lluvioso, nublado y mojado afuera 🌧️",
+                correct: true,
+                why: "El vidrio de la ventana está cubierto de gotas de agua fresca y el cielo exterior está gris y lluvioso (rainy and wet)."
+              },
+              {
+                text: "It was a scorching hot sunny desert day.",
+                textEs: "Era un día abrasador y soleado de desierto.",
+                correct: false,
+                why: "Las gotas de lluvia acumuladas en el vidrio demuestran que está lloviendo fuertemente afuera.",
+                exampleWhereCorrectEn: "It was a scorching hot day, and the sand burned our feet.",
+                exampleWhereCorrectEs: "Era un día caluroso y abrasador, y la arena nos quemaba los pies."
+              },
+              {
+                text: "There was a heavy snowfall covering the glass.",
+                textEs: "Había una fuerte nevazón cubriendo el vidrio.",
+                correct: false,
+                why: "Son gotas transparentes de lluvia líquida, no copos de nieve congelada.",
+                exampleWhereCorrectEn: "There was a heavy snowfall, and ice covered the windshield.",
+                exampleWhereCorrectEs: "Hubo una fuerte nevazón, y el hielo cubrió el parabrisas."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the atmosphere inside the house?",
+            textEs: "¿Cómo era el ambiente adentro de la casa?",
+            options: [
+              {
+                text: "Inside the house, it was warm, quiet, and cozy.",
+                textEs: "Dentro de la casa estaba cálido, tranquilo y acogedor.",
+                correct: true,
+                why: "La persona está protegida de la tormenta en una habitación temperada con una taza tibia (warm and cozy)."
+              },
+              {
+                text: "Inside the room, it was flooded with deep seawater.",
+                textEs: "Dentro de la habitación estaba inundado con agua de mar profunda.",
+                correct: false,
+                why: "La casa está completamente seca y segura.",
+                exampleWhereCorrectEn: "During the hurricane, the ground floor was flooded with seawater.",
+                exampleWhereCorrectEs: "Durante el huracán, el primer piso se inundó con agua de mar."
+              },
+              {
+                text: "It was freezing cold inside with no roof.",
+                textEs: "Hacía frío congelante adentro y no tenía techo.",
+                correct: false,
+                why: "Es una vivienda confortable con ventanas aisladas de vidrio doble.",
+                exampleWhereCorrectEn: "The abandoned cabin had no roof, so it was freezing inside.",
+                exampleWhereCorrectEs: "La cabaña abandonada no tenía techo, por lo que hacía mucho frío adentro."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Was the person at home feeling relaxed or stressed?",
+            textEs: "¿Se sentía la persona en casa relajada o estresada?",
+            options: [
+              {
+                text: "Yes, she felt very relaxed, peaceful, and calm.",
+                textEs: "¡Sí, se sentía muy relajada, tranquila y en paz!",
+                correct: true,
+                why: "Mirar la lluvia caer desde la comodidad de casa produce una sensación relajante y serena (she felt relaxed)."
+              },
+              {
+                text: "No, she was furious and breaking furniture.",
+                textEs: "No, estaba furiosa y rompiendo muebles.",
+                correct: false,
+                why: "El entorno es de pura tranquilidad y contemplación.",
+                exampleWhereCorrectEn: "He was furious when he discovered his stolen car.",
+                exampleWhereCorrectEs: "Él estaba furioso cuando descubrió su auto robado."
+              },
+              {
+                text: "No, she was terrified of an alien invasion.",
+                textEs: "No, estaba aterrorizada por una invasión alienígena.",
+                correct: false,
+                why: "Es un día normal y pacífico de lluvia en la ciudad.",
+                exampleWhereCorrectEn: "The movie characters were terrified of an alien attack.",
+                exampleWhereCorrectEs: "Los personajes de la película estaban aterrorizados por un ataque extraterrestre."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did she do on this rainy afternoon?",
+            textEs: "¿Qué hizo ella en esta tarde lluviosa? (Pasado Simple)",
+            options: [
+              {
+                text: "She stayed at home, drank a cup of hot tea, and looked at the rain.",
+                textEs: "Se quedó en casa, bebió una taza de té caliente y miró la lluvia.",
+                correct: true,
+                why: "Permaneció en el hogar ('stayed at home') y tomó una bebida tibia ('drank hot tea')."
+              },
+              {
+                text: "She swam in an outdoor swimming pool during thunder.",
+                textEs: "Nadaba en una piscina al aire libre durante los truenos.",
+                correct: false,
+                why: "Nadie nada en piscinas exteriores bajo tormentas por seguridad.",
+                exampleWhereCorrectEn: "They swam in the outdoor pool on a hot summer morning.",
+                exampleWhereCorrectEs: "Nadaron en la piscina al aire libre en una mañana calurosa de verano."
+              },
+              {
+                text: "She played a soccer match on the muddy grass.",
+                textEs: "Jugó un partido de fútbol en el pasto con barro.",
+                correct: false,
+                why: "Está adentro de su departamento descansando con calma.",
+                exampleWhereCorrectEn: "The soccer team played a difficult match on muddy ground.",
+                exampleWhereCorrectEs: "El equipo de fútbol jugó un partido difícil en terreno con barro."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Was it rainy outside the window?'</b>",
+          hint: "Escribe: <i>Yes, it was.</i>",
+          expected: "Yes, it was.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, it was") || v.includes("yes it was")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Usaste la respuesta corta con was: <b>Yes, it was.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, it was.</b> (Sí, estaba lluvioso)." };
+          }
+        }
+      },
+      {
+        id: 7,
+        title: "Escena 7: Tarde de Calor en la Piscina de Verano",
+        badge: "🏊 Verano / Piscina / Diversión en el Agua",
+        img: "img/summer_swimming_pool.jpg",
+        description: "Agua turquesa y cristalina de una gran piscina bajo el sol resplandeciente de un día muy caluroso de verano, con reposeras y sombrillas alrededor.",
+        questions: [
+          {
+            qId: 1,
+            text: "What season was it for going to the swimming pool?",
+            textEs: "¿Qué estación era para ir a la piscina?",
+            options: [
+              {
+                text: "It was summer.",
+                textEs: "Era verano ☀️",
+                correct: true,
+                why: "Las piscinas al aire libre se disfrutan plenamente en verano con días calurosos y sol radiante (summer = verano)."
+              },
+              {
+                text: "It was cold winter.",
+                textEs: "Era invierno frío ❄️",
+                correct: false,
+                why: "En invierno al aire libre las piscinas se congelan o el agua está demasiado fría para nadar.",
+                exampleWhereCorrectEn: "In cold winter, we preferred visiting indoor heated thermal baths.",
+                exampleWhereCorrectEs: "En invierno frío, preferimos visitar baños termales techados con calefacción."
+              },
+              {
+                text: "It was late autumn.",
+                textEs: "Era otoño tardío 🍂",
+                correct: false,
+                why: "En otoño la temperatura baja y el agua de la piscina está helada.",
+                exampleWhereCorrectEn: "In late autumn, the public pool was closed for the season.",
+                exampleWhereCorrectEs: "A finales de otoño, la piscina pública estaba cerrada por la temporada."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the weather at the pool?",
+            textEs: "¿Cómo estuvo el clima en la piscina?",
+            options: [
+              {
+                text: "The weather was sunny, hot, and bright with clear skies.",
+                textEs: "El clima estuvo soleado, caluroso y brillante con cielos despejados.",
+                correct: true,
+                why: "El sol ilumina directamente la superficie del agua azul sin nubes en el cielo (sunny and hot)."
+              },
+              {
+                text: "It was freezing cold and hailing violently.",
+                textEs: "Estaba helado y granizando violentamente.",
+                correct: false,
+                why: "No caen granizos ni hace frío; el agua está cristalina bajo el sol.",
+                exampleWhereCorrectEn: "It was hailing violently, so cars suffered broken glass.",
+                exampleWhereCorrectEs: "Estaba granizando violentamente, por lo que los autos sufrieron rotura de vidrios."
+              },
+              {
+                text: "It was foggy and pitch black.",
+                textEs: "Había niebla y estaba completamente negro.",
+                correct: false,
+                why: "Es pleno día con máxima luminosidad y visibilidad perfecta.",
+                exampleWhereCorrectEn: "The mountain road was foggy and pitch black at midnight.",
+                exampleWhereCorrectEs: "El camino de montaña tenía niebla y estaba completamente negro a medianoche."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were the swimmers cheerful and refreshed?",
+            textEs: "¿Estaban los nadadores alegres y refrescados?",
+            options: [
+              {
+                text: "Yes, they were very cheerful, refreshed, and excited.",
+                textEs: "¡Sí, estaban muy alegres, refrescados y entusiasmados!",
+                correct: true,
+                why: "Nadar en agua fresca durante un día caluroso revitaliza y alegra a cualquiera (they were refreshed and cheerful)."
+              },
+              {
+                text: "No, they were shivering from hypothermia and crying.",
+                textEs: "No, estaban tiritando de hipotermia y llorando.",
+                correct: false,
+                why: "El clima es caluroso y el agua está a temperatura perfecta para nadar.",
+                exampleWhereCorrectEn: "The lost swimmer was shivering after being rescued from the icy sea.",
+                exampleWhereCorrectEs: "El nadador perdido estaba tiritando tras ser rescatado del mar helado."
+              },
+              {
+                text: "No, they were bored and depressed.",
+                textEs: "No, estaban aburridos y deprimidos.",
+                correct: false,
+                why: "La piscina de verano es un lugar de entretención y deporte activo.",
+                exampleWhereCorrectEn: "He was depressed because his phone fell into the deep well.",
+                exampleWhereCorrectEs: "Él estaba deprimido porque su celular se cayó al pozo profundo."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did people do at the pool?",
+            textEs: "¿Qué hizo la gente en la piscina? (Pasado Simple)",
+            options: [
+              {
+                text: "They swam laps, splashed in the cool water, and sunbathed.",
+                textEs: "Nadaron tramos, chapotearon en el agua fresca y tomaron sol.",
+                correct: true,
+                why: "Practicaron natación ('swam') y disfrutaron refrescándose del calor del sol ('splashed')."
+              },
+              {
+                text: "They skated on thick winter ice.",
+                textEs: "Patinaron sobre hielo grueso de invierno.",
+                correct: false,
+                why: "El agua está líquida y tibia, no congelada en una pista de patinaje sobre hielo.",
+                exampleWhereCorrectEn: "They skated on the frozen lake during January.",
+                exampleWhereCorrectEs: "Patinaron sobre el lago congelado durante enero."
+              },
+              {
+                text: "They wore wool coats and gloves in the water.",
+                textEs: "Vistieron abrigos de lana y guantes en el agua.",
+                correct: false,
+                why: "Para nadar se utiliza traje de baño, no ropa de lana pesada.",
+                exampleWhereCorrectEn: "They wore wool coats and gloves when walking through Moscow.",
+                exampleWhereCorrectEs: "Vistieron abrigos de lana y guantes cuando caminaron por Moscú."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Was it sunny and hot at the pool?'</b>",
+          hint: "Escribe: <i>Yes, it was.</i>",
+          expected: "Yes, it was.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, it was") || v.includes("yes it was")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Respuesta corta oficial singular con was: <b>Yes, it was.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, it was.</b> (Sí, lo estuvo)." };
+          }
+        }
+      },
+      {
+        id: 8,
+        title: "Escena 8: Recorrido Turístico en una Ciudad Histórica de Vacaciones",
+        badge: "🏛️ Turismo / Ciudad Histórica / Caminata y Fotos",
+        img: "img/city_tour_travel.jpg",
+        description: "Turistas con mochilas y cámaras fotográficas recorriendo calles adoquinadas, plazas y monumentos históricos en una hermosa ciudad europea durante sus vacaciones.",
+        questions: [
+          {
+            qId: 1,
+            text: "What season was it for their city walking tour?",
+            textEs: "¿Qué estación era para su recorrido a pie por la ciudad?",
+            options: [
+              {
+                text: "It was spring or summer.",
+                textEs: "Era primavera o verano 🏛️",
+                correct: true,
+                why: "Los turistas visten ropa cómoda de paseo, con luz diurna despejada ideal para caminar por horas (spring / summer)."
+              },
+              {
+                text: "It was a dark polar winter night.",
+                textEs: "Era una noche de invierno polar oscuro ❄️",
+                correct: false,
+                why: "Es de día con sol radiante y temperatura agradable para caminar al aire libre.",
+                exampleWhereCorrectEn: "It was a polar winter night, and the sun never rose above the horizon.",
+                exampleWhereCorrectEs: "Era una noche polar de invierno, y el sol nunca salió sobre el horizonte."
+              },
+              {
+                text: "It was a stormy hurricane afternoon.",
+                textEs: "Era una tarde de huracán tormentoso.",
+                correct: false,
+                why: "Las calles están limpias, despejadas y tranquilas sin vientos peligrosos.",
+                exampleWhereCorrectEn: "The authorities closed the harbor during the hurricane afternoon.",
+                exampleWhereCorrectEs: "Las autoridades cerraron el puerto durante la tarde de huracán."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the weather in the historic city?",
+            textEs: "¿Cómo estuvo el clima en la ciudad histórica?",
+            options: [
+              {
+                text: "The weather was fine, sunny, and pleasant for walking.",
+                textEs: "El clima estuvo bueno, soleado y agradable para caminar.",
+                correct: true,
+                why: "Hay buena luz solar para sacar fotografías nítidas de los edificios y monumentos (fine and sunny)."
+              },
+              {
+                text: "It was raining cats and dogs with deep mud.",
+                textEs: "Llovía a cántaros con barro profundo.",
+                correct: false,
+                why: "Las calles de adoquines están secas y los turistas no usan paraguas ni impermeables.",
+                exampleWhereCorrectEn: "It was raining cats and dogs, so all outdoor tours were cancelled.",
+                exampleWhereCorrectEs: "Llovía a cántaros, por lo que todos los tours al aire libre fueron cancelados."
+              },
+              {
+                text: "There was thick poisonous smoke in the air.",
+                textEs: "Había humo espeso y venenoso en el aire.",
+                correct: false,
+                why: "El aire está limpio y el cielo es azul transparente.",
+                exampleWhereCorrectEn: "Firefighters wore oxygen masks because of poisonous factory smoke.",
+                exampleWhereCorrectEs: "Los bomberos usaron máscaras de oxígeno debido al humo tóxico de la fábrica."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were the tourists interested and enthusiastic?",
+            textEs: "¿Estaban los turistas interesados y entusiasmados?",
+            options: [
+              {
+                text: "Yes, they were very curious, interested, and delighted.",
+                textEs: "¡Sí, estaban muy curiosos, interesados y encantados!",
+                correct: true,
+                why: "Están mirando la arquitectura histórica con entusiasmo y sacando fotos de recuerdo (they were interested and delighted)."
+              },
+              {
+                text: "No, they were bored, miserable, and complaining.",
+                textEs: "No, estaban aburridos, tristes y quejándose.",
+                correct: false,
+                why: "Están disfrutando activamente la cultura y belleza del lugar.",
+                exampleWhereCorrectEn: "The passengers were miserable after their luggage was lost.",
+                exampleWhereCorrectEs: "Los pasajeros estaban tristes tras perder su equipaje."
+              },
+              {
+                text: "No, they were asleep on the pavement.",
+                textEs: "No, estaban dormidos sobre el pavimento.",
+                correct: false,
+                why: "Están de pie caminando con energía por el centro histórico.",
+                exampleWhereCorrectEn: "The exhausted runner collapsed and fell asleep on the grass.",
+                exampleWhereCorrectEs: "El corredor exhausto colapsó y se quedó dormido en el pasto."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did the tourists do during the tour?",
+            textEs: "¿Qué hicieron los turistas durante el tour? (Pasado Simple)",
+            options: [
+              {
+                text: "They walked through historic avenues, visited museums, and took pictures.",
+                textEs: "Caminaron por avenidas históricas, visitaron museos y sacaron fotos.",
+                correct: true,
+                why: "Recorrieron la ciudad a pie ('walked'), conocieron lugares turísticos ('visited') y tomaron fotografías ('took pictures')."
+              },
+              {
+                text: "They stayed asleep in the airport terminal all day.",
+                textEs: "Se quedaron dormidos en la terminal del aeropuerto todo el día.",
+                correct: false,
+                why: "Están conociendo la ciudad al aire libre, no encerrados en un aeropuerto.",
+                exampleWhereCorrectEn: "They stayed asleep at the airport due to a delayed connecting flight.",
+                exampleWhereCorrectEs: "Se quedaron dormidos en el aeropuerto debido a un vuelo de conexión retrasado."
+              },
+              {
+                text: "They fished for salmon in a stormy Arctic sea.",
+                textEs: "Pescaron salmón en un mar ártico tormentoso.",
+                correct: false,
+                why: "Están en medio de una ciudad histórica colonial, no en un barco pesquero polar.",
+                exampleWhereCorrectEn: "Fishermen caught giant salmon in the stormy Arctic sea.",
+                exampleWhereCorrectEs: "Los pescadores atraparon salmones gigantes en el tormentoso mar ártico."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Did the tourists take pictures of the city?'</b>",
+          hint: "Escribe: <i>Yes, they did.</i>",
+          expected: "Yes, they did.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, they did") || v.includes("yes they did")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Usaste la respuesta corta con el auxiliar Did: <b>Yes, they did.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, they did.</b> (Sí, las tomaron)." };
+          }
+        }
+      },
+      {
+        id: 9,
+        title: "Escena 9: Cena Especial con Amigos en un Restaurante",
+        badge: "🍝 Restaurante / Cena con Amigos / Comida Deliciosa",
+        img: "img/restaurant_dinner.jpg",
+        description: "Amigos sentados a la mesa de un acogedor restaurante iluminado con luces cálidas, brindando con bebidas y saboreando deliciosos platos de pasta y comida gourmet.",
+        questions: [
+          {
+            qId: 1,
+            text: "Where were the people in this picture?",
+            textEs: "¿Dónde estaban las personas en esta foto?",
+            options: [
+              {
+                text: "They were at a cozy local restaurant having dinner.",
+                textEs: "Estaban en un acogedor restaurante local cenando 🍝",
+                correct: true,
+                why: "Están sentados alrededor de una mesa servida con copas, cubiertos y platos de comida (they were at a restaurant)."
+              },
+              {
+                text: "They were lost in a dark desert cave.",
+                textEs: "Estaban perdidos en una cueva oscura del desierto.",
+                correct: false,
+                why: "El lugar tiene lámparas cálidas, decoración moderna y servicio de mesa profesional.",
+                exampleWhereCorrectEn: "The miners were lost in a dark cave until the rescue team arrived.",
+                exampleWhereCorrectEs: "Los mineros estuvieron perdidos en una cueva oscura hasta que llegó el equipo de rescate."
+              },
+              {
+                text: "They were swimming in the freezing Pacific ocean.",
+                textEs: "Estaban nadando en el helado océano Pacífico.",
+                correct: false,
+                why: "Están elegantemente vestidos cenando en un salón interior.",
+                exampleWhereCorrectEn: "The surfers were swimming in the cold Pacific waves.",
+                exampleWhereCorrectEs: "Los surfistas estaban nadando en las olas frías del Pacífico."
+              }
+            ]
+          },
+          {
+            qId: 2,
+            text: "How was the food and the restaurant atmosphere?",
+            textEs: "¿Cómo estuvo la comida y el ambiente del restaurante?",
+            options: [
+              {
+                text: "The food was delicious and the atmosphere was warm and lively.",
+                textEs: "La comida estuvo deliciosa y el ambiente fue cálido y animado.",
+                correct: true,
+                why: "Los platos se ven frescos y apetitosos ('the food was delicious') y la ambientación es elegante y cordial ('warm and lively')."
+              },
+              {
+                text: "The food was completely frozen and inedible.",
+                textEs: "La comida estaba completamente congelada y no se podía comer.",
+                correct: false,
+                why: "Están comiendo con agrado platos calientes recién salidos de la cocina.",
+                exampleWhereCorrectEn: "The military rations were frozen and tasteless in the trenches.",
+                exampleWhereCorrectEs: "Las raciones militares estaban congeladas y sin sabor en las trincheras."
+              },
+              {
+                text: "The restaurant was empty, dark, and abandoned.",
+                textEs: "El restaurante estaba vacío, oscuro y abandonado.",
+                correct: false,
+                why: "El restaurante está lleno de vida, buena iluminación y comensales disfrutando.",
+                exampleWhereCorrectEn: "The old saloon was abandoned and covered in spiderwebs.",
+                exampleWhereCorrectEs: "El viejo bar estaba abandonado y cubierto de telarañas."
+              }
+            ]
+          },
+          {
+            qId: 3,
+            text: "Were the friends happy and enjoying their conversation?",
+            textEs: "¿Estaban los amigos felices y disfrutando su conversación?",
+            options: [
+              {
+                text: "Yes, they were very happy, smiling, and having a great time.",
+                textEs: "¡Sí, estaban muy felices, sonriendo y pasándola muy bien!",
+                correct: true,
+                why: "Están brindando con sus vasos, riendo y compartiendo anécdotas con rostros felices (they were happy and having fun)."
+              },
+              {
+                text: "No, they were angry, yelling, and throwing plates.",
+                textEs: "No, estaban enojados, gritando y tirando platos.",
+                correct: false,
+                why: "No hay peleas ni discusiones; hay un ambiente de fraternidad y celebración.",
+                exampleWhereCorrectEn: "The angry customers yelled because the bill was incorrect.",
+                exampleWhereCorrectEs: "Los clientes enojados gritaron porque la cuenta estaba incorrecta."
+              },
+              {
+                text: "No, they were weeping because of a tragedy.",
+                textEs: "No, estaban llorando debido a una tragedia.",
+                correct: false,
+                why: "Se les ve alegres festejando juntos una velada especial.",
+                exampleWhereCorrectEn: "The family wept when hearing the tragic news on the radio.",
+                exampleWhereCorrectEs: "La familia lloró al escuchar la trágica noticia en la radio."
+              }
+            ]
+          },
+          {
+            qId: 4,
+            text: "What did they do at the restaurant?",
+            textEs: "¿Qué hicieron en el restaurante? (Pasado Simple)",
+            options: [
+              {
+                text: "They ordered dinner, tasted delicious dishes, and toasted together.",
+                textEs: "Pidieron la cena, probaron deliciosos platos y brindaron juntos.",
+                correct: true,
+                why: "Pidieron comida rica ('ordered dinner'), comieron con agrado ('tasted dishes') y brindaron ('toasted together')."
+              },
+              {
+                text: "They cooked their own food over a campfire in the woods.",
+                textEs: "Cocinaron su propia comida sobre una fogata en el bosque.",
+                correct: false,
+                why: "Están siendo atendidos en un restaurante de ciudad por garzones profesionales.",
+                exampleWhereCorrectEn: "The scouts cooked sausages over a campfire in the forest.",
+                exampleWhereCorrectEs: "Los scouts cocinaron vienesas sobre una fogata en el bosque."
+              },
+              {
+                text: "They repaired the roof of the kitchen.",
+                textEs: "Repararon el techo de la cocina.",
+                correct: false,
+                why: "Son clientes que fueron a cenar y disfrutar de una comida, no obreros de construcción.",
+                exampleWhereCorrectEn: "The workers repaired the damaged roof after the storm.",
+                exampleWhereCorrectEs: "Los obreros repararon el techo dañado tras la tormenta."
+              }
+            ]
+          }
+        ],
+        writtenPractice: {
+          prompt: "Escribe la respuesta corta oficial a: <b>'Was the food delicious at the restaurant?'</b>",
+          hint: "Escribe: <i>Yes, it was.</i>",
+          expected: "Yes, it was.",
+          eval: function(val) {
+            const v = val.toLowerCase().trim();
+            if (v.includes("yes, it was") || v.includes("yes it was")) {
+              return { ok: true, msg: "✔️ ¡Excelente! Usaste la respuesta corta singular con was: <b>Yes, it was.</b>" };
+            }
+            return { ok: false, msg: "❌ Respuesta esperada: <b>Yes, it was.</b> (Sí, lo estuvo)." };
+          }
+        }
+      }
+    ];
+
+    let imageQuizScores = {};
+
+    function renderImageQuiz(container) {
+      let scenesHtml = '';
+
+      imageScenes.forEach((scene) => {
+        let qHtml = '';
+
+        scene.questions.forEach((q) => {
+          let optsHtml = '';
+          q.options.forEach((opt, oIdx) => {
+            optsHtml += `
+              <label class="opt-label" id="iq-label-${scene.id}-${q.qId}-${oIdx}" style="display:block; margin-bottom:10px; cursor:pointer;" onclick="evalImageOption(${scene.id}, ${q.qId}, ${oIdx})">
+                <input type="radio" name="iq-opt-${scene.id}-${q.qId}" value="${oIdx}">
+                <span style="font-size:14px; font-weight:700; color:#fff;">${opt.text}</span>
+                <span style="display:block; font-size:12px; color:#94a3b8; margin-top:2px;">↳ <i>Español:</i> ${opt.textEs}</span>
+              </label>
+            `;
+          });
+
+          qHtml += `
+            <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                <div style="font-size:15px; font-weight:800; color:#60a5fa;">
+                  ${q.qId}. ${q.text}
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speak('${q.text.replace(/'/g, "\'")}')" title="Escuchar pregunta en inglés">
+                  🔊 Escuchar
+                </button>
+              </div>
+              <div style="font-size:12.5px; color:#cbd5e1; margin-bottom:12px;">
+                ↳ <i>En español:</i> <b>${q.textEs}</b>
+              </div>
+
+              <div>
+                ${optsHtml}
+              </div>
+
+              <div id="iq-fb-${scene.id}-${q.qId}" class="feedback-box" style="display:none; margin-top:10px;"></div>
+            </div>
+          `;
+        });
+
+        // Written short answer practice
+        const wp = scene.writtenPractice;
+        const writtenHtml = `
+          <div style="background:rgba(30, 58, 138, 0.25); border:1px solid rgba(59, 130, 246, 0.35); border-radius:10px; padding:16px; margin-top:18px;">
+            <div style="font-size:14px; font-weight:800; color:#93c5fd; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+              <span>✍️ 5. Práctica Escrita Oficial (Short Answer con Teclado):</span>
+            </div>
+            <div style="font-size:13.5px; color:#e2e8f0; margin-bottom:10px;">
+              ${wp.prompt}
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="text" class="written-input" style="flex:1; min-width:240px;" id="iq-written-inp-${scene.id}" placeholder="${wp.hint.replace(/<[^>]*>?/gm, '')}" onkeydown="if(event.key==='Enter') evalImageWritten(${scene.id})">
+              <button class="btn btn-primary" style="padding:8px 14px;" onclick="evalImageWritten(${scene.id})">✓ Comprobar</button>
+              <button class="btn btn-secondary" style="padding:8px 12px; color:#9ca3af;" onclick="revealImageWritten(${scene.id})">👁️ Ver</button>
+              <button class="btn btn-secondary" style="padding:8px 10px;" onclick="speak('${wp.expected.replace(/'/g, "\'")}')" title="Escuchar respuesta">🔊</button>
+            </div>
+            <div id="iq-written-fb-${scene.id}" class="feedback-box" style="display:none; margin-top:10px;"></div>
+          </div>
+        `;
+
+        scenesHtml += `
+          <div class="card" style="margin-bottom:32px; border:1px solid rgba(255,255,255,0.12);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;">
+              <h3 style="color:#60a5fa; font-size:18px; margin:0; font-weight:800;">
+                ${scene.title}
+              </h3>
+              <span style="font-size:12px; background:rgba(59,130,246,0.18); color:#93c5fd; padding:4px 10px; border-radius:6px; font-weight:700;">
+                ${scene.badge}
+              </span>
+            </div>
+
+            <!-- Imagen 100% Offline Centrada y Nítida -->
+            <div style="text-align:center; margin-bottom:16px;">
+              <img src="${scene.img}" alt="${scene.title}" style="width:100%; max-height:440px; object-fit:cover; border-radius:12px; border:2px solid rgba(255,255,255,0.1); box-shadow:0 12px 28px rgba(0,0,0,0.5);">
+            </div>
+
+            <!-- Observación Guiada en Español -->
+            <div style="background:rgba(15,23,42,0.85); border-left:4px solid #3b82f6; padding:12px 14px; border-radius:6px; margin-bottom:18px; font-size:13.5px; color:#cbd5e1; line-height:1.5;">
+              👁️ <b>Guía de Observación de la Foto:</b> ${scene.description}
+            </div>
+
+            <!-- Preguntas -->
+            ${qHtml}
+
+            <!-- Práctica Escrita -->
+            ${writtenHtml}
+          </div>
+        `;
+      });
+
+      const totalActs = imageScenes.length * 5;
+
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>🖼️ 7.1 Quiz Visual con 9 Fotos Reales (100% Offline): Estaciones, Clima, Emociones y Acciones</h1>
+            <p>Observa cada fotografía y responde: ¿Qué estación es? ¿Cómo está el clima? ¿Están felices o no? ¿Qué hicieron? Al marcar una opción, verás con total claridad si es correcta o incorrecta, por qué las otras 2 no corresponden a la foto y ejemplos de cuándo sí lo harían.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="solveAllImageQuiz()">
+              👁️ Resolver Todo el Quiz
+            </button>
+            <button class="btn btn-secondary" onclick="resetAllImageQuiz()">
+              🔄 Reiniciar Quiz
+            </button>
+          </div>
+        </div>
+
+        <div class="banner-grammar" style="margin-bottom:20px;">
+          <h3>📌 Vocabulario y Estructuras Clave de la Unidad 7:</h3>
+          <p>
+            • <b>Estaciones del año:</b> <b>summer</b> (verano ☀️), <b>winter</b> (invierno ❄️), <b>fall / autumn</b> (otoño 🍂), <b>spring</b> (primavera 🌸).<br>
+            • <b>Clima:</b> <b>sunny and warm</b> (soleado y templado), <b>cold and snowy</b> (frío y nevado), <b>rainy and wet</b> (lluvioso y mojado), <b>cool and starry</b> (fresco y estrellado).<br>
+            • <b>Emociones:</b> <b>happy / cheerful / excited</b> (felices / alegres / entusiasmados), <b>relaxed / calm</b> (relajados / tranquilos), <b>sad / bored</b> (tristes / aburridos).<br>
+            • <b>Respuestas Cortas (Short Answers):</b> <i>Were they happy? &rarr; <b>Yes, they were.</b></i> | <i>Was it cold? &rarr; <b>Yes, it was. / No, it wasn't.</b></i>
+          </p>
+        </div>
+
+        <div id="image-quiz-score-banner" style="background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px 18px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <span style="font-size:14px; color:#6ee7b7; font-weight:700;">
+            📊 Progreso del Quiz con Fotos Reales:
+          </span>
+          <span id="iq-score-display" style="font-size:14.5px; color:#34d399; font-weight:800;">
+            0 de ${totalActs} actividades completadas correctamente
+          </span>
+        </div>
+
+        <!-- TALLER Y MODELOS OFICIALES DE DESCRIPCIÓN DE FOTOS (VIÑA DEL MAR & ALASKA) -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); border: 1.5px solid rgba(96, 165, 250, 0.3); margin-bottom: 28px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+            <div>
+              <div style="font-size:12px; font-weight:800; color:#60a5fa; text-transform:uppercase; letter-spacing:0.05em;">🎯 Preparación para Prueba Oral y Escrita</div>
+              <h2 style="font-size:18px; color:#fff; margin-top:2px;">📸 Taller de Descripción de Fotos: Viña del Mar, Alaska y Frases de Opinión</h2>
+            </div>
+            <span style="background:rgba(96, 165, 250, 0.15); border:1px solid #3b82f6; color:#93c5fd; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:700;">Modelos de Examen</span>
+          </div>
+          <p style="font-size:13.5px; color:#cbd5e1; margin-bottom:20px; line-height:1.5;">
+            En las evaluaciones de Oxford te pedirán describir una fotografía respondiendo: <b>¿Quiénes son? ¿Dónde y cuándo fue? ¿Cómo estuvo el clima? ¿Qué sentiste y por qué? ¿Qué había en el lugar?</b> Aquí tienes los dos modelos oficiales perfectos con audio y las 5 frases clave de opinión con <i>because</i>.
+          </p>
+
+          <!-- MODELO 1: VIÑA DEL MAR -->
+          <div style="background:rgba(15, 23, 42, 0.8); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:18px; margin-bottom:18px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <span style="font-size:22px;">🏖️</span>
+              <div>
+                <h3 style="font-size:16px; color:#fde047; margin:0;">Modelo 1: Mis amigos y yo en la playa de Viña</h3>
+                <span style="font-size:12px; color:#94a3b8;">This is a picture of my friends and me at the beach</span>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+              <!-- Opening -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #3b82f6; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#93c5fd; text-transform:uppercase;">📌 Apertura (Identificar la foto):</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"This is a picture of my friends and me at the beach."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>Esta es una foto de mis amigos y yo en la playa.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('This is a picture of my friends and me at the beach.')">🔊</button>
+              </div>
+
+              <!-- Where & When -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #10b981; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#6ee7b7; text-transform:uppercase;">📍 (Where) Lugar & (When) Momento:</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"It was at Viña last weekend."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>(Where) Fue en Viña (When) el fin de semana pasado.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('It was at Viña last weekend.')">🔊</button>
+              </div>
+
+              <!-- Weather -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #f59e0b; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#fcd34d; text-transform:uppercase;">☀️ (Weather) Clima:</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"It was sunny and hot."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>Estuvo soleado y caluroso.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('It was sunny and hot.')">🔊</button>
+              </div>
+
+              <!-- Feeling & Reason -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #ec4899; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#f472b6; text-transform:uppercase;">❤️ (Feeling) Sentimiento & (Because) Razón:</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"I love sunny days because we can swim in the sea."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>(Feeling) Me encantan los días soleados porque (Because) podemos nadar en el mar.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('I love sunny days because we can swim in the sea.')">🔊</button>
+              </div>
+
+              <!-- There was / There were -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #8b5cf6;">
+                <div style="font-size:11px; font-weight:800; color:#c4b5fd; text-transform:uppercase; margin-bottom:6px;">🍽️ Estructuras Clave: There was / There weren't / There were:</div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <span style="color:#fff; font-weight:700;">• "There was a lot of food."</span>
+                      <span style="color:#94a3b8; font-size:12px;"> (Había mucha comida - <i>food es incontable singular: was</i>)</span>
+                    </div>
+                    <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;" onclick="speak('There was a lot of food.')">🔊</button>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <span style="color:#fff; font-weight:700;">• "There weren’t many people around."</span>
+                      <span style="color:#94a3b8; font-size:12px;"> (No había mucha gente alrededor - <i>people es plural: weren't</i>)</span>
+                    </div>
+                    <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;" onclick="speak('There were not many people around.')">🔊</button>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <span style="color:#fff; font-weight:700;">• "There were several glasses of wine."</span>
+                      <span style="color:#94a3b8; font-size:12px;"> (Había varias copas de vino - <i>glasses es plural contable: were</i>)</span>
+                    </div>
+                    <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;" onclick="speak('There were several glasses of wine.')">🔊</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODELO 2: ALASKA -->
+          <div style="background:rgba(15, 23, 42, 0.8); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:18px; margin-bottom:18px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <span style="font-size:22px;">❄️</span>
+              <div>
+                <h3 style="font-size:16px; color:#93c5fd; margin:0;">Modelo 2: Mi hermana y yo en Alaska</h3>
+                <span style="font-size:12px; color:#94a3b8;">This is a picture of my sister and me in Alaska</span>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+              <!-- Opening -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #3b82f6; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#93c5fd; text-transform:uppercase;">📌 Apertura (Identificar la foto):</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"This is a picture of my sister and me in Alaska."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>Esta es una foto de mi hermana y yo en Alaska.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('This is a picture of my sister and me in Alaska.')">🔊</button>
+              </div>
+
+              <!-- Where & When -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #10b981; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#6ee7b7; text-transform:uppercase;">📍 (Where & When) Lugar y Tiempo:</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"It was at an Alaskan port last month."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>Fue en un puerto de Alaska el mes pasado.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('It was at an Alaskan port last month.')">🔊</button>
+              </div>
+
+              <!-- Weather -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #06b6d4; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#67e8f9; text-transform:uppercase;">☁️ (Weather) Clima:</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"It was cloudy and cold."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>Estaba nublado y frío.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('It was cloudy and cold.')">🔊</button>
+              </div>
+
+              <!-- Feeling & Reason -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; border-left:3px solid #ef4444; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:#fca5a5; text-transform:uppercase;">🌧️ (Feeling) Sentimiento & (Because) Razón:</div>
+                  <div style="font-size:14px; color:#fff; font-weight:700;">"I hate rainy days because we can't go out much."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>(Feeling) Odio los días lluviosos porque (Because) no podemos salir mucho.</i></div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('I hate rainy days because we cannot go out much.')">🔊</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 FRASES DE OPINIÓN Y CLIMA CON 'BECAUSE' -->
+          <div style="background:rgba(15, 23, 42, 0.8); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:18px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <span style="font-size:22px;">💬</span>
+              <div>
+                <h3 style="font-size:16px; color:#6ee7b7; margin:0;">5 Frases de Opinión y Clima de Alto Puntaje (Oxford Test)</h3>
+                <span style="font-size:12px; color:#94a3b8;">Estructuras indispensables con 'In my opinion', 'because' y 'because of'</span>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <!-- Frase 1 -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:13.5px; color:#fff; font-weight:700;">1. "I don’t like snow because it's very cold."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>No me gusta la nieve porque es muy fría.</i> (Causa con <b>because + it's</b>)</div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('I do not like snow because it is very cold.')">🔊</button>
+              </div>
+
+              <!-- Frase 2 -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:13.5px; color:#fff; font-weight:700;">2. "I love hot weather because I can go to the beach."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>Me encanta el clima caluroso porque puedo ir a la playa.</i> (Gusto con <b>can + base verb</b>)</div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('I love hot weather because I can go to the beach.')">🔊</button>
+              </div>
+
+              <!-- Frase 3 -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:13.5px; color:#fff; font-weight:700;">3. "In my opinion, the weather yesterday was nice because it was sunny and warm."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>En mi opinión, el clima ayer estuvo agradable porque estuvo soleado y cálido.</i> (Fórmula <b>In my opinion, the weather was... because...</b>)</div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('In my opinion, the weather yesterday was nice because it was sunny and warm.')">🔊</button>
+              </div>
+
+              <!-- Frase 4 -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:13.5px; color:#fff; font-weight:700;">4. "We spent a lot of time outdoors over the weekend because of the holidays, and the weather was fine."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>Pasamos mucho tiempo al aire libre durante el fin de semana debido a los feriados, y el clima estuvo bueno.</i> (<b>because of + sustantivo</b>)</div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('We spent a lot of time outdoors over the weekend because of the holidays, and the weather was fine.')">🔊</button>
+              </div>
+
+              <!-- Frase 5 -->
+              <div style="background:rgba(30, 41, 59, 0.6); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:13.5px; color:#fff; font-weight:700;">5. "In my opinion, the weather yesterday was pleasant because it wasn't that cold."</div>
+                  <div style="font-size:12px; color:#94a3b8;">↳ <i>En mi opinión, el clima ayer estuvo agradable porque no hacía tanto frío.</i> (<b>pleasant = agradable / wasn't that cold = no hacía tanto frío</b>)</div>
+                </div>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="speak('In my opinion, the weather yesterday was pleasant because it was not that cold.')">🔊</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        ${scenesHtml}
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; margin-bottom:24px;">
+          <button class="btn btn-success" style="padding:12px 24px;" onclick="solveAllImageQuiz()">
+            👁️ Mostrar Todas las Respuestas Correctas con Explicación Completa
+          </button>
+          <button class="btn btn-secondary" style="padding:12px 20px;" onclick="resetAllImageQuiz()">
+            🔄 Reiniciar Todo el Quiz
+          </button>
+        </div>
+      `;
+
+      updateImageQuizScore();
+    }
+
+    function evalImageOption(sceneId, qId, optIdx) {
+      const scene = imageScenes.find(s => s.id === sceneId);
+      if (!scene) return;
+      const q = scene.questions.find(x => x.qId === qId);
+      if (!q) return;
+      const chosenOpt = q.options[optIdx];
+      const correctOpt = q.options.find(o => o.correct);
+      const fb = document.getElementById(`iq-fb-${sceneId}-${qId}`);
+      if (!fb) return;
+
+      const isRight = chosenOpt.correct;
+
+      // Resaltar visualmente las etiquetas de las 3 opciones
+      q.options.forEach((opt, idx) => {
+        const lbl = document.getElementById(`iq-label-${sceneId}-${qId}-${idx}`);
+        if (!lbl) return;
+        lbl.classList.remove('opt-correct', 'opt-incorrect');
+        if (opt.correct) {
+          lbl.classList.add('opt-correct');
+        } else if (idx === optIdx && !isRight) {
+          lbl.classList.add('opt-incorrect');
+        }
+      });
+
+      // Construir el análisis de las 2 alternativas que no son la correcta
+      let wrongAltsHtml = '';
+      q.options.forEach((opt, idx) => {
+        if (!opt.correct) {
+          wrongAltsHtml += `
+            <div class="alt-item-box">
+              <div style="font-weight:700; color:#fca5a5; font-size:13.5px;">
+                🚫 Alternativa "${opt.text}" (<i>${opt.textEs}</i>):
+              </div>
+              <div style="font-size:13px; color:#e2e8f0; margin-top:3px; line-height:1.45;">
+                • <b>Por qué NO corresponde a esta foto:</b> ${opt.why}
+              </div>
+              ${opt.exampleWhereCorrectEn ? `
+                <div class="example-bubble">
+                  <div style="font-weight:700; color:#6ee7b7; margin-bottom:2px;">🌟 ¿Cuándo SÍ sería correcta "${opt.text}"?</div>
+                  <i>"${opt.exampleWhereCorrectEn}"</i><br>
+                  <span style="color:#cbd5e1; font-size:12px;">↳ Español: ${opt.exampleWhereCorrectEs}</span>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
+      });
+
+      fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+      fb.style.display = 'block';
+      fb.innerHTML = `
+        <div class="badge-result-status ${isRight ? 'correct' : 'incorrect'}">
+          ${isRight 
+            ? `✔️ ¡RESPUESTA CORRECTA! Acertaste con la foto.` 
+            : `❌ RESPUESTA INCORRECTA (Elegiste: "${chosenOpt.text}" | La correcta es: "<b>${correctOpt.text}</b>")`}
+        </div>
+
+        <div style="background:rgba(16,185,129,0.12); border-left:4px solid #10b981; padding:12px 14px; border-radius:6px; margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <div style="font-weight:800; color:#6ee7b7; font-size:14px;">🎯 ¿Por qué "${correctOpt.text}" es la respuesta correcta?</div>
+            <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('${correctOpt.text.replace(/'/g, "\'")}')">🔊 Escuchar</button>
+          </div>
+          <div style="font-size:13.5px; color:#f3f4f6; line-height:1.5;">${correctOpt.why}</div>
+        </div>
+
+        <div class="comparative-box">
+          <div style="font-weight:800; font-size:13.5px; color:#93c5fd; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em;">
+            🔍 Por qué las otras 2 opciones NO corresponden (y ejemplos de cuándo sí):
+          </div>
+          ${wrongAltsHtml}
+        </div>
+      `;
+
+      imageQuizScores[`${sceneId}-${qId}`] = isRight;
+      updateImageQuizScore();
+    }
+
+    function evalImageWritten(sceneId) {
+      const scene = imageScenes.find(s => s.id === sceneId);
+      if (!scene) return;
+      const wp = scene.writtenPractice;
+      const inputEl = document.getElementById(`iq-written-inp-${sceneId}`);
+      const fb = document.getElementById(`iq-written-fb-${sceneId}`);
+      if (!inputEl || !fb) return;
+
+      const val = inputEl.value.trim();
+      if (!val) {
+        fb.style.display = 'none';
+        inputEl.className = 'written-input';
+        return;
+      }
+
+      const res = wp.eval(val);
+      fb.style.display = 'block';
+
+      if (res.ok) {
+        inputEl.className = `written-input ${res.status === 'tolerant' ? 'is-tolerant' : 'is-correct'}`;
+        fb.className = 'feedback-box correct';
+        fb.innerHTML = `
+          <div class="badge-result-status correct">✔️ ¡RESPUESTA CORRECTA!</div>
+          <div style="font-size:13.5px; margin-top:4px;">${res.msg}</div>
+        `;
+        imageQuizScores[`${sceneId}-w`] = true;
+      } else {
+        inputEl.className = 'written-input is-incorrect';
+        fb.className = 'feedback-box incorrect';
+        fb.innerHTML = `
+          <div class="badge-result-status incorrect">❌ RESPUESTA INCORRECTA</div>
+          <div style="font-size:13.5px; margin-top:4px;">${res.msg}</div>
+        `;
+        imageQuizScores[`${sceneId}-w`] = false;
+      }
+
+      updateImageQuizScore();
+    }
+
+    function revealImageWritten(sceneId) {
+      const scene = imageScenes.find(s => s.id === sceneId);
+      if (!scene) return;
+      const inputEl = document.getElementById(`iq-written-inp-${sceneId}`);
+      if (inputEl) {
+        inputEl.value = scene.writtenPractice.expected;
+        evalImageWritten(sceneId);
+      }
+    }
+
+    function updateImageQuizScore() {
+      const display = document.getElementById('iq-score-display');
+      if (!display) return;
+      let correct = 0;
+      Object.values(imageQuizScores).forEach(v => {
+        if (v === true) correct++;
+      });
+      const totalActivities = imageScenes.length * 5;
+      display.textContent = `${correct} de ${totalActivities} actividades completadas correctamente`;
+    }
+
+    function solveAllImageQuiz() {
+      imageScenes.forEach(scene => {
+        scene.questions.forEach(q => {
+          const correctIdx = q.options.findIndex(o => o.correct);
+          if (correctIdx !== -1) {
+            const radio = document.querySelector(`input[name="iq-opt-${scene.id}-${q.qId}"][value="${correctIdx}"]`);
+            if (radio) radio.checked = true;
+            evalImageOption(scene.id, q.qId, correctIdx);
+          }
+        });
+        revealImageWritten(scene.id);
+      });
+    }
+
+    function resetAllImageQuiz() {
+      imageScenes.forEach(scene => {
+        scene.questions.forEach(q => {
+          const radios = document.querySelectorAll(`input[name="iq-opt-${scene.id}-${q.qId}"]`);
+          radios.forEach(r => r.checked = false);
+          const fb = document.getElementById(`iq-fb-${scene.id}-${q.qId}`);
+          if (fb) fb.style.display = 'none';
+          q.options.forEach((opt, idx) => {
+            const lbl = document.getElementById(`iq-label-${scene.id}-${q.qId}-${idx}`);
+            if (lbl) lbl.classList.remove('opt-correct', 'opt-incorrect');
+          });
+        });
+        const inp = document.getElementById(`iq-written-inp-${scene.id}`);
+        const fbW = document.getElementById(`iq-written-fb-${scene.id}`);
+        if (inp) {
+          inp.value = '';
+          inp.className = 'written-input';
+        }
+        if (fbW) fbW.style.display = 'none';
+      });
+      imageQuizScores = {};
+      LocalDB.saveModule('mod7_1_scores', {});
+      updateImageQuizScore();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { 
+      renderImageQuiz(document.getElementById('module-container')); 
+    });
+  </script>
+</body>
+</html>

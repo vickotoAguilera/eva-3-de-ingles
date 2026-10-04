@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 2 - Reading & Grammar: 4 Historias en Pasado Simple y Clima</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 980px; margin: 0 auto; }
+    .story-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .story-btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #cbd5e1;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .story-btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+    }
+    .story-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 24px;
+      line-height: 1.8;
+      font-size: 15px;
+      color: #f1f5f9;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div>
+      <h1>📖 7.2 READING & GRAMMAR: 4 Historias en Pasado Simple</h1>
+      <p>Lee cada historia completa en inglés estilo prueba de comprensión y responde las preguntas de gramática (was, were, verbos regulares/irregulares y clima). Incluye audio nativo y traducción al español.</p>
+    </div>
+  </div>
+
+  <div class="story-nav" id="story-nav-buttons"></div>
+
+  <div id="story-content-area"></div>
+
+  <script>
+    const stories = [
+  {
+    "id": 1,
+    "title": "Historia 1: The Great Polar Race (Scott vs. Amundsen)",
+    "badge": "❄️ Carrera al Polo Sur / Clima Polar / Was y Were",
+    "audioText": "In 1911, two famous explorers were in a race to reach the South Pole. Robert Falcon Scott was from Great Britain, and Roald Amundsen was from Norway. In Europe, the summer weather was nice and warm. But in Antarctica, the climate was extremely dangerous. There was freezing cold weather, strong wind, and dark clouds. Robert Scott and his men were brave, but their journey was difficult. The winter weather was severe, with a terrible blizzard and blinding snow.",
+    "textEn": "In 1911, two famous explorers were in a dramatic race to reach the South Pole for the first time in history. One man was Robert Falcon Scott from Great Britain, and the other man was Roald Amundsen from Norway.\n\nIn Europe, the summer weather was nice and warm, with sunshine and no rain. But in Antarctica, the climate was completely different. The weather was extremely bad and dangerous. There was freezing cold weather, strong wind, and the sky was constantly filled with dark clouds. There was heavy snow across the frozen plains and high mountains.\n\nRoald Amundsen and his people were experienced in cold weather. They were prepared with warm clothes, skis, and trained sled dogs. They were fast, and their journey across the ice was successful.\n\nRobert Falcon Scott and his men were very brave, but their journey was much more difficult. They were on foot, and their transport was not suitable for deep snow. When they finally reached the South Pole in January 1912, Scott was heartbroken. Roald Amundsen and his team were already there! The Norwegian flag was at the pole, and Amundsen was first by thirty-four days.\n\nThe return journey for Scott and his men was a tragedy. The winter weather was severe. There was a terrible blizzard with freezing wind and blinding snow. Scott and his men were exhausted, cold, and hungry. Sadly, they were lost in the frozen cold on their way home.",
+    "textEs": "En 1911, dos famosos exploradores estaban en una dramática carrera para alcanzar el Polo Sur por primera vez en la historia. Un hombre era Robert Falcon Scott de Gran Bretaña, y el otro hombre era Roald Amundsen de Noruega.\n\nEn Europa, el clima de verano era agradable y cálido, con sol y sin lluvia. Pero en la Antártica, el clima era completamente diferente. El tiempo era extremadamente malo y peligroso. Había un clima frío congelante, viento fuerte y el cielo estaba constantemente lleno de nubes oscuras. Había nieve pesada a través de las llanuras congeladas y altas montañas.\n\nRoald Amundsen y su gente tenían experiencia en clima frío. Estaban preparados con ropa abrigada, esquíes y perros de trineo entrenados. Eran veloces y su viaje sobre el hielo fue exitoso.\n\nRobert Falcon Scott y sus hombres eran muy valientes, pero su viaje fue mucho más difícil. Iban a pie y su transporte no era adecuado para nieve profunda. Cuando finalmente llegaron al Polo Sur en enero de 1912, Scott tenía el corazón roto. ¡Roald Amundsen y su equipo ya estaban allí! La bandera noruega estaba en el polo y Amundsen fue primero por 34 días.\n\nEl viaje de regreso para Scott y sus hombres fue una tragedia. El clima de invierno fue severo. Hubo una terrible ventisca con viento helado y nieve cegadora. Scott y sus hombres estaban exhaustos, con frío y hambrientos. Tristemente, se perdieron en el frío congelado de camino a casa.",
+    "questions": [
+      {
+        "id": "s1_1",
+        "prompt": "1. Robert Falcon Scott and Roald Amundsen ______ two famous explorers.",
+        "options": [
+          "was",
+          "were",
+          "is"
+        ],
+        "correct": "were",
+        "rule": "Scott y Amundsen son dos personas (plural 'they'). Requiere 'were'."
+      },
+      {
+        "id": "s1_2",
+        "prompt": "2. In Antarctica, the climate ______ completely different from Europe.",
+        "options": [
+          "were",
+          "was",
+          "are"
+        ],
+        "correct": "was",
+        "rule": "'the climate' es singular ('it'). En pasado simple afirmativo requiere 'was'."
+      },
+      {
+        "id": "s1_3",
+        "prompt": "3. There ______ freezing cold weather and strong wind across the ice.",
+        "options": [
+          "was",
+          "were",
+          "weren't"
+        ],
+        "correct": "was",
+        "rule": "'cold weather' es un sustantivo incontable singular. Se usa 'there was'."
+      },
+      {
+        "id": "s1_4",
+        "prompt": "4. Scott and his men ______ on foot during their difficult journey.",
+        "options": [
+          "was",
+          "were",
+          "wasn't"
+        ],
+        "correct": "were",
+        "rule": "'Scott and his men' es un sujeto plural ('they'). Requiere 'were'."
+      },
+      {
+        "id": "s1_5",
+        "prompt": "5. What was the severe winter weather like on their return journey?",
+        "options": [
+          "sunny and mild",
+          "a terrible blizzard with freezing wind",
+          "warm with no rain"
+        ],
+        "correct": "a terrible blizzard with freezing wind",
+        "rule": "El texto declara: 'There was a terrible blizzard with freezing wind and blinding snow'."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Historia 2: A Summer Vacation to Quintero and Ventanas Beach",
+    "badge": "🏖️ Vacaciones de Verano / Tarea Escrita / Playa y Restaurante",
+    "audioText": "Last summer in 2025, I went to Quintero beach with my family. First, we arrived at a hotel and the weather was sunny and warm. Then, we visited the city of Ventanas and took many pictures. We walked on the beach, but the wind suddenly became very cold. After that, we had lunch at a local restaurant and tasted delicious seafood. Finally, we returned home and I felt very happy.",
+    "textEn": "Last summer in 2025, I went to Quintero beach because I wanted to explore the Chilean coast with my family.\n\nFirst, we arrived at a comfortable hotel in the morning. The coastal weather was sunny and warm, with a clear blue sky.\n\nThen, we visited the historic city of Ventanas and took many pictures of the ocean. We walked on the golden sand, but the ocean wind suddenly became very cold.\n\nAfter that, we had lunch at a popular local restaurant and tasted delicious fresh seafood. In the afternoon, I bought nice handmade souvenirs because my family loved the town.\n\nLater, it started to rain lightly, so we didn't stay on the beach. Finally, we returned home in the evening, and I felt very relaxed and happy about our memorable trip.",
+    "textEs": "El verano pasado en 2025, fui a la playa de Quintero porque quería explorar la costa chilena con mi familia.\n\nPrimero, llegamos a un cómodo hotel por la mañana. El clima costero estuvo soleado y cálido, con un cielo azul despejado.\n\nLuego, visitamos la histórica ciudad de Ventanas y tomamos muchas fotos del océano. Caminamos por la arena dorada, pero el viento del océano de repente se puso muy frío.\n\nDespués de eso, almorzamos en un restaurante local popular y probamos deliciosos mariscos frescos. Por la tarde, compré lindos recuerdos artesanales porque a mi familia le encantó el pueblo.\n\nMás tarde, comenzó a llover suavemente, por lo que no nos quedamos en la playa. Finalmente, regresamos a casa por la noche, y me sentí muy relajado y feliz por nuestro viaje memorable.",
+    "questions": [
+      {
+        "id": "s2_1",
+        "prompt": "1. Last summer in 2025, I ______ to Quintero beach.",
+        "options": [
+          "goed",
+          "went",
+          "go"
+        ],
+        "correct": "went",
+        "rule": "'go' es irregular. Su pasado simple es 'went', jamás 'goed'."
+      },
+      {
+        "id": "s2_2",
+        "prompt": "2. In the morning, the coastal weather ______ sunny and warm.",
+        "options": [
+          "were",
+          "was",
+          "is"
+        ],
+        "correct": "was",
+        "rule": "'the coastal weather' es singular incontable. Requiere 'was'."
+      },
+      {
+        "id": "s2_3",
+        "prompt": "3. We walked on the beach, ______ the ocean wind suddenly became very cold.",
+        "options": [
+          "because",
+          "but",
+          "finally"
+        ],
+        "correct": "but",
+        "rule": "El conector 'but' (pero) expresa el contraste entre caminar y el frío repentino."
+      },
+      {
+        "id": "s2_4",
+        "prompt": "4. At the restaurant, we ______ delicious fresh seafood.",
+        "options": [
+          "haded",
+          "had",
+          "have"
+        ],
+        "correct": "had",
+        "rule": "'have' es irregular. Su pasado simple es 'had' (tuvimos / comimos)."
+      },
+      {
+        "id": "s2_5",
+        "prompt": "5. Finally, we returned home and I ______ very relaxed.",
+        "options": [
+          "felt",
+          "feeled",
+          "feel"
+        ],
+        "correct": "felt",
+        "rule": "'feel' es irregular. Su pasado simple es 'felt' (me sentí), jamás 'feeled'."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Historia 3: The Stormy Camping Trip in the Andes Mountains",
+    "badge": "⛺ Campamento en la Montaña / Tormenta Repentina / Carpa y Té",
+    "audioText": "Two months ago, my friends and I planned an adventure in the Andes Mountains. First, we hiked up the trail and set up our tent. The afternoon was sunny and pleasant. But in the evening, the sky turned dark. There was a sudden thunderstorm with heavy rain and freezing wind. We stayed inside our tent and drank hot tea to keep warm.",
+    "textEn": "Two months ago, my friends and I planned a mountain adventure in the Andes.\n\nFirst, we hiked up the scenic trail and set up our green tent on a plateau. The afternoon weather was sunny and pleasant, with fresh mountain air.\n\nThen, we walked near a stream and took wonderful pictures of the snowy peaks. We were excited and energetic.\n\nBut in the evening, the weather changed dramatically. The sky turned dark gray, and there was a sudden thunderstorm with heavy rain, thunder, and freezing wind.\n\nBecause of the storm, we didn't stay outside. We stayed inside our tent, wore warm wool sweaters, and drank hot tea to keep warm. Finally, the next morning the sun was out again, and we returned home safely.",
+    "textEs": "Hace dos meses, mis amigos y yo planificamos una aventura de montaña en los Andes.\n\nPrimero, caminamos por el sendero panorámico y armamos nuestra carpa verde en una meseta. El clima de la tarde estuvo soleado y agradable, con aire fresco de montaña.\n\nLuego, caminamos cerca de un arroyo y tomamos fotos maravillosas de las cumbres nevadas. Estábamos entusiasmados y con energía.\n\nPero por la noche, el clima cambió dramáticamente. El cielo se volvió gris oscuro y hubo una repentina tormenta eléctrica con lluvia intensa, truenos y viento helado.\n\nDebido a la tormenta, no nos quedamos afuera. Nos quedamos dentro de la carpa, vestimos chalecos de lana abrigados y tomamos té caliente para mantenernos tibios. Finalmente, a la mañana siguiente el sol salió otra vez y regresamos a casa sanos y salvos.",
+    "questions": [
+      {
+        "id": "s3_1",
+        "prompt": "1. Two months ago, the friends ______ a mountain adventure.",
+        "options": [
+          "planed",
+          "planned",
+          "plan"
+        ],
+        "correct": "planned",
+        "rule": "Regla CVC: 'plan' duplica la consonante 'n' antes de '-ed': 'planned'."
+      },
+      {
+        "id": "s3_2",
+        "prompt": "2. In the afternoon, the weather ______ sunny and pleasant.",
+        "options": [
+          "were",
+          "was",
+          "are"
+        ],
+        "correct": "was",
+        "rule": "'the weather' es singular. Usa 'was'."
+      },
+      {
+        "id": "s3_3",
+        "prompt": "3. The friends ______ very excited and energetic.",
+        "options": [
+          "was",
+          "were",
+          "wasn't"
+        ],
+        "correct": "were",
+        "rule": "'The friends' es sujeto plural ('they'). Requiere 'were'."
+      },
+      {
+        "id": "s3_4",
+        "prompt": "4. Because of the heavy storm, they ______ outside.",
+        "options": [
+          "didn't went",
+          "didn't stay",
+          "didn't stayed"
+        ],
+        "correct": "didn't stay",
+        "rule": "Con 'didn't' el verbo principal va en forma base ('stay')."
+      },
+      {
+        "id": "s3_5",
+        "prompt": "5. Inside the tent, they ______ hot tea to keep warm.",
+        "options": [
+          "drinked",
+          "drank",
+          "drink"
+        ],
+        "correct": "drank",
+        "rule": "'drink' es irregular. Su pasado simple es 'drank', jamás 'drinked'."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Historia 4: A Cozy Rainy Weekend at Home in London",
+    "badge": "🌧️ Fin de Semana Lluvioso / Hogar Cálido / Joe en Oxford 7.1",
+    "audioText": "Last weekend, the weather in London was very wet and rainy. The sky was filled with dark clouds, and the temperature was cold. I stayed at home with my brother. We baked delicious cookies, watched a comedy movie, and drank hot coffee. We were very cozy and relaxed inside our warm house.",
+    "textEn": "Last weekend, the weather in London was extremely wet and rainy.\n\nFrom early morning, the sky was completely filled with dark gray clouds, and the temperature was chilly. Strong wind shook the trees in the garden.\n\nBecause of the bad weather, my brother and I didn't go into the city center. We stayed at home where it was warm and comfortable.\n\nFirst, we prepared breakfast together in the kitchen. Then, we baked delicious chocolate cookies in the oven. In the afternoon, we watched a funny movie on television while listening to the raindrops hitting the window glass.\n\nWe were very cozy, peaceful, and relaxed inside our home. Finally, Sunday evening arrived, and we felt rested and ready for school.",
+    "textEs": "El fin de semana pasado, el clima en Londres estuvo extremadamente mojado y lluvioso.\n\nDesde temprano en la mañana, el cielo estuvo completamente lleno de nubes grises oscuras y la temperatura estuvo fría. El viento fuerte movía los árboles del jardín.\n\nDebido al mal tiempo, mi hermano y yo no fuimos al centro de la ciudad. Nos quedamos en casa donde estaba cálido y cómodo.\n\nPrimero, preparamos el desayuno juntos en la cocina. Luego, horneamos deliciosas galletas de chocolate en el horno. Por la tarde, vimos una película divertida en la televisión mientras escuchábamos las gotas de lluvia golpear el vidrio de la ventana.\n\nEstuvimos muy acogedores, tranquilos y relajados dentro de nuestro hogar. Finalmente, llegó la tarde del domingo y nos sentimos descansados y listos para el colegio.",
+    "questions": [
+      {
+        "id": "s4_1",
+        "prompt": "1. Last weekend, the weather in London ______ very wet and rainy.",
+        "options": [
+          "were",
+          "was",
+          "is"
+        ],
+        "correct": "was",
+        "rule": "'the weather' es singular. Usa 'was'."
+      },
+      {
+        "id": "s4_2",
+        "prompt": "2. Because of the bad weather, the brothers ______ into the city.",
+        "options": [
+          "didn't went",
+          "didn't go",
+          "don't go"
+        ],
+        "correct": "didn't go",
+        "rule": "Negativo en pasado simple: didn't + forma base ('didn't go')."
+      },
+      {
+        "id": "s4_3",
+        "prompt": "3. The brothers ______ very cozy, peaceful, and relaxed inside.",
+        "options": [
+          "was",
+          "were",
+          "wasn't"
+        ],
+        "correct": "were",
+        "rule": "'The brothers' es sujeto plural ('they'). Requiere 'were'."
+      },
+      {
+        "id": "s4_4",
+        "prompt": "4. In the afternoon, they ______ a funny comedy on television.",
+        "options": [
+          "watched",
+          "watch",
+          "watcheed"
+        ],
+        "correct": "watched",
+        "rule": "'watch' es regular y forma el pasado simple añadiendo '-ed': 'watched'."
+      },
+      {
+        "id": "s4_5",
+        "prompt": "5. Finally, Sunday evening arrived and they ______ rested and happy.",
+        "options": [
+          "feeled",
+          "felt",
+          "feel"
+        ],
+        "correct": "felt",
+        "rule": "'feel' es irregular. Su pasado simple es 'felt', jamás 'feeled'."
+      }
+    ]
+  }
+];
+    let activeStoryId = 1;
+    let savedStoryChoices = LocalDB.loadModule('mod2_stories') || {};
+
+    function initStories() {
+      const nav = document.getElementById('story-nav-buttons');
+      let navHtml = '';
+      stories.forEach(s => {
+        navHtml += `
+          <button class="story-btn ${s.id === activeStoryId ? 'active' : ''}" onclick="switchStory(${s.id})">
+            ${s.title.split(':')[0]}
+          </button>
+        `;
+      });
+      nav.innerHTML = navHtml;
+      renderCurrentStory();
+    }
+
+    function switchStory(id) {
+      activeStoryId = id;
+      initStories();
+    }
+
+    function renderCurrentStory() {
+      const s = stories.find(x => x.id === activeStoryId);
+      const area = document.getElementById('story-content-area');
+      if (!s) return;
+
+      let questionsHtml = '';
+      s.questions.forEach((q, idx) => {
+        let opts = '';
+        q.options.forEach((opt, oIdx) => {
+          opts += `
+            <label class="opt-label" id="sq-lbl-${q.id}-${oIdx}" onclick="evalStoryQ('${q.id}', '${opt}', ${oIdx})">
+              <input type="radio" name="sq-opt-${q.id}" value="${opt}">
+              <span style="font-weight:700;">${opt}</span>
+            </label>
+          `;
+        });
+
+        questionsHtml += `
+          <div class="card" style="margin-bottom:16px; border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:12px;">
+              ${q.prompt}
+            </div>
+            <div class="options-row">${opts}</div>
+            <div id="sq-fb-${q.id}" class="feedback-box"></div>
+          </div>
+        `;
+      });
+
+      area.innerHTML = `
+        <div class="card" style="border:1px solid rgba(255,255,255,0.12); margin-bottom:24px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+            <h2 style="color:#60a5fa; font-size:19px; font-weight:800; margin:0;">${s.title}</h2>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-secondary" onclick="speakStory()">🔊 Escuchar Lectura</button>
+              <button class="btn btn-secondary" id="btn-toggle-es" onclick="toggleSpanish()">🌍 Ver Traducción al Español</button>
+            </div>
+          </div>
+
+          <div style="font-size:12.5px; background:rgba(59,130,246,0.15); color:#93c5fd; padding:6px 12px; border-radius:6px; font-weight:700; margin-bottom:16px; display:inline-block;">
+            ${s.badge}
+          </div>
+
+          <div class="story-box" id="story-en-text">${s.textEn}</div>
+
+          <div class="story-box" id="story-es-text" style="display:none; background:rgba(30,41,59,0.9); border-color:#3b82f6; color:#e2e8f0;">
+            ${s.textEs}
+          </div>
+        </div>
+
+        <h3 style="color:#93c5fd; font-size:17px; font-weight:800; margin-bottom:14px;">
+          ✍️ Preguntas de Gramática y Comprensión de la Historia:
+        </h3>
+
+        ${questionsHtml}
+      `;
+
+      // Restaurar respuestas guardadas
+      s.questions.forEach(q => {
+        const chosen = savedStoryChoices[q.id];
+        if (chosen) {
+          const oIdx = q.options.indexOf(chosen);
+          if (oIdx !== -1) {
+            const radio = document.querySelector(`input[name="sq-opt-${q.id}"][value="${chosen}"]`);
+            if (radio) radio.checked = true;
+            evalStoryQ(q.id, chosen, oIdx, false);
+          }
+        }
+      });
+    }
+
+    function evalStoryQ(qId, chosen, chosenIdx, save = true) {
+      const s = stories.find(x => x.id === activeStoryId);
+      const q = s.questions.find(x => x.id === qId);
+      if (!q) return;
+
+      const fb = document.getElementById(`sq-fb-${qId}`);
+      const isRight = (chosen === q.correct);
+
+      if (save) {
+        savedStoryChoices[qId] = chosen;
+        LocalDB.saveModule('mod2_stories', savedStoryChoices);
+      }
+
+      q.options.forEach((opt, idx) => {
+        const lbl = document.getElementById(`sq-lbl-${qId}-${idx}`);
+        if (!lbl) return;
+        lbl.classList.remove('opt-correct', 'opt-incorrect');
+        if (opt === q.correct) lbl.classList.add('opt-correct');
+        else if (idx === chosenIdx && !isRight) lbl.classList.add('opt-incorrect');
+      });
+
+      fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+      fb.innerHTML = `
+        <div class="badge-result-status ${isRight ? 'correct' : 'incorrect'}">
+          ${isRight ? '✔️ ¡CORRECTO!' : `❌ INCORRECTO (Marcaste: "${chosen}" | Correcta: "<b>${q.correct}</b>")`}
+        </div>
+        <div style="font-size:13.5px; color:#f3f4f6;">💡 <b>Regla:</b> ${q.rule}</div>
+      `;
+      fb.style.display = 'block';
+    }
+
+    function speakStory() {
+      const s = stories.find(x => x.id === activeStoryId);
+      if (s) speak(s.audioText);
+    }
+
+    function toggleSpanish() {
+      const el = document.getElementById('story-es-text');
+      const btn = document.getElementById('btn-toggle-es');
+      if (!el || !btn) return;
+      if (el.style.display === 'none') {
+        el.style.display = 'block';
+        btn.textContent = '🙈 Ocultar Traducción al Español';
+      } else {
+        el.style.display = 'none';
+        btn.textContent = '🌍 Ver Traducción al Español';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initStories);
+  </script>
+</body>
+</html>

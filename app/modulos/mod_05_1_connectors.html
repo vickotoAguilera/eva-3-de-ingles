@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 5.1 - Guía Bilingüe de Conectores</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+    /* ========================================================
+       5.1 GUÍA BILINGÜE: CONECTORES Y "LAST WEEK" (Sección Aparte)
+       ======================================================== */
+    const timeExpressionsData = [
+      {
+        id: "last-week",
+        en: "Last week,",
+        es: "La semana pasada,",
+        when: "Se usa para iniciar un relato sobre actividades realizadas durante los 7 días de la semana anterior (en casa, descansando, estudiando).",
+        whenEn: "Used to introduce events that happened during the previous week (at home, studying, relaxing).",
+        position: "📌 Al principio de la oración con una coma obligatoria después (Last week, ...). También se puede poner al final sin coma (I stayed at home last week).",
+        formula: "Last week, + I / We + [verbo en pasado simple] + [complemento]...",
+        exampleEn: "Last week, I stayed at home with my family because the weather was very rainy.",
+        exampleEs: "La semana pasada, me quedé en casa con mi familia porque el clima estaba muy lluvioso."
+      },
+      {
+        id: "last-summer",
+        en: "Last summer in 2025,",
+        es: "El verano pasado en 2025,",
+        when: "Se usa como frase de apertura ideal para la Oración 1 de tu tarea sobre el viaje a la playa de Quintero y Ventanas.",
+        whenEn: "Ideal opening phrase for Sentence 1 about your summer vacation to Quintero and Ventanas beach.",
+        position: "📌 Al principio con coma: sitúa el año (2025) y la temporada (summer).",
+        formula: "Last summer in 2025, + I went to [Lugar] because + [motivo]...",
+        exampleEn: "Last summer in 2025, I went to Quintero beach because I wanted to explore the coast.",
+        exampleEs: "El verano pasado en 2025, fui a la playa de Quintero porque quería explorar la costa."
+      },
+      {
+        id: "last-weekend",
+        en: "Last weekend,",
+        es: "El fin de semana pasado,",
+        when: "Se usa para referirse específicamente a lo que hiciste el sábado y domingo anteriores (salidas, paseos cortos, relajo).",
+        whenEn: "Used to describe activities done on the previous Saturday and Sunday.",
+        position: "📌 Al inicio con coma.",
+        formula: "Last weekend, + I / We + [verbo en pasado]...",
+        exampleEn: "Last weekend, I visited my grandparents and we had lunch together.",
+        exampleEs: "El fin de semana pasado, visité a mis abuelos y almorzamos juntos."
+      },
+      {
+        id: "yesterday",
+        en: "Yesterday / Yesterday afternoon,",
+        es: "Ayer / Ayer por la tarde,",
+        when: "Se usa para hechos que ocurrieron en el día inmediatamente anterior al de hoy.",
+        whenEn: "Used to describe actions that took place on the previous day.",
+        position: "📌 Al inicio con coma o al final sin coma.",
+        formula: "Yesterday afternoon, + [evento de clima o acción]...",
+        exampleEn: "Yesterday afternoon, it rained heavily and the wind became very cold.",
+        exampleEs: "Ayer por la tarde, llovió fuerte y el viento se puso muy frío."
+      },
+      {
+        id: "on-days",
+        en: "On Monday / On Saturday / On Sunday,",
+        es: "El lunes / El sábado / El domingo,",
+        when: "¡REGLA DE ORO!: En inglés para decir 'el lunes' o 'el sábado' NUNCA se dice 'the Monday' ni 'in Monday'. Se usa SIEMPRE la preposición ON.",
+        whenEn: "GOLDEN RULE: In English, always use ON with days of the week (never 'in' or 'at').",
+        position: "📌 Al inicio de la oración para ordenar los días de la semana.",
+        formula: "On [Day], + I / We + [verbo en pasado]...",
+        exampleEn: "On Saturday, I bought groceries at the supermarket and visited my grandparents.",
+        exampleEs: "El sábado, compré mercadería en el supermercado y visité a mis abuelos."
+      },
+      {
+        id: "in-year",
+        en: "In 2025 / In January,",
+        es: "En 2025 / En enero,",
+        when: "¡REGLA DE ORO!: Con años y meses se usa la preposición IN (In 2025, In February).",
+        whenEn: "GOLDEN RULE: Always use IN with years and months.",
+        position: "📌 Al principio para indicar la fecha histórica o año de tu vivencia.",
+        formula: "In [Year/Month], + I / We + [verbo en pasado]...",
+        exampleEn: "In 2025, we traveled to the coast and stayed at a hotel.",
+        exampleEs: "En 2025, viajamos a la costa y nos quedamos en un hotel."
+      },
+      {
+        id: "ago",
+        en: "... two days ago / a week ago",
+        es: "... hace dos días / hace una semana",
+        when: "'Ago' significa 'hace' o 'atrás'. Se usa para indicar el tiempo transcurrido desde el momento del hecho hasta ahora.",
+        whenEn: "'Ago' means in the past. Used to indicate how much time has passed.",
+        position: "📌 Va siempre al FINAL de la oración.",
+        formula: "I / We + [verbo en pasado] + [complemento] + [cantidad de tiempo] ago.",
+        exampleEn: "I bought these souvenirs two days ago.",
+        exampleEs: "Compré estos recuerdos hace dos días."
+      }
+    ];
+
+    const sequenceConnectorsData = [
+      {
+        word: "First,",
+        es: "Primero,",
+        targetSent: "Oración 2 de tu tarea",
+        when: "Abre el orden cronológico de tu relato. Es la primera acción que cuentas después de la frase introductoria.",
+        whenEn: "Opens the chronological sequence of your story. The first action narrated.",
+        position: "📌 Al inicio de la oración, seguido de una coma.",
+        formula: "First, + I / We + [verbo en pasado] + and + [clima con was]...",
+        exampleEn: "First, I arrived at a hotel and the weather was sunny and warm.",
+        exampleEs: "Primero, llegué a un hotel y el clima estaba soleado y cálido."
+      },
+      {
+        word: "Then,",
+        es: "Luego / Después,",
+        targetSent: "Oración 3 de tu tarea",
+        when: "Introduce la acción siguiente en el orden de los acontecimientos.",
+        whenEn: "Introduces the immediate next step in your sequence.",
+        position: "📌 Al inicio de la oración con coma.",
+        formula: "Then, + I / We + [verbo regular en -ed] + and + [verbo irregular: took, saw, ate]...",
+        exampleEn: "Then, we visited the city of Ventanas and took many pictures.",
+        exampleEs: "Luego, visitamos la ciudad de Ventanas y sacamos muchas fotos."
+      },
+      {
+        word: "After that,",
+        es: "Después de eso,",
+        targetSent: "Oración 5 de tu tarea",
+        when: "Marca la transición a una etapa posterior del día (como ir a almorzar, cenar o cambiar de actividad).",
+        whenEn: "Marks a transition to a later part of the day (e.g. having lunch or dinner).",
+        position: "📌 Al inicio de la oración con coma.",
+        formula: "After that, + I / We + had lunch / cooked dinner + and + [acción]...",
+        exampleEn: "After that, we had lunch at a local restaurant and tasted delicious seafood.",
+        exampleEs: "Después de eso, almorzamos en un restaurante local y probamos deliciosos mariscos."
+      },
+      {
+        word: "Later,",
+        es: "Más tarde,",
+        targetSent: "Oración 7 de tu tarea",
+        when: "Expresa que pasó un tiempo durante el mismo día (por ejemplo en la tarde o atardecer).",
+        whenEn: "Indicates that some time passed during the day (e.g. late afternoon).",
+        position: "📌 Al inicio de la oración con coma.",
+        formula: "Later, + it started to rain, so we didn't stay...",
+        exampleEn: "Later, it started to rain, so we didn't stay on the beach.",
+        exampleEs: "Más tarde, empezó a llover, así que no nos quedamos en la playa."
+      },
+      {
+        word: "Finally,",
+        es: "Finalmente,",
+        targetSent: "Oración 8 de tu tarea",
+        when: "Cierra definitivamente tu historia. Se usa para la última acción y para contar cómo te sentiste al terminar.",
+        whenEn: "Concludes the story. Used for the final action and your concluding feeling.",
+        position: "📌 Al inicio de la oración final con coma.",
+        formula: "Finally, + I / We + returned home / went to bed + and + I felt [happy / relaxed / ready]...",
+        exampleEn: "Finally, we returned home and I felt very happy about our trip.",
+        exampleEs: "Finalmente, volvimos a casa y me sentí muy feliz por nuestro viaje."
+      }
+    ];
+
+    const logicConnectorsData = [
+      {
+        connector: "because",
+        es: "porque (explica la causa o razón)",
+        when: "Responde a la pregunta ¿Por qué? (Why?). Explica la razón o el motivo de tu acción.",
+        whenEn: "Explains the reason or cause of an action (answers 'Why?').",
+        commaRule: "⚠️ ¡OJO!: En inglés 'because' va en el medio uniendo dos ideas y NO lleva coma antes.",
+        formula: "[Acción principal en pasado] + because + [Sujeto] + [Verbo en pasado / Motivo]",
+        exampleEn: "I went to Quintero beach because I wanted to explore the coast.",
+        exampleEs: "Fui a la playa de Quintero porque quería explorar la costa."
+      },
+      {
+        connector: "and",
+        es: "y (adición / suma de ideas)",
+        when: "Suma dos acciones que hiciste o dos cualidades del clima que ocurrieron al mismo tiempo.",
+        whenEn: "Connects two similar actions or two weather qualities.",
+        commaRule: "📌 No lleva coma cuando une dos verbos simples con el mismo sujeto.",
+        formula: "[Verbo 1] + and + [Verbo 2]  O  [Adjetivo 1] + and + [Adjetivo 2]",
+        exampleEn: "The weather was sunny and warm.",
+        exampleEs: "El clima estaba soleado y cálido."
+      },
+      {
+        connector: ", but",
+        es: "pero (contraste / imprevisto)",
+        when: "Introduce un cambio inesperado, un contraste o un imprevisto que alteró los planes (ej: querías caminar pero se puso muy frío).",
+        whenEn: "Introduces an unexpected contrast or change of plans/weather.",
+        commaRule: "⚠️ ¡REGLA CLAVE!: En inglés 'but' SIEMPRE lleva una coma antes (, but).",
+        formula: "[Acción o intención], but + [Imprevisto o cambio de clima en pasado]",
+        exampleEn: "We walked on the beach, but the wind suddenly became very cold.",
+        exampleEs: "Caminamos por la playa, pero el viento de repente se puso muy frío."
+      },
+      {
+        connector: ", so",
+        es: "así que / por lo tanto (consecuencia)",
+        when: "Indica el resultado o la consecuencia lógica de una situación que ocurrió.",
+        whenEn: "Shows the result or consequence of a situation.",
+        commaRule: "📌 Lleva una coma antes (, so).",
+        formula: "[Situación ocurrida], so + [Consecuencia o decisión tomada]",
+        exampleEn: "It started to rain, so we didn't stay on the beach.",
+        exampleEs: "Empezó a llover, así que no nos quedamos en la playa."
+      }
+    ];
+
+    let builderState = {
+      time: "Last summer in 2025,",
+      timeEs: "El verano pasado en 2025,",
+      subject: "I",
+      subjectEs: "yo",
+      action: "went to Quintero beach",
+      actionEs: "fui a la playa de Quintero",
+      connector: "because I wanted to explore the coast.",
+      connectorEs: "porque quería explorar la costa."
+    };
+
+    function renderConnectorsGuide(container) {
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>🕒 Guía Bilingüe: Conectores & "Last week" (Cuándo y Cómo Usarlos)</h1>
+            <p>Aprende en español y en inglés el significado exacto, la posición de las comas y las fórmulas para construir tus oraciones con total seguridad.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="loadView('writing-studio')">
+              ✍️ Ir al Taller de Redacción (8 Oraciones)
+            </button>
+            <button class="btn btn-secondary" onclick="speakSpanish('Guía bilingüe de conectores y expresiones de tiempo.')">
+              🔊 Escuchar Introducción
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner Explicativo de la Regla de Oro de las Comas -->
+        <div class="banner-grammar" style="border-left: 4px solid #3b82f6; background: rgba(30, 58, 138, 0.25);">
+          <h3>📌 La Regla de Oro de la Coma en tus Oraciones:</h3>
+          <p style="font-size:13.5px; line-height:1.6; margin:0;">
+            • <b>Al inicio con coma:</b> Si la oración empieza con tiempo o secuencia, <b>SIEMPRE lleva coma después</b>:<br>
+            &nbsp;&nbsp;↳ <i>"<b>Last week,</b> I stayed at home..."</i> &nbsp;|&nbsp; <i>"<b>First,</b> I arrived at a hotel..."</i> &nbsp;|&nbsp; <i>"<b>Finally,</b> we returned home..."</i><br>
+            • <b>En medio de la oración:</b><br>
+            &nbsp;&nbsp;↳ <b>because</b> (porque) <b>NO lleva coma</b>: <i>"...beach <b>because</b> I wanted to explore..."</i><br>
+            &nbsp;&nbsp;↳ <b>but</b> (pero) <b>SÍ lleva coma antes</b>: <i>"...on the beach<b>, but</b> the wind became cold..."</i><br>
+            &nbsp;&nbsp;↳ <b>so</b> (así que) <b>SÍ lleva coma antes</b>: <i>"...to rain<b>, so</b> we didn't stay..."</i>
+          </p>
+        </div>
+
+        <!-- Pestañas de la Guía -->
+        <div style="display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="toggleConnectorsTab('time')" id="btn-tab-time" style="background:rgba(59,130,246,0.3); border-color:#3b82f6; color:#fff; font-weight:600;">
+            🕒 1. Expresiones de Tiempo ("Last week", etc.)
+          </button>
+          <button class="btn btn-secondary" onclick="toggleConnectorsTab('sequence')" id="btn-tab-sequence" style="font-weight:600;">
+            🔗 2. Conectores de Secuencia (First, Then, Finally)
+          </button>
+          <button class="btn btn-secondary" onclick="toggleConnectorsTab('logic')" id="btn-tab-logic" style="font-weight:600;">
+            🧠 3. Conectores Lógicos (because, but, and, so)
+          </button>
+          <button class="btn btn-secondary" onclick="toggleConnectorsTab('builder')" id="btn-tab-builder" style="font-weight:600; background:rgba(139,92,246,0.2); border-color:rgba(139,92,246,0.4); color:#c4b5fd;">
+            🛠️ 4. Constructor de Oraciones Paso a Paso
+          </button>
+          <button class="btn btn-secondary" onclick="toggleConnectorsTab('models')" id="btn-tab-models" style="font-weight:600; background:rgba(16,185,129,0.2); border-color:rgba(16,185,129,0.4); color:#6ee7b7;">
+            📸 5. Modelos de Fotos (Viña & Alaska) y Frases con "Because"
+          </button>
+        </div>
+
+        <!-- TAB 1: EXPRESIONES DE TIEMPO -->
+        <div id="section-tab-time" style="display:block;">
+          <div class="card" style="margin-bottom:16px;">
+            <h3 style="color:#60a5fa; font-size:17px; margin-top:0;">🕒 Expresiones Temporales en Pasado: ¿Cuándo y Cómo Usarlas?</h3>
+            <p style="font-size:13px; color:#cbd5e1;">Estas frases le indican al lector <b>en qué momento exacto</b> ocurrió tu experiencia. Son indispensables para la Oración 1 y para ubicar los días de la semana.</p>
+            
+            <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px;">
+              ${timeExpressionsData.map(item => `
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <div>
+                      <span style="font-size:16px; font-weight:800; color:#38bdf8;">${item.en}</span>
+                      <span style="font-size:14px; color:#94a3b8; margin-left:8px;">(${item.es})</span>
+                    </div>
+                    <button class="btn btn-secondary" onclick="speak('${item.exampleEn.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 10px;">
+                      🔊 Escuchar Ejemplo
+                    </button>
+                  </div>
+                  
+                  <div style="font-size:13px; color:#cbd5e1; margin-bottom:6px;">
+                    <b>💡 ¿Cuándo se usa?:</b> ${item.when}
+                  </div>
+                  <div style="font-size:12px; color:#93c5fd; margin-bottom:8px;">
+                    ${item.position}
+                  </div>
+                  
+                  <div style="background:rgba(15,23,42,0.6); padding:10px 14px; border-radius:6px; border-left:3px solid #38bdf8;">
+                    <div style="font-size:11.5px; color:#64748b; text-transform:uppercase; font-weight:700;">Fórmula:</div>
+                    <div style="font-size:12.5px; color:#f1f5f9; font-family:monospace; margin-bottom:6px;">${item.formula}</div>
+                    <div style="font-size:12px; color:#38bdf8;"><b>EN:</b> "${item.exampleEn}"</div>
+                    <div style="font-size:12px; color:#94a3b8;"><b>ES:</b> "${item.exampleEs}"</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: CONECTORES DE SECUENCIA -->
+        <div id="section-tab-sequence" style="display:none;">
+          <div class="card" style="margin-bottom:16px;">
+            <h3 style="color:#60a5fa; font-size:17px; margin-top:0;">🔗 Conectores de Secuencia: La Línea de Tiempo de tu Historia</h3>
+            <p style="font-size:13px; color:#cbd5e1;">El profesor exige <b>First</b>, <b>Then</b>, <b>After that</b> y <b>Finally</b> para comprobar que sabes narrar sucesos en orden cronológico.</p>
+            
+            <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px;">
+              ${sequenceConnectorsData.map(item => `
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <div>
+                      <span style="font-size:17px; font-weight:800; color:#fbbf24;">${item.word}</span>
+                      <span style="font-size:14px; color:#94a3b8; margin-left:8px;">(${item.es})</span>
+                      <span style="background:rgba(251,191,36,0.15); color:#fde68a; font-size:11px; padding:2px 8px; border-radius:12px; margin-left:8px; font-weight:600;">
+                        ${item.targetSent}
+                      </span>
+                    </div>
+                    <button class="btn btn-secondary" onclick="speak('${item.exampleEn.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 10px;">
+                      🔊 Escuchar Ejemplo
+                    </button>
+                  </div>
+                  
+                  <div style="font-size:13px; color:#cbd5e1; margin-bottom:6px;">
+                    <b>💡 ¿Cuándo se usa?:</b> ${item.when}
+                  </div>
+                  <div style="font-size:12px; color:#93c5fd; margin-bottom:8px;">
+                    ${item.position}
+                  </div>
+                  
+                  <div style="background:rgba(15,23,42,0.6); padding:10px 14px; border-radius:6px; border-left:3px solid #fbbf24;">
+                    <div style="font-size:11.5px; color:#64748b; text-transform:uppercase; font-weight:700;">Fórmula:</div>
+                    <div style="font-size:12.5px; color:#f1f5f9; font-family:monospace; margin-bottom:6px;">${item.formula}</div>
+                    <div style="font-size:12px; color:#fbbf24;"><b>EN:</b> "${item.exampleEn}"</div>
+                    <div style="font-size:12px; color:#94a3b8;"><b>ES:</b> "${item.exampleEs}"</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: CONECTORES LÓGICOS -->
+        <div id="section-tab-logic" style="display:none;">
+          <div class="card" style="margin-bottom:16px;">
+            <h3 style="color:#60a5fa; font-size:17px; margin-top:0;">🧠 Conectores Lógicos: Causa, Unión y Contraste</h3>
+            <p style="font-size:13px; color:#cbd5e1;">Aprende cuándo usar <b>because</b> (causa), <b>and</b> (adición), <b>but</b> (contraste) y <b>so</b> (consecuencia) sin equivocarte en las comas.</p>
+            
+            <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px;">
+              ${logicConnectorsData.map(item => `
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <div>
+                      <span style="font-size:17px; font-weight:800; color:#34d399;">${item.connector}</span>
+                      <span style="font-size:14px; color:#94a3b8; margin-left:8px;">(${item.es})</span>
+                    </div>
+                    <button class="btn btn-secondary" onclick="speak('${item.exampleEn.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 10px;">
+                      🔊 Escuchar Ejemplo
+                    </button>
+                  </div>
+                  
+                  <div style="font-size:13px; color:#cbd5e1; margin-bottom:6px;">
+                    <b>💡 ¿Cuándo se usa?:</b> ${item.when}
+                  </div>
+                  <div style="font-size:12.5px; color:#f87171; margin-bottom:8px; font-weight:600;">
+                    ${item.commaRule}
+                  </div>
+                  
+                  <div style="background:rgba(15,23,42,0.6); padding:10px 14px; border-radius:6px; border-left:3px solid #34d399;">
+                    <div style="font-size:11.5px; color:#64748b; text-transform:uppercase; font-weight:700;">Fórmula:</div>
+                    <div style="font-size:12.5px; color:#f1f5f9; font-family:monospace; margin-bottom:6px;">${item.formula}</div>
+                    <div style="font-size:12px; color:#34d399;"><b>EN:</b> "${item.exampleEn}"</div>
+                    <div style="font-size:12px; color:#94a3b8;"><b>ES:</b> "${item.exampleEs}"</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: CONSTRUCTOR INTERACTIVO DE ORACIONES -->
+        <div id="section-tab-builder" style="display:none;">
+          <div class="card" style="border: 2px solid rgba(139,92,246,0.4); background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(76,29,149,0.25)); padding:20px;">
+            <h3 style="color:#c4b5fd; font-size:18px; margin-top:0;">🛠️ Constructor Interactivo: Arma tu Oración Paso a Paso</h3>
+            <p style="font-size:13px; color:#cbd5e1;">Haz clic en cada parte para armar tu oración en inglés y ver de inmediato qué significa en español con pronunciación de audio:</p>
+
+            <!-- Paso 1 -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:13px; font-weight:700; color:#93c5fd; margin-bottom:6px;">
+                1️⃣ Paso 1: Elige la Expresión de Tiempo o Secuencia:
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <button class="btn btn-secondary builder-btn-time active" onclick="setBuilderPart('time', 'Last summer in 2025,', 'El verano pasado en 2025,', this)">Last summer in 2025, (El verano pasado)</button>
+                <button class="btn btn-secondary builder-btn-time" onclick="setBuilderPart('time', 'Last week,', 'La semana pasada,', this)">Last week, (La semana pasada)</button>
+                <button class="btn btn-secondary builder-btn-time" onclick="setBuilderPart('time', 'Last weekend,', 'El fin de semana pasado,', this)">Last weekend, (El fin de semana)</button>
+                <button class="btn btn-secondary builder-btn-time" onclick="setBuilderPart('time', 'First,', 'Primero,', this)">First, (Primero)</button>
+                <button class="btn btn-secondary builder-btn-time" onclick="setBuilderPart('time', 'Then,', 'Luego,', this)">Then, (Luego)</button>
+                <button class="btn btn-secondary builder-btn-time" onclick="setBuilderPart('time', 'After that,', 'Después de eso,', this)">After that, (Después de eso)</button>
+                <button class="btn btn-secondary builder-btn-time" onclick="setBuilderPart('time', 'Finally,', 'Finalmente,', this)">Finally, (Finalmente)</button>
+                <button class="btn btn-secondary builder-btn-time" onclick="setBuilderPart('time', 'On Saturday,', 'El sábado,', this)">On Saturday, (El sábado)</button>
+              </div>
+            </div>
+
+            <!-- Paso 2 -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:13px; font-weight:700; color:#93c5fd; margin-bottom:6px;">
+                2️⃣ Paso 2: Elige el Sujeto:
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <button class="btn btn-secondary builder-btn-subject active" onclick="setBuilderPart('subject', 'I', 'yo', this)">I (Yo)</button>
+                <button class="btn btn-secondary builder-btn-subject" onclick="setBuilderPart('subject', 'we', 'nosotros', this)">we (Nosotros)</button>
+              </div>
+            </div>
+
+            <!-- Paso 3 -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:13px; font-weight:700; color:#93c5fd; margin-bottom:6px;">
+                3️⃣ Paso 3: Elige la Acción en Pasado:
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <button class="btn btn-secondary builder-btn-action active" onclick="setBuilderPart('action', 'went to Quintero beach', 'fui a la playa de Quintero', this)">went to Quintero beach (fui a la playa)</button>
+                <button class="btn btn-secondary builder-btn-action" onclick="setBuilderPart('action', 'stayed at home with my family', 'me quedé en casa con mi familia', this)">stayed at home (me quedé en casa)</button>
+                <button class="btn btn-secondary builder-btn-action" onclick="setBuilderPart('action', 'arrived at a hotel', 'llegué a un hotel', this)">arrived at a hotel (llegué al hotel)</button>
+                <button class="btn btn-secondary builder-btn-action" onclick="setBuilderPart('action', 'visited the city of Ventanas', 'visité la ciudad de Ventanas', this)">visited Ventanas (visité Ventanas)</button>
+                <button class="btn btn-secondary builder-btn-action" onclick="setBuilderPart('action', 'had lunch at a local restaurant', 'almorcé en un restaurante local', this)">had lunch (almorcé)</button>
+                <button class="btn btn-secondary builder-btn-action" onclick="setBuilderPart('action', 'bought nice souvenirs', 'compré lindos recuerdos', this)">bought nice souvenirs (compré recuerdos)</button>
+                <button class="btn btn-secondary builder-btn-action" onclick="setBuilderPart('action', 'cleaned my room', 'limpié mi pieza', this)">cleaned my room (limpié mi pieza)</button>
+                <button class="btn btn-secondary builder-btn-action" onclick="setBuilderPart('action', 'returned home', 'volví a casa', this)">returned home (volví a casa)</button>
+              </div>
+            </div>
+
+            <!-- Paso 4 -->
+            <div style="margin-bottom:20px;">
+              <div style="font-size:13px; font-weight:700; color:#93c5fd; margin-bottom:6px;">
+                4️⃣ Paso 4: Elige el Conector Lógico y Motivo:
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <button class="btn btn-secondary builder-btn-connector active" onclick="setBuilderPart('connector', 'because I wanted to explore the coast.', 'porque quería explorar la costa.', this)">because I wanted to explore... (porque quería explorar...)</button>
+                <button class="btn btn-secondary builder-btn-connector" onclick="setBuilderPart('connector', 'because the weather was very rainy.', 'porque el clima estaba muy lluvioso.', this)">because the weather was rainy (porque estaba lluvioso)</button>
+                <button class="btn btn-secondary builder-btn-connector" onclick="setBuilderPart('connector', 'and the weather was sunny and warm.', 'y el clima estaba soleado y agradable.', this)">and the weather was sunny (y el clima soleado)</button>
+                <button class="btn btn-secondary builder-btn-connector" onclick="setBuilderPart('connector', 'and took many pictures.', 'y saqué muchas fotos.', this)">and took many pictures (y saqué muchas fotos)</button>
+                <button class="btn btn-secondary builder-btn-connector" onclick="setBuilderPart('connector', ', but the wind suddenly became very cold.', ', pero el viento de repente se puso muy frío.', this)">, but the wind became cold (, pero el viento se puso frío)</button>
+                <button class="btn btn-secondary builder-btn-connector" onclick="setBuilderPart('connector', 'and felt very happy about our trip.', 'y me sentí muy feliz por nuestro viaje.', this)">and felt very happy (y me sentí muy feliz)</button>
+              </div>
+            </div>
+
+            <!-- Resultado en Vivo -->
+            <div style="background:rgba(15,23,42,0.8); border:2px solid #a78bfa; border-radius:10px; padding:18px;">
+              <div style="font-size:12px; font-weight:800; color:#c4b5fd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
+                ✨ Tu Oración Generada en Inglés:
+              </div>
+              <div id="builder-result-en" style="font-size:17px; font-weight:700; color:#fff; line-height:1.5; margin-bottom:8px;">
+                Last summer in 2025, I went to Quintero beach because I wanted to explore the coast.
+              </div>
+              
+              <div style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">
+                🌐 Traducción Exacta en Español:
+              </div>
+              <div id="builder-result-es" style="font-size:15px; color:#cbd5e1; font-style:italic; line-height:1.5; margin-bottom:16px;">
+                El verano pasado en 2025, yo fui a la playa de Quintero porque quería explorar la costa.
+              </div>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-secondary" onclick="speakBuilderSentence()" style="font-size:13px; padding:8px 16px;">
+                  🔊 Escuchar Oración en Inglés
+                </button>
+                <button class="btn btn-primary" onclick="copyBuilderSentence()" style="font-size:13px; padding:8px 16px; background:#8b5cf6; border-color:#7c3aed;">
+                  📋 Copiar Oración para mi Tarea
+                </button>
+                <button class="btn btn-secondary" onclick="loadView('writing-studio')" style="font-size:13px; padding:8px 16px; border-color:rgba(59,130,246,0.4); color:#93c5fd;">
+                  ✍️ Ir a Escribir al Taller
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 5: MODELOS DE FOTOS Y FRASES DE OPINIÓN -->
+        <div id="section-tab-models" style="display:none;">
+          <div class="card" style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;">
+              <div>
+                <h3 style="color:#6ee7b7; font-size:18px; margin:0;">📸 Modelos Oficiales de Descripción de Fotos (Examen Oral & Escrito)</h3>
+                <p style="font-size:13px; color:#cbd5e1; margin-top:4px; margin-bottom:0;">Aprende cómo usar <i>where</i>, <i>when</i>, <i>weather</i>, <i>feeling</i>, <i>because</i> y <i>there was/were</i> en descripciones reales de fotos.</p>
+              </div>
+            </div>
+
+            <!-- Modelo 1: Viña del Mar -->
+            <div style="background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; margin-bottom:16px;">
+              <div style="font-size:15px; font-weight:800; color:#fde047; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                <span>🏖️</span> Modelo 1: Amigos en la playa de Viña (Beach with Friends)
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#93c5fd; font-weight:700; text-transform:uppercase;">Apertura:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"This is a picture of my friends and me at the beach."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Esta es una foto de mis amigos y yo en la playa.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('This is a picture of my friends and me at the beach.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#6ee7b7; font-weight:700; text-transform:uppercase;">(Where) Lugar & (When) Momento:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"It was at Viña last weekend."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>(Where) Fue en Viña (When) el fin de semana pasado.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('It was at Viña last weekend.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#fcd34d; font-weight:700; text-transform:uppercase;">☀️ (Weather) Clima:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"It was sunny and hot."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Estuvo soleado y caluroso.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('It was sunny and hot.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#f472b6; font-weight:700; text-transform:uppercase;">❤️ (Feeling) Sentimiento & (Because) Razón:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"I love sunny days because we can swim in the sea."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Me encantan los días soleados porque podemos nadar en el mar.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('I love sunny days because we can swim in the sea.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px;">
+                  <div style="font-size:11px; color:#c4b5fd; font-weight:700; text-transform:uppercase; margin-bottom:4px;">🍽️ Estructuras de Examen: There was / were</div>
+                  <div style="font-size:12.5px; color:#e2e8f0; line-height:1.6;">
+                    • <b>"There was a lot of food."</b> (Había mucha comida - <i>incontable singular: was</i>)<br>
+                    • <b>"There weren’t many people around."</b> (No había mucha gente alrededor - <i>people es plural: weren't</i>)<br>
+                    • <b>"There were several glasses of wine."</b> (Había varias copas de vino - <i>glasses plural: were</i>)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modelo 2: Alaska -->
+            <div style="background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; margin-bottom:16px;">
+              <div style="font-size:15px; font-weight:800; color:#93c5fd; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                <span>❄️</span> Modelo 2: Mi hermana y yo en Alaska (Alaska Port with Sister)
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#93c5fd; font-weight:700; text-transform:uppercase;">Apertura:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"This is a picture of my sister and me in Alaska."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Esta es una foto de mi hermana y yo en Alaska.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('This is a picture of my sister and me in Alaska.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#6ee7b7; font-weight:700; text-transform:uppercase;">(Where & When) Lugar y Tiempo:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"It was at an Alaskan port last month."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Fue en un puerto de Alaska el mes pasado.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('It was at an Alaskan port last month.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#06b6d4; font-weight:700; text-transform:uppercase;">☁️ (Weather) Clima:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"It was cloudy and cold."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Estaba nublado y frío.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('It was cloudy and cold.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:11px; color:#fca5a5; font-weight:700; text-transform:uppercase;">🌧️ (Feeling) Sentimiento & (Because) Razón:</div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">"I hate rainy days because we can't go out much."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Odio los días lluviosos porque no podemos salir mucho.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('I hate rainy days because we cannot go out much.')">🔊</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5 Frases de Opinión y Clima -->
+            <div style="background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
+              <div style="font-size:15px; font-weight:800; color:#34d399; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                <span>💬</span> 5 Frases de Opinión y Clima de Alto Puntaje (Oxford Test)
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">1. "I don’t like snow because it's very cold."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>No me gusta la nieve porque es muy fría.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('I do not like snow because it is very cold.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">2. "I love hot weather because I can go to the beach."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Me encanta el clima caluroso porque puedo ir a la playa.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('I love hot weather because I can go to the beach.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">3. "In my opinion, the weather yesterday was nice because it was sunny and warm."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>En mi opinión, el clima ayer estuvo agradable porque estuvo soleado y cálido.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('In my opinion, the weather yesterday was nice because it was sunny and warm.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">4. "We spent a lot of time outdoors over the weekend because of the holidays, and the weather was fine."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>Pasamos mucho tiempo al aire libre durante el fin de semana debido a los feriados, y el clima estuvo bueno.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('We spent a lot of time outdoors over the weekend because of the holidays, and the weather was fine.')">🔊</button>
+                </div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-size:13.5px; color:#fff; font-weight:700;">5. "In my opinion, the weather yesterday was pleasant because it wasn't that cold."</div>
+                    <div style="font-size:12px; color:#94a3b8;">↳ <i>En mi opinión, el clima ayer estuvo agradable porque no hacía tanto frío.</i></div>
+                  </div>
+                  <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('In my opinion, the weather yesterday was pleasant because it was not that cold.')">🔊</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleConnectorsTab(tabName) {
+      const tabs = ['time', 'sequence', 'logic', 'builder', 'models'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`section-tab-${t}`);
+        const btn = document.getElementById(`btn-tab-${t}`);
+        if (sec) sec.style.display = (t === tabName) ? 'block' : 'none';
+        if (btn) {
+          if (t === tabName) {
+            btn.style.background = 'rgba(59, 130, 246, 0.3)';
+            btn.style.borderColor = '#3b82f6';
+            btn.style.color = '#fff';
+          } else {
+            btn.style.background = 'transparent';
+            btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            btn.style.color = '#cbd5e1';
+          }
+        }
+      });
+    }
+
+    function setBuilderPart(part, enVal, esVal, btnEl) {
+      builderState[part] = enVal;
+      builderState[part + 'Es'] = esVal;
+
+      // Actualizar estilo activo de botones
+      const groupBtns = document.querySelectorAll(`.builder-btn-${part}`);
+      groupBtns.forEach(b => {
+        b.style.background = 'transparent';
+        b.style.borderColor = 'rgba(255,255,255,0.15)';
+        b.style.color = '#cbd5e1';
+      });
+      if (btnEl) {
+        btnEl.style.background = 'rgba(139, 92, 246, 0.35)';
+        btnEl.style.borderColor = '#a78bfa';
+        btnEl.style.color = '#fff';
+      }
+
+      // Renderizar resultado
+      const enBox = document.getElementById('builder-result-en');
+      const esBox = document.getElementById('builder-result-es');
+
+      const fullEn = `${builderState.time} ${builderState.subject} ${builderState.action} ${builderState.connector}`;
+      const fullEs = `${builderState.timeEs} ${builderState.subjectEs} ${builderState.actionEs} ${builderState.connectorEs}`;
+
+      if (enBox) enBox.textContent = fullEn;
+      if (esBox) esBox.textContent = fullEs;
+    }
+
+    function speakBuilderSentence() {
+      const fullEn = `${builderState.time} ${builderState.subject} ${builderState.action} ${builderState.connector}`;
+      speak(fullEn);
+    }
+
+    function copyBuilderSentence() {
+      const fullEn = `${builderState.time} ${builderState.subject} ${builderState.action} ${builderState.connector}`;
+      navigator.clipboard.writeText(fullEn);
+      alert('¡Oración copiada al portapapeles!\n\n' + fullEn);
+    }
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderConnectorsGuide(document.getElementById('module-container'));
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 8 - Cazador de Trampas de Examen</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 820px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div>
+      <h1>🎮 Cazador de Trampas Ortográficas de Examen</h1>
+      <p>Se seleccionan <b>10 trampas aleatorias</b> de un banco de 28 trampas de prueba. Identifica si la palabra o frase es correcta o si es una trampa. Lleva contador de <b>Aciertos y Fallos</b> con calificación final y desglose explicativo.</p>
+    </div>
+    <div>
+      <button class="btn btn-secondary" onclick="initTrapSession()">🔄 Nuevas 10 Trampas</button>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center; padding:30px 24px; border:1px solid rgba(255,255,255,0.12);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; font-size:13.5px; color:#94a3b8; flex-wrap:wrap; gap:8px;">
+      <span>Ronda: <b id="trap-current" style="color:#60a5fa; font-size:16px;">1</b> de <b>10</b></span>
+      <div style="display:flex; gap:16px;">
+        <span style="color:#34d399; font-weight:700;">✔️ Aciertos: <span id="trap-correct-count">0</span></span>
+        <span style="color:#f87171; font-weight:700;">❌ Fallos: <span id="trap-incorrect-count">0</span></span>
+      </div>
+    </div>
+
+    <span style="font-size:12px; text-transform:uppercase; letter-spacing:0.06em; color:#93c5fd; font-weight:800;">Palabra o Frase a Evaluar:</span>
+    <div id="trap-display" style="font-size:32px; font-weight:900; color:#fff; margin:20px 0; min-height:56px; display:flex; align-items:center; justify-content:center;"></div>
+    
+    <div id="trap-buttons" style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+      <button id="btn-trap-correct" class="btn btn-success" style="padding:14px 28px; font-size:16px; font-weight:800;" onclick="answerTrap(true)">
+        ✔️ Es Correcto
+      </button>
+      <button id="btn-trap-wrong" class="btn btn-danger" style="padding:14px 28px; font-size:16px; font-weight:800;" onclick="answerTrap(false)">
+        ❌ ¡Es Trampa!
+      </button>
+    </div>
+
+    <div id="trap-feedback" class="feedback-box" style="margin-top:20px; text-align:left; line-height:1.6; display:none;"></div>
+
+    <div id="trap-next-container" style="margin-top:20px; display:none;">
+      <button id="btn-trap-next" class="btn btn-primary" style="padding:12px 28px; font-size:15px; font-weight:800; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="nextTrap()">
+        ➡️ Siguiente Palabra / Trampa
+      </button>
+    </div>
+  </div>
+
+  <div id="trap-final-results" style="display:none;"></div>
+
+  <script>
+    const allTrapsPool = [
+  {
+    "word": "raiseed",
+    "isCorrect": false,
+    "fix": "raised",
+    "why": "'raise' ya termina en 'e'. La regla dice que solo se le agrega 'd', jamás doble 'ee'."
+  },
+  {
+    "word": "planned",
+    "isCorrect": true,
+    "fix": "planned",
+    "why": "Correcto: sigue la regla CVC (consonante-vocal-consonante) y duplica la 'n' antes de '-ed'."
+  },
+  {
+    "word": "studyed",
+    "isCorrect": false,
+    "fix": "studied",
+    "why": "Consonante + 'y' ('study') cambia obligatoriamente la 'y' por 'i' antes de '-ed': 'studied'."
+  },
+  {
+    "word": "visited",
+    "isCorrect": true,
+    "fix": "visited",
+    "why": "Verbo regular estándar: solo agrega '-ed'."
+  },
+  {
+    "word": "didn't went",
+    "isCorrect": false,
+    "fix": "didn't go",
+    "why": "¡Gran trampa de examen! Tras el auxiliar negativo 'didn't', el verbo principal SIEMPRE va en forma base ('go'), jamás en pasado."
+  },
+  {
+    "word": "took",
+    "isCorrect": true,
+    "fix": "took",
+    "why": "Pasado irregular correcto de 'take'."
+  },
+  {
+    "word": "taked",
+    "isCorrect": false,
+    "fix": "took",
+    "why": "'take' es un verbo irregular. Su pasado simple es 'took', jamás 'taked'."
+  },
+  {
+    "word": "goed",
+    "isCorrect": false,
+    "fix": "went",
+    "why": "El verbo 'go' es irregular. Su pasado simple es 'went'. 'goed' no existe en el idioma inglés."
+  },
+  {
+    "word": "used",
+    "isCorrect": true,
+    "fix": "used",
+    "why": "'use' termina en 'e', solo agrega 'd'."
+  },
+  {
+    "word": "bought",
+    "isCorrect": true,
+    "fix": "bought",
+    "why": "Pasado irregular correcto de 'buy'."
+  },
+  {
+    "word": "buyed",
+    "isCorrect": false,
+    "fix": "bought",
+    "why": "'buy' es irregular, su forma de pasado es 'bought', jamás 'buyed'."
+  },
+  {
+    "word": "stoped",
+    "isCorrect": false,
+    "fix": "stopped",
+    "why": "Regla CVC: 'stop' debe duplicar la consonante 'p' antes de '-ed' ('stopped')."
+  },
+  {
+    "word": "stopped",
+    "isCorrect": true,
+    "fix": "stopped",
+    "why": "Correcto: duplica la consonante 'p' antes de '-ed'."
+  },
+  {
+    "word": "The weather were nice",
+    "isCorrect": false,
+    "fix": "The weather was nice",
+    "why": "'The weather' (el clima) es un sustantivo singular/incontable ('it'). Debe usar 'was', no 'were'."
+  },
+  {
+    "word": "Scott and his men was lost",
+    "isCorrect": false,
+    "fix": "Scott and his men were lost",
+    "why": "'Scott and his men' (Scott y sus hombres) es un sujeto plural ('they'). Debe usar 'were', no 'was'."
+  },
+  {
+    "word": "They arrived yesterday",
+    "isCorrect": true,
+    "fix": "They arrived yesterday",
+    "why": "Correcto: 'arrive' termina en 'e', por lo que solo añade 'd' ('arrived')."
+  },
+  {
+    "word": "arriveed",
+    "isCorrect": false,
+    "fix": "arrived",
+    "why": "'arrive' ya termina en 'e', solo se agrega 'd', nunca doble 'ee'."
+  },
+  {
+    "word": "eated",
+    "isCorrect": false,
+    "fix": "ate",
+    "why": "'eat' es irregular. Su pasado simple es 'ate', jamás 'eated'."
+  },
+  {
+    "word": "ate",
+    "isCorrect": true,
+    "fix": "ate",
+    "why": "Pasado irregular correcto de 'eat'."
+  },
+  {
+    "word": "seed",
+    "isCorrect": false,
+    "fix": "saw",
+    "why": "'see' es irregular. Su pasado simple es 'saw', jamás 'seed'."
+  },
+  {
+    "word": "saw",
+    "isCorrect": true,
+    "fix": "saw",
+    "why": "Pasado irregular correcto de 'see'."
+  },
+  {
+    "word": "drank",
+    "isCorrect": true,
+    "fix": "drank",
+    "why": "Pasado irregular correcto de 'drink'."
+  },
+  {
+    "word": "drinked",
+    "isCorrect": false,
+    "fix": "drank",
+    "why": "'drink' es irregular. Su pasado simple es 'drank', jamás 'drinked'."
+  },
+  {
+    "word": "felt",
+    "isCorrect": true,
+    "fix": "felt",
+    "why": "Pasado irregular correcto de 'feel'."
+  },
+  {
+    "word": "feeled",
+    "isCorrect": false,
+    "fix": "felt",
+    "why": "'feel' es irregular. Su pasado simple es 'felt', jamás 'feeled'."
+  },
+  {
+    "word": "Did you went?",
+    "isCorrect": false,
+    "fix": "Did you go?",
+    "why": "Con 'Did' el verbo va en forma base: 'Did you go?'."
+  },
+  {
+    "word": "Wheater",
+    "isCorrect": false,
+    "fix": "Weather",
+    "why": "Error ortográfico: se escribe 'Weather', no 'Wheater'."
+  },
+  {
+    "word": "wasent",
+    "isCorrect": false,
+    "fix": "wasn't",
+    "why": "En la prueba escrita formal, la contracción correcta de 'was not' lleva apóstrofe entre la n y la t: 'wasn't'."
+  }
+];
+    let sessionTraps = [];
+    let currentIdx = 0;
+    let correctScore = 0;
+    let incorrectScore = 0;
+    let sessionHistory = [];
+
+    function shuffle(array) {
+      let arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function initTrapSession() {
+      sessionTraps = shuffle(allTrapsPool).slice(0, 10);
+      currentIdx = 0;
+      correctScore = 0;
+      incorrectScore = 0;
+      sessionHistory = [];
+
+      document.getElementById('trap-buttons').style.display = 'flex';
+      document.getElementById('trap-feedback').style.display = 'none';
+      document.getElementById('trap-next-container').style.display = 'none';
+      document.getElementById('trap-final-results').style.display = 'none';
+      updateCounters();
+      showCurrentTrap();
+    }
+
+    function updateCounters() {
+      document.getElementById('trap-current').innerText = currentIdx + 1;
+      document.getElementById('trap-correct-count').innerText = correctScore;
+      document.getElementById('trap-incorrect-count').innerText = incorrectScore;
+    }
+
+    function showCurrentTrap() {
+      if (currentIdx >= sessionTraps.length) {
+        finishTrapSession();
+        return;
+      }
+
+      const t = sessionTraps[currentIdx];
+      document.getElementById('trap-display').innerText = `"${t.word}"`;
+      document.getElementById('trap-feedback').style.display = 'none';
+      document.getElementById('trap-next-container').style.display = 'none';
+
+      const btnC = document.getElementById('btn-trap-correct');
+      const btnW = document.getElementById('btn-trap-wrong');
+      btnC.disabled = false;
+      btnW.disabled = false;
+      btnC.style.opacity = '1';
+      btnW.style.opacity = '1';
+
+      updateCounters();
+    }
+
+    function answerTrap(userSaidCorrect) {
+      const t = sessionTraps[currentIdx];
+      const isRight = (userSaidCorrect === t.isCorrect);
+
+      if (isRight) correctScore++;
+      else incorrectScore++;
+
+      sessionHistory.push({
+        word: t.word,
+        userSaidCorrect: userSaidCorrect,
+        wasActuallyCorrect: t.isCorrect,
+        isRight: isRight,
+        fix: t.fix,
+        why: t.why
+      });
+
+      const btnC = document.getElementById('btn-trap-correct');
+      const btnW = document.getElementById('btn-trap-wrong');
+      btnC.disabled = true;
+      btnW.disabled = true;
+      btnC.style.opacity = '0.6';
+      btnW.style.opacity = '0.6';
+
+      updateCounters();
+
+      const fb = document.getElementById('trap-feedback');
+      fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+      fb.innerHTML = `
+        <div class="badge-result-status ${isRight ? 'correct' : 'incorrect'}">
+          ${isRight ? '✔️ ¡CORRECTO!' : '❌ INCORRECTO EN TU ELECCIÓN'}
+        </div>
+        <div style="font-size:14px; margin-bottom:6px;">
+          ${t.isCorrect ? `<b>"${t.word}"</b> es una palabra válida y bien escrita.` : `<b>"${t.word}"</b> es una TRAMPA. Lo correcto es: <b style="color:#6ee7b7; font-size:15px;">"${t.fix}"</b>.`}
+        </div>
+        <div style="font-size:13px; color:#e2e8f0;">💡 ${t.why}</div>
+      `;
+      fb.style.display = 'block';
+
+      document.getElementById('trap-next-container').style.display = 'block';
+    }
+
+    function nextTrap() {
+      currentIdx++;
+      if (currentIdx >= sessionTraps.length) {
+        finishTrapSession();
+      } else {
+        showCurrentTrap();
+      }
+    }
+
+    function finishTrapSession() {
+      document.getElementById('trap-buttons').style.display = 'none';
+      document.getElementById('trap-feedback').style.display = 'none';
+      document.getElementById('trap-next-container').style.display = 'none';
+      document.getElementById('trap-display').innerText = "🏆 ¡Ronda de 10 Trampas Completada!";
+
+      const grade = calcChileanGrade(correctScore, 10);
+      LocalDB.saveModule('mod8_trap_best', { score: correctScore, grade: grade, date: new Date().toISOString() });
+
+      const mistakes = sessionHistory.filter(h => !h.isRight);
+      let mistakesHtml = '';
+
+      if (mistakes.length === 0) {
+        mistakesHtml = `
+          <div style="background:rgba(16,185,129,0.15); border:1px solid #10b981; padding:16px; border-radius:8px; color:#d1fae5; font-size:14px; margin-top:16px;">
+            🎉 ¡EXTRAORDINARIO! No cometiste ningún error en esta ronda de trampas. Tienes una vista de águila para la ortografía inglesa.
+          </div>
+        `;
+      } else {
+        mistakesHtml = `
+          <div style="margin-top:20px;">
+            <h3 style="color:#fca5a5; font-size:16px; margin-bottom:12px; font-weight:800;">
+              🔍 Repaso de tus ${mistakes.length} errores en esta ronda (¡Estúdialos para no caer en la prueba!):
+            </h3>
+            ${mistakes.map(m => `
+              <div style="background:rgba(15,23,42,0.9); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:14px 16px; margin-bottom:12px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span style="font-weight:800; font-size:16px; color:#fff;">"${m.word}"</span>
+                  <span style="font-size:12px; color:#fca5a5; font-weight:700;">Marcaste: ${m.userSaidCorrect ? 'Correcto' : 'Trampa'}</span>
+                </div>
+                <div style="font-size:13.5px; color:#6ee7b7; font-weight:700; margin-bottom:4px;">
+                  Forma correcta: "${m.fix}"
+                </div>
+                <div style="font-size:13px; color:#cbd5e1; line-height:1.45;">
+                  💡 <b>Por qué:</b> ${m.why}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      const resultsEl = document.getElementById('trap-final-results');
+      resultsEl.style.display = 'block';
+      resultsEl.innerHTML = `
+        <div class="grade-display-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+              <div style="font-size:13px; color:#9ca3af; text-transform:uppercase; font-weight:700;">Tu Calificación en Cazador de Trampas (Escala 60%)</div>
+              <div style="font-size:52px; font-weight:900; color:${grade >= 4.0 ? '#34d399' : '#f87171'}; margin:4px 0;">
+                NOTA ${grade.toFixed(1)}
+              </div>
+              <p style="font-size:14.5px; color:#e5e7eb; margin:0;">
+                Puntaje obtenido: <b>${correctScore}</b> aciertos | <b>${incorrectScore}</b> fallos de 10 trampas.
+              </p>
+              <p style="font-size:12.5px; color:#94a3b8; margin-top:4px;">
+                Exigencia: 60% (6 aciertos = 4.0 | 10 aciertos = 7.0).
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-primary" style="padding:14px 28px; font-size:15px; font-weight:800;" onclick="initTrapSession()">
+                🔄 Jugar Nueva Ronda con Otras 10 Trampas
+              </button>
+            </div>
+          </div>
+          ${mistakesHtml}
+        </div>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', initTrapSession);
+  </script>
+</body>
+</html>

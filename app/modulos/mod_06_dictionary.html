@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 6 - Diccionario Maestro de Verbos</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+    /* ========================================================
+       6. VERBS DICTIONARY (take -> took, etc.)
+       ======================================================== */
+    const masterVerbs = [
+      { base: "take", past: "took", trans: "tomar / sacar (fotos)", ex: "We took many pictures in Ventanas." },
+      { base: "go", past: "went", trans: "ir", ex: "I went to Quintero beach last summer." },
+      { base: "buy", past: "bought", trans: "comprar", ex: "I bought nice souvenirs for my family." },
+      { base: "see", past: "saw", trans: "ver", ex: "We saw the beautiful ocean from the hotel." },
+      { base: "have", past: "had", trans: "tener / almorzar / comer", ex: "We had lunch at a local seafood restaurant." },
+      { base: "eat", past: "ate", trans: "comer", ex: "We ate fresh fish and empanadas." },
+      { base: "drink", past: "drank", trans: "beber", ex: "I drank cold water because it was hot." },
+      { base: "meet", past: "met", trans: "conocer / reunirse", ex: "I met friendly people at the beach." },
+      { base: "feel", past: "felt", trans: "sentirse", ex: "I felt very happy and relaxed." },
+      { base: "swim", past: "swam", trans: "nadar", ex: "They swam in the cold water." },
+      { base: "drive", past: "drove", trans: "conducir / manejar", ex: "We drove to the coast in the morning." },
+      { base: "spend", past: "spent", trans: "pasar tiempo / gastar dinero", ex: "We spent two days exploring the city." },
+      { base: "leave", past: "left", trans: "salir / partir / dejar", ex: "We left the hotel at 10 AM." },
+      { base: "get", past: "got", trans: "llegar / obtener / cansarse", ex: "I got tired after walking on the sand." },
+      { base: "sleep", past: "slept", trans: "dormir", ex: "I slept eight hours at the hotel." },
+      { base: "come", past: "came", trans: "venir / llegar", ex: "The bus came on time." },
+      { base: "make", past: "made", trans: "hacer / preparar", ex: "They made a campfire at night." },
+      { base: "write", past: "wrote", trans: "escribir", ex: "I wrote eight sentences about my trip." },
+      { base: "read", past: "read", trans: "leer (se pronuncia /red/)", ex: "I read Joe's email about the weather." },
+      { base: "do", past: "did", trans: "hacer", ex: "What did you do on vacation?" },
+      { base: "give", past: "gave", trans: "dar", ex: "She gave me a nice gift." },
+      { base: "find", past: "found", trans: "encontrar", ex: "We found a quiet beach in Ventanas." },
+      { base: "think", past: "thought", trans: "pensar", ex: "I thought the weather was warm." },
+      { base: "bring", past: "brought", trans: "traer", ex: "I brought warm clothes for the cold wind." },
+      { base: "wear", past: "wore", trans: "vestir / usar ropa", ex: "I wore sunglasses because it was sunny." },
+      { base: "visit (regular)", past: "visited", trans: "visitar", ex: "We visited the city of Ventanas." },
+      { base: "walk (regular)", past: "walked", trans: "caminar", ex: "We walked on the beach." },
+      { base: "plan (regular)", past: "planned", trans: "planear (duplica n)", ex: "They planned their trip to Chile." },
+      { base: "raise (regular)", past: "raised", trans: "recaudar (solo agrega d)", ex: "We raised money for charity." },
+      { base: "study (regular)", past: "studied", trans: "estudiar (i+ed)", ex: "I studied English in the evening." },
+      { base: "arrive (regular)", past: "arrived", trans: "llegar", ex: "We arrived at the beach at noon." },
+      { base: "taste (regular)", past: "tasted", trans: "probar comida / saborear", ex: "We tasted delicious seafood." }
+    ];
+
+    const dictPracticeVerbs = [
+      { base: "take", past: "took", trans: "tomar / sacar fotos", rule: "Verbo irregular: take -> took." },
+      { base: "go", past: "went", trans: "ir", rule: "Verbo irregular: go -> went." },
+      { base: "buy", past: "bought", trans: "comprar", rule: "Verbo irregular: buy -> bought." },
+      { base: "see", past: "saw", trans: "ver", rule: "Verbo irregular: see -> saw." },
+      { base: "have", past: "had", trans: "tener / comer / almorzar", rule: "Verbo irregular: have -> had." },
+      { base: "eat", past: "ate", trans: "comer", rule: "Verbo irregular: eat -> ate." },
+      { base: "drink", past: "drank", trans: "beber", rule: "Verbo irregular: drink -> drank." },
+      { base: "meet", past: "met", trans: "conocer / reunirse", rule: "Verbo irregular: meet -> met." },
+      { base: "feel", past: "felt", trans: "sentirse", rule: "Verbo irregular: feel -> felt." },
+      { base: "swim", past: "swam", trans: "nadar", rule: "Verbo irregular: swim -> swam." },
+      { base: "drive", past: "drove", trans: "conducir / manejar", rule: "Verbo irregular: drive -> drove." },
+      { base: "spend", past: "spent", trans: "pasar tiempo / gastar", rule: "Verbo irregular: spend -> spent." },
+      { base: "leave", past: "left", trans: "salir / partir / dejar", rule: "Verbo irregular: leave -> left." },
+      { base: "get", past: "got", trans: "obtener / llegar / cansarse", rule: "Verbo irregular: get -> got." },
+      { base: "sleep", past: "slept", trans: "dormir", rule: "Verbo irregular: sleep -> slept." },
+      { base: "come", past: "came", trans: "venir / llegar", rule: "Verbo irregular: come -> came." },
+      { base: "make", past: "made", trans: "hacer / preparar", rule: "Verbo irregular: make -> made." },
+      { base: "write", past: "wrote", trans: "escribir", rule: "Verbo irregular: write -> wrote." },
+      { base: "read", past: "read", trans: "leer (se pronuncia /red/)", rule: "Verbo irregular: se escribe igual 'read' pero se pronuncia /red/." },
+      { base: "do", past: "did", trans: "hacer", rule: "Verbo irregular: do -> did." },
+      { base: "give", past: "gave", trans: "dar", rule: "Verbo irregular: give -> gave." },
+      { base: "find", past: "found", trans: "encontrar", rule: "Verbo irregular: find -> found." },
+      { base: "think", past: "thought", trans: "pensar", rule: "Verbo irregular: think -> thought." },
+      { base: "bring", past: "brought", trans: "traer", rule: "Verbo irregular: bring -> brought." },
+      { base: "wear", past: "wore", trans: "vestir / usar ropa", rule: "Verbo irregular: wear -> wore." },
+      { base: "plan", past: "planned", trans: "planear", rule: "Regla CVC: duplica la consonante 'n' antes de -ed -> planned." },
+      { base: "study", past: "studied", trans: "estudiar", rule: "Regla y -> ied: cambia 'y' por 'i' antes de -ed -> studied." },
+      { base: "visit", past: "visited", trans: "visitar", rule: "Verbo regular: visit + ed = visited." },
+      { base: "walk", past: "walked", trans: "caminar", rule: "Verbo regular: walk + ed = walked." },
+      { base: "start", past: "started", trans: "empezar / comenzar", rule: "Verbo regular: start + ed = started." },
+      { base: "end", past: "ended", trans: "terminar", rule: "Verbo regular: end + ed = ended." },
+      { base: "ask", past: "asked", trans: "preguntar", rule: "Verbo regular: ask + ed = asked." },
+      { base: "be", past: "was / were", trans: "ser / estar", rule: "Was (singular: I/he/she/it) y Were (plural: you/we/they)." }
+    ];
+
+    function renderVerbsDict(container) {
+      let practiceGridHtml = '';
+      dictPracticeVerbs.forEach((v, idx) => {
+        practiceGridHtml += `
+          <div class="card" style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(255,255,255,0.08); padding:14px; border-radius:10px; margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:16px; font-weight:800; color:#60a5fa;">${v.base}</span>
+              <span style="font-size:12px; color:#94a3b8; font-style:italic;">${v.trans}</span>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="text" class="written-input" style="flex:1; padding:7px 10px; font-size:14px; min-width:140px;" id="vp-input-${idx}" placeholder="Pasado de ${v.base}..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkSingleVerbPractice(${idx})" oninput="checkSingleVerbPractice(${idx})">
+              <button class="btn btn-secondary" style="padding:7px 10px; font-size:12px;" onclick="speak('${v.base} ... ${v.past}')" title="Escuchar pronunciación">🔊</button>
+            </div>
+            <div id="vp-fb-${idx}" style="display:none; font-size:12px; margin-top:8px; padding:6px 10px; border-radius:6px; line-height:1.4;"></div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>📚 Diccionario Maestro de Verbos en Pasado Simple</h1>
+            <p>Aprende, consulta y practica cómo se escriben los verbos en pasado simple para tu evaluación escrita.</p>
+          </div>
+        </div>
+
+        <!-- PARTE 1: TABLA Y BUSCADOR -->
+        <div class="card" style="margin-bottom:24px;">
+          <h3 style="color:#60a5fa; font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <span>📖 Parte 1: Tabla de Consulta Rápida con Buscador en Vivo y Audio</span>
+          </h3>
+          <input type="text" class="search-box" id="verb-search" placeholder="🔍 Escribe cualquier verbo en español o inglés (ej: tomar, took, comprar, bought, ir, see)..." oninput="filterVerbs()">
+
+          <table class="verb-table">
+            <thead>
+              <tr>
+                <th>Presente (Forma Base)</th>
+                <th>Pasado Simple</th>
+                <th>Significado en Español</th>
+                <th>Ejemplo en Oración</th>
+                <th>Audio</th>
+              </tr>
+            </thead>
+            <tbody id="verbs-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- PARTE 2: TALLER DE PRÁCTICA ESCRITA -->
+        <div class="card" style="margin-top:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+            <div>
+              <h3 style="color:#34d399; font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                <span>✍️ Parte 2: Taller de Práctica Escrita (Escribe el Pasado Simple)</span>
+              </h3>
+              <p style="font-size:13px; color:#9ca3af; margin-top:3px;">
+                Escribe directamente con tu teclado el pasado simple de cada verbo. El sistema te avisará al instante si acertaste o si cometiste una trampa común (ej: escribir <i>goed</i> en vez de <i>went</i> o <i>planed</i> en vez de <i>planned</i>).
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span id="verb-score-badge" style="background:rgba(52,211,153,0.15); color:#34d399; padding:6px 14px; border-radius:999px; font-weight:800; font-size:13px; border:1px solid rgba(52,211,153,0.3);">
+                Aciertos: 0 / ${dictPracticeVerbs.length}
+              </span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:14px;" id="verb-practice-grid">
+            ${practiceGridHtml}
+          </div>
+
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px;">
+            <button class="btn btn-success" style="font-size:15px; padding:12px 24px;" onclick="checkAllVerbPractice()">
+              ✓ Comprobar Todos los Verbos
+            </button>
+            <button class="btn btn-secondary" onclick="solveAllVerbPractice()">
+              👁️ Rellenar Todas las Respuestas
+            </button>
+            <button class="btn btn-secondary" onclick="resetAllVerbPractice()">
+              🔄 Limpiar y Volver a Intentar
+            </button>
+          </div>
+        </div>
+      `;
+
+      filterVerbs();
+    }
+
+    function checkSingleVerbPractice(idx) {
+      const v = dictPracticeVerbs[idx];
+      const inputEl = document.getElementById(`vp-input-${idx}`);
+      const fbEl = document.getElementById(`vp-fb-${idx}`);
+      if (!inputEl || !fbEl || !v) return null;
+
+      const raw = inputEl.value.trim();
+      if (!raw) {
+        fbEl.style.display = 'none';
+        inputEl.className = 'written-input';
+        updateVerbScoreBadge();
+        return null;
+      }
+
+      const normUser = raw.toLowerCase().trim();
+      const normPast = v.past.toLowerCase().trim();
+
+      // Comparaciones especiales
+      let isExact = false;
+      let isTolerant = false;
+      let note = "";
+
+      if (v.base === "be") {
+        if (normUser === "was" || normUser === "were" || normUser === "was/were" || normUser === "was / were") {
+          isExact = true;
+        }
+      } else if (normUser === normPast) {
+        isExact = true;
+      } else if (v.base === "plan" && normUser === "planed") {
+        isTolerant = true;
+        note = "¡Buena intención! Pero recuerda la regla CVC: duplica la consonante 'n' &rarr; <b>planned</b>.";
+      } else if (v.base === "study" && normUser === "studyed") {
+        isTolerant = true;
+        note = "¡Casi! Recuerda cambiar la 'y' por 'i' antes de -ed &rarr; <b>studied</b>.";
+      } else if (v.base === "take" && normUser === "taked") {
+        note = "¡Ojo! 'take' es irregular. Su pasado es <b>took</b>.";
+      } else if (v.base === "go" && normUser === "goed") {
+        note = "¡Ojo! 'go' es irregular. Su pasado es <b>went</b>.";
+      } else if (v.base === "buy" && normUser === "buyed") {
+        note = "¡Ojo! 'buy' es irregular. Su pasado es <b>bought</b>.";
+      } else if (v.base === "eat" && normUser === "eated") {
+        note = "¡Ojo! 'eat' es irregular. Su pasado es <b>ate</b>.";
+      } else if (v.base === "drink" && normUser === "drinked") {
+        note = "¡Ojo! 'drink' es irregular. Su pasado es <b>drank</b>.";
+      } else if (v.base === "see" && normUser === "seed") {
+        note = "¡Ojo! 'see' es irregular. Su pasado es <b>saw</b>.";
+      } else if (v.base === "swim" && normUser === "swimmed") {
+        note = "¡Ojo! 'swim' es irregular. Su pasado es <b>swam</b>.";
+      } else if (v.base === "drive" && normUser === "drived") {
+        note = "¡Ojo! 'drive' es irregular. Su pasado es <b>drove</b>.";
+      } else if (v.base === "sleep" && normUser === "sleeped") {
+        note = "¡Ojo! 'sleep' es irregular. Su pasado es <b>slept</b>.";
+      } else if (v.base === "bring" && normUser === "bringed") {
+        note = "¡Ojo! 'bring' es irregular. Su pasado es <b>brought</b>.";
+      } else if (v.base === "write" && normUser === "writed") {
+        note = "¡Ojo! 'write' es irregular. Su pasado es <b>wrote</b>.";
+      } else if (v.base === "make" && normUser === "maked") {
+        note = "¡Ojo! 'make' es irregular. Su pasado es <b>made</b>.";
+      } else if (v.base === "leave" && normUser === "leaved") {
+        note = "¡Ojo! 'leave' es irregular. Su pasado es <b>left</b>.";
+      } else if (v.base === "have" && normUser === "haved") {
+        note = "¡Ojo! 'have' es irregular. Su pasado es <b>had</b>.";
+      }
+
+      if (isExact) {
+        inputEl.className = 'written-input is-correct';
+        fbEl.style.display = 'block';
+        fbEl.style.background = 'rgba(16, 185, 129, 0.15)';
+        fbEl.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+        fbEl.style.color = '#34d399';
+        fbEl.innerHTML = `✔️ <b>¡Correcto!</b> ${v.base} &rarr; <b>${v.past}</b>`;
+        updateVerbScoreBadge();
+        return true;
+      } else if (isTolerant) {
+        inputEl.className = 'written-input is-tolerant';
+        fbEl.style.display = 'block';
+        fbEl.style.background = 'rgba(245, 158, 11, 0.15)';
+        fbEl.style.border = '1px solid #f59e0b';
+        fbEl.style.color = '#fbbf24';
+        fbEl.innerHTML = `✔️ <b>¡Buena por intención!</b> ${note}`;
+        updateVerbScoreBadge();
+        return true;
+      } else {
+        inputEl.className = 'written-input is-incorrect';
+        fbEl.style.display = 'block';
+        fbEl.style.background = 'rgba(239, 68, 68, 0.15)';
+        fbEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+        fbEl.style.color = '#f87171';
+        fbEl.innerHTML = `❌ <b>Incorrecto:</b> ${note || `El pasado de ${v.base} es <b>${v.past}</b>.`} <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px; margin-left:6px;" onclick="speak('${v.base} ... ${v.past}')">🔊</button>`;
+        updateVerbScoreBadge();
+        return false;
+      }
+    }
+
+    function updateVerbScoreBadge() {
+      let count = 0;
+      dictPracticeVerbs.forEach((v, idx) => {
+        const inputEl = document.getElementById(`vp-input-${idx}`);
+        if (inputEl && (inputEl.classList.contains('is-correct') || inputEl.classList.contains('is-tolerant'))) {
+          count++;
+        }
+      });
+      const badge = document.getElementById('verb-score-badge');
+      if (badge) {
+        badge.textContent = `Aciertos: ${count} / ${dictPracticeVerbs.length}`;
+        if (count === dictPracticeVerbs.length) {
+          badge.style.background = '#10b981';
+          badge.style.color = '#fff';
+          badge.textContent = `🌟 ¡PERFECTO! ${count} / ${dictPracticeVerbs.length}`;
+        }
+      }
+    }
+
+    function checkAllVerbPractice() {
+      dictPracticeVerbs.forEach((v, idx) => {
+        checkSingleVerbPractice(idx);
+      });
+    }
+
+    function solveAllVerbPractice() {
+      dictPracticeVerbs.forEach((v, idx) => {
+        const inputEl = document.getElementById(`vp-input-${idx}`);
+        if (inputEl) {
+          inputEl.value = (v.base === 'be') ? 'was / were' : v.past;
+          checkSingleVerbPractice(idx);
+        }
+      });
+    }
+
+    function resetAllVerbPractice() {
+      dictPracticeVerbs.forEach((v, idx) => {
+        const inputEl = document.getElementById(`vp-input-${idx}`);
+        const fbEl = document.getElementById(`vp-fb-${idx}`);
+        if (inputEl) {
+          inputEl.value = '';
+          inputEl.className = 'written-input';
+        }
+        if (fbEl) fbEl.style.display = 'none';
+      });
+      updateVerbScoreBadge();
+    }
+
+    function filterVerbs() {
+      const q = (document.getElementById('verb-search')?.value || '').toLowerCase();
+      const tbody = document.getElementById('verbs-tbody');
+      if (!tbody) return;
+
+      const filtered = masterVerbs.filter(v => 
+        v.base.toLowerCase().includes(q) || 
+        v.past.toLowerCase().includes(q) || 
+        v.trans.toLowerCase().includes(q) || 
+        v.ex.toLowerCase().includes(q)
+      );
+
+      let html = '';
+      filtered.forEach(v => {
+        html += `
+          <tr>
+            <td><strong style="color:#60a5fa;">${v.base}</strong></td>
+            <td><b style="color:#34d399; font-size:15px;">${v.past}</b></td>
+            <td>${v.trans}</td>
+            <td style="color:#e5e7eb; font-style:italic;">"${v.ex}"</td>
+            <td>
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speak('${v.base} ... ${v.past} ... ${v.ex}')">🔊</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      if (filtered.length === 0) {
+        html = '<tr><td colspan="5" style="text-align:center; color:#9ca3af; padding:30px;">No se encontraron verbos con ese término.</td></tr>';
+      }
+
+      tbody.innerHTML = html;
+    }
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderVerbsDict(document.getElementById('module-container'));
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 4 - Unit 7 Test: Selección Múltiple con Análisis Comparativo</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 980px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div>
+      <h1>📝 Unit 7 Test: 25 Preguntas de Alternativas con Análisis Comparativo</h1>
+      <p>Preguntas con patrones <b>100% desordenados y mezclados</b> (was, were, went, -ed, didn't, Did you, conectores y clima) para que identifiques la regla real y no respondas de memoria. Al marcar una opción, verás con total claridad si es correcta o incorrecta, por qué las otras 2 no van y ejemplos prácticos de cuándo sí lo harían.</p>
+    </div>
+    <div>
+      <button class="btn btn-secondary" onclick="resetAllMC()">🔄 Reiniciar Todas</button>
+    </div>
+  </div>
+
+  <div class="banner-grammar">
+    <h3>📌 Estrategia de Éxito para tu Prueba Escrita:</h3>
+    <p>
+      1. <b>Sujeto Singular</b> (I, he, she, it, a family, the weather, Otto) &rarr; usa <b>was / wasn't</b>.<br>
+      2. <b>Sujeto Plural</b> (we, they, you, Anna and Naomi, children, people) &rarr; usa <b>were / weren't</b>.<br>
+      3. <b>Preguntas con Did / Negativas con didn't</b> &rarr; el verbo principal va SIEMPRE en <b>forma base</b> (<i>Did you go? / I didn't buy</i>).<br>
+      4. <b>Verbos Irregulares clave</b>: <b>go &rarr; went</b>, <b>take &rarr; took</b>, <b>buy &rarr; bought</b>, <b>eat &rarr; ate</b>, <b>have &rarr; had</b>, <b>drink &rarr; drank</b>, <b>feel &rarr; felt</b>, <b>see &rarr; saw</b>.<br>
+      5. <b>Reglas de -ed regulares</b>: si termina en -e añade -d (arrived); si es CVC duplica la consonante (planned); consonante + y cambia a -ied (studied).
+    </p>
+  </div>
+
+  <div id="mc-cards-container"></div>
+
+  <script>
+    const mcQuestions = [
+  {
+    "id": 1,
+    "prompt": "1. There ______ a family relaxing on the beach.",
+    "options": [
+      "were",
+      "weren't",
+      "was"
+    ],
+    "correct": "was",
+    "target": "was (singular past be)",
+    "whyCorrect": "'a family' (una familia) es un sustantivo singular colectivo en inglés. Requiere 'was' en pasado afirmativo singular: 'There was a family on the beach' (Había una familia en la playa).",
+    "alternatives": [
+      {
+        "opt": "were",
+        "whyWrong": "'were' es para sujetos plurales (they, we, you) o sustantivos en plural ('many families', 'people'). 'a family' es singular.",
+        "exampleCorrectEn": "There were many people on the beach yesterday.",
+        "exampleCorrectEs": "Había muchas personas en la playa ayer."
+      },
+      {
+        "opt": "weren't",
+        "whyWrong": "'weren't' es la forma negativa plural (no había). La oración narra afirmativamente la presencia de la familia.",
+        "exampleCorrectEn": "There weren't any clouds in the sky during our trip.",
+        "exampleCorrectEs": "No había ninguna nube en el cielo durante nuestro viaje."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "prompt": "2. Last summer in 2025, I ______ to Quintero beach with my family.",
+    "options": [
+      "goed",
+      "went",
+      "go"
+    ],
+    "correct": "went",
+    "target": "went (irregular past of go)",
+    "whyCorrect": "'go' es un verbo irregular fundamental. Su forma de pasado simple afirmativo es 'went'. Jamás se le agrega -ed.",
+    "alternatives": [
+      {
+        "opt": "goed",
+        "whyWrong": "'goed' es un error común: los verbos irregulares no forman pasado con -ed. La palabra 'goed' no existe en inglés.",
+        "exampleCorrectEn": "He went to the supermarket an hour ago.",
+        "exampleCorrectEs": "Él fue al supermercado hace una hora (la forma correcta es went)."
+      },
+      {
+        "opt": "go",
+        "whyWrong": "'go' es el tiempo presente simple o forma base. La pista 'Last summer in 2025' exige obligatoriamente pasado.",
+        "exampleCorrectEn": "I always go to school by bus.",
+        "exampleCorrectEs": "Siempre voy al colegio en micro (rutina actual en presente)."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "prompt": "3. Anna and Naomi ______ in the office today because they were sick.",
+    "options": [
+      "was",
+      "weren't",
+      "wasn't"
+    ],
+    "correct": "weren't",
+    "target": "weren't (plural negative past be)",
+    "whyCorrect": "'Anna and Naomi' son dos personas (sujeto plural 'they'). En la forma negativa del pasado simple de be se usa 'weren't' (no estuvieron en la oficina).",
+    "alternatives": [
+      {
+        "opt": "was",
+        "whyWrong": "'was' es afirmativo y solo para sujetos singulares (I, he, she, it). Con Anna y Naomi es imposible usar was.",
+        "exampleCorrectEn": "Anna was in the office yesterday morning.",
+        "exampleCorrectEs": "Anna estuvo en la oficina ayer por la mañana (sujeto singular afirmativo)."
+      },
+      {
+        "opt": "wasn't",
+        "whyWrong": "'wasn't' es negativo pero solo para singular (she wasn't). Como son dos personas (they), la regla exige 'weren't'.",
+        "exampleCorrectEn": "Naomi wasn't at home when I called.",
+        "exampleCorrectEs": "Naomi no estaba en casa cuando llamé (solo Naomi = singular wasn't)."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "prompt": "4. On Sunday afternoon, we ______ the historic church of Ventanas.",
+    "options": [
+      "visited",
+      "visit",
+      "visiteed"
+    ],
+    "correct": "visited",
+    "target": "visited (regular past with -ed)",
+    "whyCorrect": "'visit' es un verbo regular estándar. Para expresar pasado simple solo agrega la terminación '-ed': 'visited'.",
+    "alternatives": [
+      {
+        "opt": "visit",
+        "whyWrong": "'visit' es presente simple o forma base. No expresa una acción ya completada en el pasado.",
+        "exampleCorrectEn": "We visit our grandparents every Sunday.",
+        "exampleCorrectEs": "Visitamos a nuestros abuelos todos los domingos (hábito en presente)."
+      },
+      {
+        "opt": "visiteed",
+        "whyWrong": "'visiteed' es un error ortográfico: 'visit' termina en consonante 't', por lo que solo se le añade '-ed', jamás doble 'ee'.",
+        "exampleCorrectEn": "They visited the museum in London last year.",
+        "exampleCorrectEs": "Visitaron el museo en Londres el año pasado (ortografía correcta: visited)."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "prompt": "5. Did you ______ to the party last Saturday night?",
+    "options": [
+      "went",
+      "go",
+      "goes"
+    ],
+    "correct": "go",
+    "target": "Did you go (question with auxiliary Did)",
+    "whyCorrect": "Regla de oro de preguntas en pasado simple: con el auxiliar 'Did' al inicio, el verbo principal SIEMPRE va en su forma base ('go'), jamás conjugado en pasado.",
+    "alternatives": [
+      {
+        "opt": "went",
+        "whyWrong": "'went' es pasado simple afirmativo. Poner 'Did you went' es un error grave de doble pasado (el auxiliar Did ya indica pasado).",
+        "exampleCorrectEn": "Yes, I went to the party last Saturday.",
+        "exampleCorrectEs": "Sí, fui a la fiesta el sábado pasado (oración afirmativa en pasado sin auxiliar)."
+      },
+      {
+        "opt": "goes",
+        "whyWrong": "'goes' es presente simple de tercera persona (he/she/it). No se usa con 'you' ni tras el auxiliar 'Did'.",
+        "exampleCorrectEn": "She goes to the gym three times a week.",
+        "exampleCorrectEs": "Ella va al gimnasio tres veces por semana (presente habitual)."
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "prompt": "6. It was ______ yesterday, so we took an umbrella with us.",
+    "options": [
+      "sunny",
+      "rainy",
+      "windy"
+    ],
+    "correct": "rainy",
+    "target": "rainy (weather adjective)",
+    "whyCorrect": "La consecuencia lógica de 'so we took an umbrella' (por lo que llevamos un paraguas) es que el clima estaba lluvioso: 'rainy'.",
+    "alternatives": [
+      {
+        "opt": "sunny",
+        "whyWrong": "'sunny' significa soleado. Si estuviera soleado llevaríamos lentes de sol o bloqueador, no un paraguas para la lluvia.",
+        "exampleCorrectEn": "It was sunny yesterday, so we swam in the pool.",
+        "exampleCorrectEs": "Estuvo soleado ayer, por lo que nadamos en la piscina."
+      },
+      {
+        "opt": "windy",
+        "whyWrong": "'windy' significa ventoso. El paraguas se lleva por la lluvia, ya que con mucho viento el paraguas se rompe o se da vuelta.",
+        "exampleCorrectEn": "It was windy yesterday, so the children flew their kites.",
+        "exampleCorrectEs": "Estuvo ventoso ayer, por lo que los niños encumbraron volantines."
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "prompt": "7. I didn't ______ any souvenirs because they were very expensive.",
+    "options": [
+      "bought",
+      "buy",
+      "buying"
+    ],
+    "correct": "buy",
+    "target": "didn't buy (negative with didn't)",
+    "whyCorrect": "En oraciones negativas en pasado simple con 'didn't', el verbo principal DEBE ir en forma base ('buy'). El auxiliar 'didn't' ya asume la carga del pasado.",
+    "alternatives": [
+      {
+        "opt": "bought",
+        "whyWrong": "'bought' es el pasado irregular afirmativo de buy. 'didn't bought' es un error común de duplicar el pasado.",
+        "exampleCorrectEn": "I bought a nice hat at the craft market.",
+        "exampleCorrectEs": "Compré un lindo sombrero en la feria artesanal (afirmativo en pasado)."
+      },
+      {
+        "opt": "buying",
+        "whyWrong": "'buying' es el gerundio (-ing) y no puede ir después de didn't.",
+        "exampleCorrectEn": "I was buying food when you called me.",
+        "exampleCorrectEs": "Estaba comprando comida cuando me llamaste (pasado continuo con was)."
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "prompt": "8. The children ______ very cheerful and excited when they saw the ocean.",
+    "options": [
+      "was",
+      "were",
+      "is"
+    ],
+    "correct": "were",
+    "target": "were (plural affirmative past be)",
+    "whyCorrect": "'The children' (los niños) es un sustantivo plural irregular (plural de 'child' = 'they'). En pasado afirmativo simple requiere 'were'.",
+    "alternatives": [
+      {
+        "opt": "was",
+        "whyWrong": "'was' solo se usa para singular (I, he, she, it, a child). Con 'children' (plural) jamás se usa was.",
+        "exampleCorrectEn": "The child was very happy with his new toy.",
+        "exampleCorrectEs": "El niño estaba muy feliz con su juguete nuevo (un solo niño = child was)."
+      },
+      {
+        "opt": "is",
+        "whyWrong": "'is' es presente simple singular, pero aquí el sujeto es plural y la acción ocurrió en el pasado ('when they saw').",
+        "exampleCorrectEn": "The child is playing in the garden right now.",
+        "exampleCorrectEs": "El niño está jugando en el jardín ahora mismo (presente singular)."
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "prompt": "9. They ______ their vacation to Chile two months ago.",
+    "options": [
+      "planed",
+      "planned",
+      "plan"
+    ],
+    "correct": "planned",
+    "target": "planned (CVC doubling rule)",
+    "whyCorrect": "Regla ortográfica CVC (consonante-vocal-consonante): el verbo monosílabo 'plan' duplica la consonante 'n' antes de añadir '-ed': 'planned'.",
+    "alternatives": [
+      {
+        "opt": "planed",
+        "whyWrong": "'planed' no duplicó la 'n'. En inglés 'planed' proviene del verbo 'plane' (cepillar madera), no de 'plan' (planificar).",
+        "exampleCorrectEn": "The carpenter planed the rough piece of wood.",
+        "exampleCorrectEs": "El carpintero cepilló la pieza áspera de madera."
+      },
+      {
+        "opt": "plan",
+        "whyWrong": "'plan' es la forma base o presente. La expresión 'two months ago' (hace dos meses) exige pasado simple.",
+        "exampleCorrectEn": "We plan our activities every Monday morning.",
+        "exampleCorrectEs": "Planificamos nuestras actividades todos los lunes por la mañana (rutina presente)."
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "prompt": "10. The hotel room ______ expensive, so we saved a lot of money.",
+    "options": [
+      "weren't",
+      "wasn't",
+      "was"
+    ],
+    "correct": "wasn't",
+    "target": "wasn't (singular negative past be)",
+    "whyCorrect": "'The hotel room' (la habitación de hotel) es un sustantivo singular neutro ('it'). La forma negativa en pasado simple de be es 'wasn't'.",
+    "alternatives": [
+      {
+        "opt": "weren't",
+        "whyWrong": "'weren't' es negativo para sujetos plurales (they, we, you, hotel rooms). 'The hotel room' es singular.",
+        "exampleCorrectEn": "The hotel rooms weren't available for booking.",
+        "exampleCorrectEs": "Las habitaciones del hotel no estaban disponibles para reservar (plural rooms = weren't)."
+      },
+      {
+        "opt": "was",
+        "whyWrong": "'was' es afirmativo. Si la habitación hubiera sido cara ('was expensive'), no habríamos ahorrado dinero ('saved money').",
+        "exampleCorrectEn": "The hotel room was very luxurious and big.",
+        "exampleCorrectEs": "La habitación del hotel era muy lujosa y grande (afirmativo)."
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "prompt": "11. After arriving in Ventanas, we ______ delicious seafood at a local restaurant.",
+    "options": [
+      "haded",
+      "had",
+      "have"
+    ],
+    "correct": "had",
+    "target": "had (irregular past of have)",
+    "whyCorrect": "'have' es un verbo irregular. Su pasado simple es 'had' ('we had lunch' = almorzamos / comimos).",
+    "alternatives": [
+      {
+        "opt": "haded",
+        "whyWrong": "'haded' es un invento incorrecto de agregar '-ed' a un verbo irregular. La forma correcta de pasado es 'had'.",
+        "exampleCorrectEn": "She had a wonderful birthday party yesterday.",
+        "exampleCorrectEs": "Ella tuvo una maravillosa fiesta de cumpleaños ayer (la forma correcta es had)."
+      },
+      {
+        "opt": "have",
+        "whyWrong": "'have' es tiempo presente o infinitivo. No corresponde a un relato de hechos pasados.",
+        "exampleCorrectEn": "I have breakfast at 7:00 AM every day.",
+        "exampleCorrectEs": "Tomo desayuno a las 7:00 AM todos los días (hábito presente)."
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "prompt": "12. Otto ______ many pictures of the ocean with his new camera.",
+    "options": [
+      "taked",
+      "took",
+      "takes"
+    ],
+    "correct": "took",
+    "target": "took (irregular past of take)",
+    "whyCorrect": "'take' es un verbo irregular clave de la Unidad 7. Su pasado simple es 'took' ('took pictures' = sacó fotos), jamás 'taked'.",
+    "alternatives": [
+      {
+        "opt": "taked",
+        "whyWrong": "'taked' no existe en el idioma inglés. Es una trampa típica de examen pretender que take es regular.",
+        "exampleCorrectEn": "He took the bus to the airport yesterday.",
+        "exampleCorrectEs": "Él tomó la micro al aeropuerto ayer (la forma correcta es took)."
+      },
+      {
+        "opt": "takes",
+        "whyWrong": "'takes' es presente simple con tercera persona singular (he takes), lo que indica rutina actual y no pasado.",
+        "exampleCorrectEn": "He takes photographs for a fashion magazine.",
+        "exampleCorrectEs": "Él toma fotografías para una revista de modas (trabajo / rutina actual)."
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "prompt": "13. I stayed inside my house yesterday ______ the wind became very cold.",
+    "options": [
+      "because",
+      "but",
+      "so"
+    ],
+    "correct": "because",
+    "target": "because (reason connector)",
+    "whyCorrect": "'because' (porque) introduce la causa o motivo por el cual la persona se quedó adentro de la casa (el viento se puso helado).",
+    "alternatives": [
+      {
+        "opt": "but",
+        "whyWrong": "'but' (pero) expresa contraste u oposición entre dos ideas, no la causa directa.",
+        "exampleCorrectEn": "I wanted to go out, but the rain was too heavy.",
+        "exampleCorrectEs": "Quería salir, pero la lluvia era demasiado fuerte (contraste)."
+      },
+      {
+        "opt": "so",
+        "whyWrong": "'so' (por lo tanto / por eso) introduce la consecuencia o resultado, no la causa.",
+        "exampleCorrectEn": "The wind became very cold, so I stayed inside my house.",
+        "exampleCorrectEs": "El viento se puso muy frío, por lo que me quedé adentro de mi casa (consecuencia invertida)."
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "prompt": "14. We ______ at a quiet hotel near the coast for three nights.",
+    "options": [
+      "stayed",
+      "stays",
+      "stay"
+    ],
+    "correct": "stayed",
+    "target": "stayed (regular past)",
+    "whyCorrect": "'stay' es un verbo regular terminado en vocal + 'y'. Solo añade '-ed' normalmente: 'stayed' (nos hospedamos / nos quedamos).",
+    "alternatives": [
+      {
+        "opt": "stays",
+        "whyWrong": "'stays' es presente simple con tercera persona (he/she/it). Con el sujeto 'we' y en pasado es incorrecto.",
+        "exampleCorrectEn": "The tourist stays at the hostel every winter.",
+        "exampleCorrectEs": "El turista se hospeda en el hostal todos los inviernos (presente habitual)."
+      },
+      {
+        "opt": "stay",
+        "whyWrong": "'stay' es forma base o presente simple para we/they, no tiempo pasado.",
+        "exampleCorrectEn": "We usually stay with our cousins during holidays.",
+        "exampleCorrectEs": "Normalmente nos quedamos con nuestros primos durante vacaciones (hábito presente)."
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "prompt": "15. For dinner, they ______ Italian pasta and tasted local desserts.",
+    "options": [
+      "eated",
+      "ate",
+      "eat"
+    ],
+    "correct": "ate",
+    "target": "ate (irregular past of eat)",
+    "whyCorrect": "'eat' es un verbo irregular. Su pasado simple es 'ate' (comieron), jamás 'eated'.",
+    "alternatives": [
+      {
+        "opt": "eated",
+        "whyWrong": "'eated' es un error común: jamás se le agrega -ed a 'eat'. La forma correcta de pasado es 'ate'.",
+        "exampleCorrectEn": "We ate fresh seafood by the sea yesterday.",
+        "exampleCorrectEs": "Comimos mariscos frescos junto al mar ayer (la forma correcta es ate)."
+      },
+      {
+        "opt": "eat",
+        "whyWrong": "'eat' es la forma base o tiempo presente simple. No expresa una acción completada en el pasado.",
+        "exampleCorrectEn": "They eat dinner together at 8:00 PM every evening.",
+        "exampleCorrectEs": "Cenan juntos a las 8:00 PM todas las tardes (rutina presente)."
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "prompt": "16. ______ , we arrived at the beach. Then, we walked on the sand.",
+    "options": [
+      "Finally",
+      "First",
+      "Because"
+    ],
+    "correct": "First",
+    "target": "First (sequence connector)",
+    "whyCorrect": "'First' (Primero) es el conector de secuencia obligatorio para comenzar la narración cronológica de hechos.",
+    "alternatives": [
+      {
+        "opt": "Finally",
+        "whyWrong": "'Finally' (Finalmente) se utiliza únicamente al final del relato para concluir, jamás para la primera acción.",
+        "exampleCorrectEn": "Finally, we returned home and went to sleep.",
+        "exampleCorrectEs": "Finalmente, regresamos a casa y nos fuimos a dormir (cierre del relato)."
+      },
+      {
+        "opt": "Because",
+        "whyWrong": "'Because' (Porque) es un conector de causa o razón, no una palabra de secuencia cronológica.",
+        "exampleCorrectEn": "We went to the beach because the weather was sunny.",
+        "exampleCorrectEs": "Fuimos a la playa porque el clima estaba soleado (causa)."
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "prompt": "17. Naomi ______ very hard for the English examination last night.",
+    "options": [
+      "studyed",
+      "studied",
+      "study"
+    ],
+    "correct": "studied",
+    "target": "studied (consonant + y rule)",
+    "whyCorrect": "Regla ortográfica de consonante + 'y': el verbo 'study' cambia obligatoriamente la 'y' por 'i' antes de '-ed': 'studied'.",
+    "alternatives": [
+      {
+        "opt": "studyed",
+        "whyWrong": "'studyed' mantuvo la 'y'. La regla gramatical inglesa prohíbe mantener la 'y' cuando le precede una consonante ('d').",
+        "exampleCorrectEn": "He studied medicine for six years at university.",
+        "exampleCorrectEs": "Él estudió medicina por seis años en la universidad (ortografía correcta: studied)."
+      },
+      {
+        "opt": "study",
+        "whyWrong": "'study' es tiempo presente o forma base. La expresión 'last night' (anoche) exige pasado simple.",
+        "exampleCorrectEn": "I study English every day after class.",
+        "exampleCorrectEs": "Estudio inglés todos los días después de clases (rutina presente)."
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "prompt": "18. During our morning at the coast, the weather was ______ .",
+    "options": [
+      "cold and snowy",
+      "sunny and warm",
+      "freezing with a blizzard"
+    ],
+    "correct": "sunny and warm",
+    "target": "sunny and warm (summer weather description)",
+    "whyCorrect": "En la playa de la zona central de Chile durante las vacaciones de verano, el clima característico es 'sunny and warm' (soleado y templado).",
+    "alternatives": [
+      {
+        "opt": "cold and snowy",
+        "whyWrong": "'cold and snowy' (frío y nevado) describe la alta montaña o el invierno polar, no una playa costera de verano.",
+        "exampleCorrectEn": "The weather was cold and snowy in the mountains during July.",
+        "exampleCorrectEs": "El clima estuvo frío y nevado en las montañas durante julio."
+      },
+      {
+        "opt": "freezing with a blizzard",
+        "whyWrong": "'freezing with a blizzard' (congelante con una ventisca) describe la Antártica o una tormenta polar severa.",
+        "exampleCorrectEn": "There was a freezing blizzard at the South Pole.",
+        "exampleCorrectEs": "Hubo una ventisca congelante en el Polo Sur."
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "prompt": "19. ______ you see the sea lions swimming near the rocks yesterday?",
+    "options": [
+      "Were",
+      "Did",
+      "Do"
+    ],
+    "correct": "Did",
+    "target": "Did you see (past question with action verb)",
+    "whyCorrect": "Para hacer preguntas en pasado simple con verbos de acción ('see'), el auxiliar obligatorio es 'Did'.",
+    "alternatives": [
+      {
+        "opt": "Were",
+        "whyWrong": "'Were' es el verbo be. No se puede poner 'Were you see' porque 'see' es un verbo de acción y requiere el auxiliar 'Did'.",
+        "exampleCorrectEn": "Were you at the beach yesterday?",
+        "exampleCorrectEs": "¿Estuviste tú en la playa ayer? (con adjetivo o lugar, sin verbo de acción adicional)."
+      },
+      {
+        "opt": "Do",
+        "whyWrong": "'Do' es el auxiliar de tiempo Presente Simple ('¿Ves...?'). La palabra 'yesterday' exige el auxiliar de pasado 'Did'.",
+        "exampleCorrectEn": "Do you see those birds in the tree?",
+        "exampleCorrectEs": "¿Ves esas aves en el árbol? (tiempo presente actual)."
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "prompt": "20. Because the wind was very chilly, we ______ hot chocolate in the cafe.",
+    "options": [
+      "drinked",
+      "drank",
+      "drink"
+    ],
+    "correct": "drank",
+    "target": "drank (irregular past of drink)",
+    "whyCorrect": "'drink' es un verbo irregular. Su forma de pasado simple es 'drank' (bebimos / tomamos), jamás 'drinked'.",
+    "alternatives": [
+      {
+        "opt": "drinked",
+        "whyWrong": "'drinked' es un error común: los verbos irregulares no añaden '-ed'. La forma de pasado es 'drank'.",
+        "exampleCorrectEn": "We drank warm tea to fight the cold.",
+        "exampleCorrectEs": "Bebimos té tibio para combatir el frío (la forma correcta es drank)."
+      },
+      {
+        "opt": "drink",
+        "whyWrong": "'drink' es la forma base o tiempo presente simple. No expresa una acción terminada en el pasado.",
+        "exampleCorrectEn": "I drink eight glasses of water every day.",
+        "exampleCorrectEs": "Bebo ocho vasos de agua todos los días (hábito presente)."
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "prompt": "21. The tourist bus ______ at the terminal on time yesterday afternoon.",
+    "options": [
+      "arrived",
+      "arrive",
+      "arriveed"
+    ],
+    "correct": "arrived",
+    "target": "arrived (verb ending in -e adds -d)",
+    "whyCorrect": "'arrive' ya termina en la vocal 'e'. La regla dice que si el verbo termina en 'e', solo se le agrega '-d': 'arrived'.",
+    "alternatives": [
+      {
+        "opt": "arrive",
+        "whyWrong": "'arrive' está en presente simple o infinitivo. La expresión 'yesterday afternoon' exige tiempo pasado.",
+        "exampleCorrectEn": "Flights usually arrive on schedule.",
+        "exampleCorrectEs": "Los vuelos normalmente llegan a la hora (presente general)."
+      },
+      {
+        "opt": "arriveed",
+        "whyWrong": "'arriveed' tiene un error ortográfico de doble 'ee'. Como arrive ya termina en 'e', jamás se duplica la e.",
+        "exampleCorrectEn": "The train arrived at platform 3 safely.",
+        "exampleCorrectEs": "El tren llegó al andén 3 con seguridad (ortografía correcta: arrived)."
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "prompt": "22. Finally, we returned home safely and I ______ very relaxed about our trip.",
+    "options": [
+      "feeled",
+      "felt",
+      "feel"
+    ],
+    "correct": "felt",
+    "target": "felt (irregular past of feel)",
+    "whyCorrect": "'feel' es un verbo irregular. Su pasado simple es 'felt' (me sentí), jamás 'feeled'.",
+    "alternatives": [
+      {
+        "opt": "feeled",
+        "whyWrong": "'feeled' no existe en el idioma inglés. Es un error intentar regularizar 'feel'. Su pasado es 'felt'.",
+        "exampleCorrectEn": "She felt proud after finishing the race.",
+        "exampleCorrectEs": "Ella se sintió orgullosa tras terminar la carrera (la forma correcta es felt)."
+      },
+      {
+        "opt": "feel",
+        "whyWrong": "'feel' es tiempo presente o forma base, no tiempo pasado completado.",
+        "exampleCorrectEn": "I feel energetic every morning after breakfast.",
+        "exampleCorrectEs": "Me siento con energía todas las mañanas tras desayunar (presente)."
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "prompt": "23. In the high Andes mountains during July, the weather was ______ .",
+    "options": [
+      "hot and tropical",
+      "cold and snowy",
+      "warm and sunny"
+    ],
+    "correct": "cold and snowy",
+    "target": "cold and snowy (winter weather in mountains)",
+    "whyCorrect": "En julio en la Cordillera de los Andes es pleno invierno, por lo que el clima es frío y con nieve ('cold and snowy').",
+    "alternatives": [
+      {
+        "opt": "hot and tropical",
+        "whyWrong": "'hot and tropical' corresponde a la selva o zona ecuatorial en verano, no a la cordillera andina en invierno.",
+        "exampleCorrectEn": "The Amazon rainforest was hot and tropical all year.",
+        "exampleCorrectEs": "La selva amazónica estuvo calurosa y tropical todo el año."
+      },
+      {
+        "opt": "warm and sunny",
+        "whyWrong": "'warm and sunny' describe un día templado de playa o primavera, no el invierno de alta montaña.",
+        "exampleCorrectEn": "The coast was warm and sunny throughout February.",
+        "exampleCorrectEs": "La costa estuvo templada y soleada durante todo febrero."
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "prompt": "24. Yesterday morning, I ______ my old friends walking down the street.",
+    "options": [
+      "seed",
+      "saw",
+      "see"
+    ],
+    "correct": "saw",
+    "target": "saw (irregular past of see)",
+    "whyCorrect": "'see' es un verbo irregular de uso diario. Su forma de pasado simple es 'saw' (vi / divisé), jamás 'seed'.",
+    "alternatives": [
+      {
+        "opt": "seed",
+        "whyWrong": "'seed' no es el pasado de see ('seed' en inglés significa semilla). El pasado correcto de see es 'saw'.",
+        "exampleCorrectEn": "We saw a great movie at the cinema last Friday.",
+        "exampleCorrectEs": "Vimos una gran película en el cine el viernes pasado (la forma correcta es saw)."
+      },
+      {
+        "opt": "see",
+        "whyWrong": "'see' es la forma base o tiempo presente simple. Con 'Yesterday morning' se debe usar 'saw'.",
+        "exampleCorrectEn": "I see my colleagues at work every day.",
+        "exampleCorrectEs": "Veo a mis colegas en el trabajo todos los días (presente de rutina)."
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "prompt": "25. The Nguyen family ______ to Vietnam after they lived in China for three years.",
+    "options": [
+      "returns",
+      "returned",
+      "return"
+    ],
+    "correct": "returned",
+    "target": "returned (regular past with -ed)",
+    "whyCorrect": "La acción describe un hecho histórico ya ocurrido en el pasado simple (marcado por 'after they lived in China'). El verbo regular 'return' agrega '-ed': 'returned'.",
+    "alternatives": [
+      {
+        "opt": "returns",
+        "whyWrong": "'returns' es presente simple con tercera persona (-s). Se usa para rutinas de hoy, no para hechos históricos pasados.",
+        "exampleCorrectEn": "The family returns to Vietnam every summer for vacation.",
+        "exampleCorrectEs": "La familia regresa a Vietnam todos los veranos de vacaciones (rutina en presente)."
+      },
+      {
+        "opt": "return",
+        "whyWrong": "'return' es la forma base o presente simple para I, you, we, they; no expresa pasado simple afirmativo.",
+        "exampleCorrectEn": "They didn't return to China after the war.",
+        "exampleCorrectEs": "Ellos no regresaron a China después de la guerra (tras didn't el verbo va en forma base: return)."
+      }
+    ]
+  }
+];
+
+    let userChoices = LocalDB.loadModule('mod4_choices') || {};
+
+    function renderMC() {
+      const container = document.getElementById('mc-cards-container');
+      let cardsHtml = '';
+
+      mcQuestions.forEach(q => {
+        let opts = '';
+        q.options.forEach((opt, oIdx) => {
+          opts += `
+            <label class="opt-label" id="mc-label-${q.id}-${oIdx}" onclick="evalMC(${q.id}, '${opt}', ${oIdx})">
+              <input type="radio" name="mc-opt-${q.id}" value="${opt}">
+              <span style="font-size:14.5px; font-weight:700;">${opt}</span>
+            </label>
+          `;
+        });
+
+        cardsHtml += `
+          <div class="card" style="margin-bottom:20px; border:1px solid rgba(255,255,255,0.12);">
+            <div style="font-size:16px; font-weight:800; color:#fff; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <span>${q.prompt}</span>
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speak('${q.prompt.replace(/______/g, q.correct).replace(/'/g, "\\\'")}')" title="Escuchar oración completa">🔊 Escuchar</button>
+            </div>
+            <div class="options-row">${opts}</div>
+            <div id="mc-fb-${q.id}" class="feedback-box"></div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = cardsHtml;
+
+      // Restaurar progreso previo desde la Base de Datos Local
+      Object.keys(userChoices).forEach(qId => {
+        const chosen = userChoices[qId];
+        const q = mcQuestions.find(x => x.id === parseInt(qId));
+        if (q) {
+          const oIdx = q.options.indexOf(chosen);
+          if (oIdx !== -1) {
+            const radio = document.querySelector(`input[name="mc-opt-${q.id}"][value="${chosen}"]`);
+            if (radio) radio.checked = true;
+            evalMC(q.id, chosen, oIdx, false);
+          }
+        }
+      });
+    }
+
+    function evalMC(id, chosen, chosenIdx, save = true) {
+      const q = mcQuestions.find(x => x.id === id);
+      const fb = document.getElementById(`mc-fb-${id}`);
+      const isRight = (chosen === q.correct);
+
+      if (save) {
+        userChoices[id] = chosen;
+        LocalDB.saveModule('mod4_choices', userChoices);
+      }
+
+      // Resaltar visualmente las opciones (verde si es la correcta, rojo si la marcada es errónea)
+      q.options.forEach((opt, oIdx) => {
+        const lbl = document.getElementById(`mc-label-${id}-${oIdx}`);
+        if (!lbl) return;
+        lbl.classList.remove('opt-correct', 'opt-incorrect');
+        if (opt === q.correct) {
+          lbl.classList.add('opt-correct');
+        } else if (opt === chosen && !isRight) {
+          lbl.classList.add('opt-incorrect');
+        }
+      });
+
+      // Construir el análisis de las 2 alternativas restantes
+      let altBreakdownHtml = '';
+      q.alternatives.forEach(alt => {
+        altBreakdownHtml += `
+          <div class="alt-item-box">
+            <div style="font-weight:700; color:#fca5a5; font-size:13.5px;">
+              🚫 Alternativa <b>"${alt.opt}"</b>:
+            </div>
+            <div style="font-size:13px; color:#e2e8f0; margin-top:3px; line-height:1.45;">
+              • <b>Por qué NO es correcta en esta frase:</b> ${alt.whyWrong}
+            </div>
+            <div class="example-bubble">
+              <div style="font-weight:700; color:#6ee7b7; margin-bottom:2px;">🌟 ¿Cuándo SÍ sería correcta "${alt.opt}"?</div>
+              <i>"${alt.exampleCorrectEn}"</i><br>
+              <span style="color:#cbd5e1; font-size:12px;">↳ Español: ${alt.exampleCorrectEs}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+      fb.innerHTML = `
+        <div class="badge-result-status ${isRight ? 'correct' : 'incorrect'}">
+          ${isRight 
+            ? '✔️ ¡RESPUESTA CORRECTA! Acertaste con la regla gramatical.' 
+            : `❌ RESPUESTA INCORRECTA (Elegiste: "${chosen}" | La opción correcta es: "<b>${q.correct}</b>")`}
+        </div>
+
+        <div style="background:rgba(16,185,129,0.12); border-left:4px solid #10b981; padding:12px 14px; border-radius:6px; margin-bottom:12px;">
+          <div style="font-weight:800; color:#6ee7b7; font-size:14px; margin-bottom:4px;">🎯 ¿Por qué "${q.correct}" es la respuesta correcta?</div>
+          <div style="font-size:13.5px; color:#f3f4f6; line-height:1.5;">${q.whyCorrect}</div>
+        </div>
+
+        <div class="comparative-box">
+          <div style="font-weight:800; font-size:13.5px; color:#93c5fd; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em;">
+            🔍 Análisis Comparativo de las otras 2 alternativas (con ejemplos para la prueba):
+          </div>
+          ${altBreakdownHtml}
+        </div>
+      `;
+      fb.style.display = 'block';
+    }
+
+    function resetAllMC() {
+      userChoices = {};
+      LocalDB.saveModule('mod4_choices', {});
+      renderMC();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderMC);
+  </script>
+</body>
+</html>

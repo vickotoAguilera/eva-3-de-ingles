@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 9 - Simulacro de Prueba (20 Preguntas)</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+const examQuestions = [
+      { q: "1. We ______ in Ventanas yesterday.", opts: ["stayed", "stay", "stayeed"], ans: "stayed", exp: "'stay' es regular y solo agrega '-ed': 'stayed'." },
+      { q: "2. The weather ______ sunny and warm at the coast.", opts: ["were", "was", "is"], ans: "was", exp: "'The weather' es incontable y singular en pasado: usa 'was'." },
+      { q: "3. I ______ many souvenirs because I loved the town.", opts: ["buyed", "bought", "buy"], ans: "bought", exp: "'buy' es irregular. Su pasado es 'bought', jamás 'buyed'." },
+      { q: "4. We walked on the beach, ______ the wind suddenly became cold.", opts: ["because", "but", "so"], ans: "but", exp: "Expresa contraste: 'caminamos, PERO el viento se volvió frío'." },
+      { q: "5. We ______ to the museum yesterday.", opts: ["didn't went", "didn't go", "don't went"], ans: "didn't go", exp: "En pasado negativo se usa didn't + verbo base ('didn't go')." },
+      { q: "6. Who ______ the first explorer at the South Pole?", opts: ["was", "were", "is"], ans: "was", exp: "Explorer es singular: en pregunta se usa 'Who was...'." },
+      { q: "7. Scott and his men ______ lost in the snow.", opts: ["was", "were", "weren't"], ans: "were", exp: "'Scott and his men' es un sujeto plural ('they'): usa 'were'." },
+      { q: "8. There ______ a family walking on the sand.", opts: ["were", "was", "are"], ans: "was", exp: "'a family' es un sustantivo singular colectivo: usa 'was'." },
+      { q: "9. They ______ their vacation two months ago.", opts: ["planed", "planned", "plan"], ans: "planned", exp: "Regla CVC (consonante-vocal-consonante): 'plan' duplica la 'n' -> 'planned'." },
+      { q: "10. Anna and Naomi ______ at school today.", opts: ["wasn't", "weren't", "was"], ans: "weren't", exp: "Anna y Naomi son dos personas (plural 'they'): en negativo usan 'weren't'." },
+      { q: "11. In London, the sun is out and there is no rain. The weather is ______ .", opts: ["bad", "nice", "cloudy"], ans: "nice", exp: "Según el email de Joe en Oxford 7.1: sol y sin lluvia es 'nice weather' (buen clima)." },
+      { q: "12. In Spain, the sky is filled with clouds and there is snow. The weather is ______ .", opts: ["nice", "bad", "warm"], ans: "bad", exp: "Cielo lleno de nubes, viento frío y nieve en las montañas corresponde a 'bad weather'." },
+      { q: "13. Yesterday evening, she ______ all her homework before dinner.", opts: ["finished", "finish", "finisheed"], ans: "finished", exp: "'finish' es regular y forma su pasado agregando '-ed' ('finished')." },
+      { q: "14. Last week, my brother ______ many pictures with his new camera.", opts: ["taked", "took", "takes"], ans: "took", exp: "'take' es un verbo irregular. Su pasado simple es 'took', jamás 'taked'." },
+      { q: "15. I stayed at home on Sunday ______ it was raining heavily.", opts: ["because", "but", "first"], ans: "because", exp: "El conector 'because' (porque) explica la causa o razón de quedarse en casa." },
+      { q: "16. ______ , I woke up early. Next, I prepared breakfast.", opts: ["Finally", "First", "Because"], ans: "First", exp: "'First' (Primero) es la palabra de secuencia obligatoria para iniciar una narración." },
+      { q: "17. He ______ very hard for the English test last night.", opts: ["studyed", "studied", "study"], ans: "studied", exp: "Regla ortográfica: verbo terminado en consonante + 'y' ('study') cambia a '-ied' ('studied')." },
+      { q: "18. We wanted to play soccer in the park, ______ it started to snow.", opts: ["and", "but", "then"], ans: "but", exp: "'but' (pero) conecta dos ideas opuestas: queríamos jugar, pero comenzó a nevar." },
+      { q: "19. ______ you visit your grandparents last weekend?", opts: ["Did", "Do", "Were"], ans: "Did", exp: "Para hacer preguntas en pasado simple con verbos de acción se usa el auxiliar 'Did' al inicio." },
+      { q: "20. ______ , we arrived home safely and went to sleep.", opts: ["Finally", "First", "Because"], ans: "Finally", exp: "'Finally' (Finalmente) es la palabra de secuencia utilizada para concluir el relato." }
+    ];
+
+    let examAnswers = {};
+
+    function renderExamSim(container) {
+      examAnswers = {};
+      let qHtml = '';
+      examQuestions.forEach((eq, idx) => {
+        let optsHtml = '';
+        eq.opts.forEach(o => {
+          const safeId = o.replace(/\s+/g, '_');
+          optsHtml += `
+            <label class="opt-label" id="eq-label-${idx}-${safeId}" onclick="selectExamOpt(${idx}, '${o}')">
+              <input type="radio" name="eq-${idx}" value="${o}">
+              <span>${o}</span>
+            </label>
+          `;
+        });
+        qHtml += `
+          <div class="card" style="margin-bottom:14px;">
+            <div style="font-size:15px; font-weight:700; color:#fff; margin-bottom:10px;">${eq.q}</div>
+            <div class="options-row">${optsHtml}</div>
+            <div id="eq-fb-${idx}" class="feedback-box"></div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>🏆 Simulacro de Prueba Escrita con Nota (1.0 a 7.0)</h1>
+            <p>Responde las <b>20 preguntas</b> oficiales para calcular tu calificación estimada con la escala chilena al 60% de exigencia (12 correctas = 4.0).</p>
+          </div>
+        </div>
+
+        ${qHtml}
+
+        <div style="margin-top:20px;">
+          <button class="btn btn-success" style="font-size:16px; padding:14px 28px;" onclick="calculateGrade()">
+            📊 Finalizar Examen y Ver Mi Nota
+          </button>
+        </div>
+
+        <div id="grade-card" class="card" style="margin-top:24px; display:none;"></div>
+      `;
+    }
+
+    function selectExamOpt(idx, val) {
+      examAnswers[idx] = val;
+      const eq = examQuestions[idx];
+      eq.opts.forEach(o => {
+        const lbl = document.getElementById(`eq-label-${idx}-${o.replace(/\s+/g, '_')}`);
+        if (lbl) {
+          lbl.style.borderColor = (o === val) ? '#60a5fa' : 'rgba(255,255,255,0.08)';
+          lbl.style.background = (o === val) ? 'rgba(59,130,246,0.2)' : 'rgba(31, 41, 55, 0.7)';
+        }
+      });
+    }
+
+    function calculateGrade() {
+      let correctCount = 0;
+      let mistakes = [];
+
+      examQuestions.forEach((eq, idx) => {
+        const userChoice = examAnswers[idx];
+        const isRight = (userChoice === eq.ans);
+        if (isRight) correctCount++;
+        else {
+          mistakes.push({
+            num: idx + 1,
+            q: eq.q,
+            userChoice: userChoice || 'sin responder',
+            ans: eq.ans,
+            exp: eq.exp
+          });
+        }
+
+        const fb = document.getElementById(`eq-fb-${idx}`);
+        if (fb) {
+          fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+          fb.innerHTML = `
+            <b>${isRight ? '✔️ Correcto' : '❌ Incorrecto'}</b>: Marcaste "${userChoice || 'sin responder'}". Respuesta correcta: <b>"${eq.ans}"</b>.<br>
+            💡 ${eq.exp}
+          `;
+          fb.style.display = 'block';
+        }
+
+        eq.opts.forEach(o => {
+          const safeId = o.replace(/\s+/g, '_');
+          const lbl = document.getElementById(`eq-label-${idx}-${safeId}`);
+          if (lbl) {
+            lbl.classList.remove('opt-correct', 'opt-incorrect');
+            if (o === eq.ans) lbl.classList.add('opt-correct');
+            else if (o === userChoice && !isRight) lbl.classList.add('opt-incorrect');
+          }
+        });
+      });
+
+      const total = examQuestions.length; // 20
+      const grade = calcChileanGrade(correctCount, total);
+      LocalDB.saveModule('mod9_exam_best', { score: correctCount, total: total, grade: grade, date: new Date().toISOString() });
+
+      const gCard = document.getElementById('grade-card');
+      if (gCard) {
+        gCard.style.display = 'block';
+        gCard.innerHTML = `
+          <div class="grade-display-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+              <div>
+                <div style="font-size:13px; color:#9ca3af; text-transform:uppercase; font-weight:700;">Tu Calificación Estimada (Escala Chilena 60%)</div>
+                <div style="font-size:48px; font-weight:900; color:${grade >= 4.0 ? '#34d399' : '#f87171'}; margin:4px 0;">
+                  NOTA ${grade.toFixed(1)}
+                </div>
+                <p style="font-size:14.5px; color:#e5e7eb; margin:0;">
+                  Puntaje obtenido: <b>${correctCount}</b> de <b>${total}</b> preguntas correctas.
+                </p>
+                <p style="font-size:12.5px; color:#94a3b8; margin-top:4px;">
+                  Exigencia: 60% (12 correctas = 4.0 | 20 correctas = 7.0).
+                </p>
+              </div>
+              <div>
+                <button class="btn btn-primary" style="padding:14px 28px; font-size:15px; font-weight:800;" onclick="resetExamSim()">
+                  🔄 Reintentar Examen
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        gCard.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function resetExamSim() {
+      examAnswers = {};
+      LocalDB.saveModule('mod9_answers', {});
+      renderExamSim(document.getElementById('module-container'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { 
+      renderExamSim(document.getElementById('module-container')); 
+    });
+  </script>
+</body>
+</html>

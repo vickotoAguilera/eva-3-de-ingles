@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 12 - Centro de Documentos</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+function renderDocsDownload(container) {
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>📁 Documentos Oficiales de la Evaluación 3</h1>
+            <p>Descarga la tarea lista en formato Word (.docx), la guía completa de estudio y el PDF oficial de vocabulario Oxford.</p>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h4 style="font-size:16px; color:#fff;">📄 Tarea Oficial: 8 Oraciones de Vacaciones</h4>
+            <p style="font-size:13px; color:#9ca3af; margin-top:4px;">Archivo Word formateado con tu nombre, las 8 oraciones, conectores en negrita y las 4 preguntas de pasado.</p>
+            <code style="font-size:11px; color:#60a5fa;">Evaluacion_3/documentos/Tarea_8_Oraciones.docx</code>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <a href="../documentos/Tarea_8_Oraciones.docx" download class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">⬇ Abrir Word</a>
+            <span class="btn btn-success" style="cursor:default;">✔ En tu carpeta</span>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h4 style="font-size:16px; color:#fff;">📘 Guía de Estudio Imprimible: Unit 7 Simple Past</h4>
+            <p style="font-size:13px; color:#9ca3af; margin-top:4px;">Tablas de verbos regulares e irregulares, reglas de ortografía, Was/Were y conectores.</p>
+            <code style="font-size:11px; color:#60a5fa;">Evaluacion_3/documentos/Guia_Estudio_Unit7.docx</code>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <a href="../documentos/Guia_Estudio_Unit7.docx" download class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">⬇ Abrir Guía</a>
+            <span class="btn btn-success" style="cursor:default;">✔ En tu carpeta</span>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h4 style="font-size:16px; color:#fff;">📕 PDF Oficial Oxford: Unit 7 Word Lists</h4>
+            <p style="font-size:13px; color:#9ca3af; margin-top:4px;">Documento oficial publicado por Oxford University Press con todo el vocabulario de clima y números ordinales.</p>
+            <code style="font-size:11px; color:#60a5fa;">Evaluacion_3/documentos/WA_01_U07_word_lists.pdf</code>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <a href="../documentos/WA_01_U07_word_lists.pdf" target="_blank" class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">📖 Ver PDF</a>
+            <span class="btn btn-success" style="cursor:default;">✔ En tu carpeta</span>
+          </div>
+        </div>
+      `;
+    }
+
+document.addEventListener('DOMContentLoaded', () => { renderDocsDownload(document.getElementById('module-container')); });
+  </script>
+</body>
+</html>

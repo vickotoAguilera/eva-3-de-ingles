@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 3 - Correct vs Incorrect (Verbos Regulares e Irregulares)</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 980px; margin: 0 auto; }
+    .target-word {
+      text-decoration: underline;
+      text-decoration-color: #60a5fa;
+      text-underline-offset: 4px;
+      font-weight: 800;
+      color: #93c5fd;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div>
+      <h1>⚖️ 7.3 GRAMMAR: Correct vs Incorrect (18 Preguntas)</h1>
+      <p>Lee cada oración prestando especial atención a la palabra <u>subrayada</u> (ubicada en distintas posiciones de la frase). ¿Está el verbo en su forma correcta de pasado simple? Elige <b>Correct</b> o <b>Incorrect</b>.</p>
+    </div>
+    <div>
+      <button class="btn btn-secondary" onclick="resetAllCI()">🔄 Reiniciar Todas</button>
+    </div>
+  </div>
+
+  <div class="banner-grammar">
+    <h3>📌 Cuándo marcar 'Incorrect' en la prueba escrita:</h3>
+    <p>
+      1. <b>Doble 'ee' incorrecta</b>: Verbos que ya terminan en -e solo agregan -d (<i>raise &rarr; raised, NUNCA raiseed; arrive &rarr; arrived, NUNCA arriveed</i>).<br>
+      2. <b>Consonante + y sin cambiar</b>: Debe cambiar a -ied (<i>study &rarr; studied, NUNCA studyed</i>).<br>
+      3. <b>CVC sin duplicar consonante</b>: (<i>plan &rarr; planned, planed está mal; stop &rarr; stopped, stoped está mal</i>).<br>
+      4. <b>Verbo irregular con -ed falso</b>: (<i>goed &rarr; went, taked &rarr; took, drinked &rarr; drank</i>).<br>
+      5. <b>Doble pasado con didn't</b>: Tras didn't el verbo va en forma base (<i>didn't go, NUNCA didn't went</i>).<br>
+      6. <b>Falsa concordancia Was/Were</b>: (<i>there was many people &rarr; debe ser there were</i>).
+    </p>
+  </div>
+
+  <div id="ci-container"></div>
+
+  <script>
+    const ciQuestions = [
+  {
+    "id": 1,
+    "sentence": "Last December, my family <u>planed</u> for our summer trip to the beach.",
+    "target": "planed",
+    "pos": "middle",
+    "correct": "incorrect",
+    "right": "planned",
+    "rule": "Regla CVC (consonante-vocal-consonante): el verbo monosílabo 'plan' termina en consonante-vocal-consonante (p-l-a-n). Exige duplicar la última consonante 'n' antes de '-ed': se escribe 'planned', jamás 'planed'."
+  },
+  {
+    "id": 2,
+    "sentence": "During our wonderful trip to Central America, I <u>visited</u> Guatemala for a week!",
+    "target": "visited",
+    "pos": "middle",
+    "correct": "correct",
+    "right": "visited",
+    "rule": "'visit' es un verbo regular estándar. Para formar el pasado simple solo añade '-ed': 'visited'. Es 100% correcto."
+  },
+  {
+    "id": 3,
+    "sentence": "To support the local children's hospital, we <u>raiseed</u> money with a charity event.",
+    "target": "raiseed",
+    "pos": "middle",
+    "correct": "incorrect",
+    "right": "raised",
+    "rule": "¡OJO! El verbo 'raise' YA TERMINA en la letra 'e'. Si un verbo termina en 'e', solo se le agrega una '-d' (raised). Poner doble 'ee' ('raiseed') es un error ortográfico muy grave."
+  },
+  {
+    "id": 4,
+    "sentence": "After buying modern technology, the school <u>used</u> the computers for science classes.",
+    "target": "used",
+    "pos": "middle",
+    "correct": "correct",
+    "right": "used",
+    "rule": "'use' termina en 'e'. Por ende, solo se le agrega '-d': 'used'. Es gramaticalmente correcto."
+  },
+  {
+    "id": 5,
+    "sentence": "Yesterday in the computer lab, our technical team <u>fixed</u> the broken screens.",
+    "target": "fixed",
+    "pos": "middle",
+    "correct": "correct",
+    "right": "fixed",
+    "rule": "'fix' es regular y añade '-ed' normalmente: 'fixed'. Es correcto."
+  },
+  {
+    "id": 6,
+    "sentence": "In this modern economy, many international companies <u>want</u> workers with advanced computer skills.",
+    "target": "want",
+    "pos": "middle",
+    "correct": "incorrect",
+    "right": "wanted",
+    "rule": "El verbo 'want' está en PRESENTE simple. Como este ejercicio evalúa la forma correcta de PASADO (past tense), la respuesta es 'incorrect'. En pasado simple debe ser 'wanted'."
+  },
+  {
+    "id": 7,
+    "sentence": "Before moving to Chile, my foreign friend <u>studyed</u> Spanish for three years.",
+    "target": "studyed",
+    "pos": "middle",
+    "correct": "incorrect",
+    "right": "studied",
+    "rule": "Regla de consonante + 'y': 'study' termina en consonante 'd' + 'y'. La regla exige obligatoriamente cambiar la 'y' por 'i' antes de '-ed': se escribe 'studied', jamás 'studyed'."
+  },
+  {
+    "id": 8,
+    "sentence": "Early yesterday morning, the whole group of tourists <u>goed</u> to the historic museum.",
+    "target": "goed",
+    "pos": "middle",
+    "correct": "incorrect",
+    "right": "went",
+    "rule": "'go' es un verbo irregular. Su forma de pasado simple es 'went'. Jamás se le añade -ed ('goed' no existe en el idioma inglés)."
+  },
+  {
+    "id": 9,
+    "sentence": "Because the morning weather was sunny and warm, we <u>walked</u> along the beautiful coast.",
+    "target": "walked",
+    "pos": "subordinate clause",
+    "correct": "correct",
+    "right": "walked",
+    "rule": "'walk' es un verbo regular terminado en consonantes 'lk'. Agrega '-ed' de forma regular: 'walked'. Es correcto."
+  },
+  {
+    "id": 10,
+    "sentence": "On their first afternoon at the beach, they <u>taked</u> many photos of the sunset.",
+    "target": "taked",
+    "pos": "middle",
+    "correct": "incorrect",
+    "right": "took",
+    "rule": "'take' es un verbo irregular. Su forma de pasado simple es 'took', jamás 'taked'."
+  },
+  {
+    "id": 11,
+    "sentence": "Although the market was very crowded, she <u>bought</u> nice handmade souvenirs.",
+    "target": "bought",
+    "pos": "subordinate clause",
+    "correct": "correct",
+    "right": "bought",
+    "rule": "'buy' es irregular. Su pasado simple es 'bought' (compró). Es 100% correcto."
+  },
+  {
+    "id": 12,
+    "sentence": "When the heavy blizzard started in Antarctica, the explorers <u>didn't went</u> outside.",
+    "target": "didn't went",
+    "pos": "subordinate clause",
+    "correct": "incorrect",
+    "right": "didn't go",
+    "rule": "¡Gran trampa de examen! Tras el auxiliar de pasado negativo 'didn't', el verbo principal DEBE ir en forma base ('go'), jamás en pasado ('didn't went' es un error grave de doble pasado)."
+  },
+  {
+    "id": 13,
+    "sentence": "Before going to sleep, the responsible student <u>finisheed</u> all his English assignments.",
+    "target": "finisheed",
+    "pos": "subordinate clause",
+    "correct": "incorrect",
+    "right": "finished",
+    "rule": "'finish' termina en 'sh'. Solo agrega '-ed' ('finished'). Escribir doble 'ee' ('finisheed') es un error ortográfico."
+  },
+  {
+    "id": 14,
+    "sentence": "During the festival in the square, there <u>was</u> many tourists enjoying the music.",
+    "target": "was",
+    "pos": "middle",
+    "correct": "incorrect",
+    "right": "were",
+    "rule": "'many tourists' (muchos turistas) es un sustantivo plural ('they'). Con sustantivos plurales en pasado se usa 'there were', jamás 'there was'."
+  },
+  {
+    "id": 15,
+    "sentence": "Even though the winter wind was chilly, the children <u>were</u> very cheerful in the snow.",
+    "target": "were",
+    "pos": "subordinate clause",
+    "correct": "correct",
+    "right": "were",
+    "rule": "'the children' es plural (los niños = they). La concordancia con 'were' es 100% correcta."
+  },
+  {
+    "id": 16,
+    "sentence": "While driving through the mountain highway, our father <u>stoped</u> at a gas station.",
+    "target": "stoped",
+    "pos": "subordinate clause",
+    "correct": "incorrect",
+    "right": "stopped",
+    "rule": "Regla CVC: 'stop' termina en consonante-vocal-consonante (s-t-o-p). Debe duplicar la consonante 'p' antes de '-ed': 'stopped'."
+  },
+  {
+    "id": 17,
+    "sentence": "After resting at the hotel for an hour, the travelers <u>arrived</u> safely at the restaurant.",
+    "target": "arrived",
+    "pos": "subordinate clause",
+    "correct": "correct",
+    "right": "arrived",
+    "rule": "'arrive' termina en 'e'. Solo agrega '-d': 'arrived'. Es correcto."
+  },
+  {
+    "id": 18,
+    "sentence": "Because the soup was extremely hot, the little boy <u>drinked</u> it very slowly.",
+    "target": "drinked",
+    "pos": "subordinate clause",
+    "correct": "incorrect",
+    "right": "drank",
+    "rule": "'drink' es irregular. Su pasado simple es 'drank' (bebió), jamás 'drinked'."
+  }
+];
+    let userCIChoices = LocalDB.loadModule('mod3_ci') || {};
+
+    function renderCI() {
+      const container = document.getElementById('ci-container');
+      let html = '';
+
+      ciQuestions.forEach(q => {
+        html += `
+          <div class="card" style="margin-bottom:18px; border:1px solid rgba(255,255,255,0.12);">
+            <div style="font-size:12px; font-weight:800; color:#60a5fa; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em;">
+              Pregunta ${q.id} &bull; Palabra Clave Subrayada: <span style="color:#93c5fd;">"${q.target}"</span>
+            </div>
+            <div style="font-size:16px; font-weight:700; color:#fff; margin-bottom:14px; line-height:1.5;">
+              ${q.sentence}
+            </div>
+            <div class="options-row">
+              <label class="opt-label" id="ci-label-${q.id}-correct" onclick="evalCI(${q.id}, 'correct')">
+                <input type="radio" name="ci-opt-${q.id}" value="correct">
+                <span style="font-weight:700;">✔️ Correct</span>
+              </label>
+              <label class="opt-label" id="ci-label-${q.id}-incorrect" onclick="evalCI(${q.id}, 'incorrect')">
+                <input type="radio" name="ci-opt-${q.id}" value="incorrect">
+                <span style="font-weight:700;">❌ Incorrect</span>
+              </label>
+            </div>
+            <div id="ci-fb-${q.id}" class="feedback-box"></div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Restaurar progreso guardado
+      Object.keys(userCIChoices).forEach(qId => {
+        const chosen = userCIChoices[qId];
+        const radio = document.querySelector(`input[name="ci-opt-${qId}"][value="${chosen}"]`);
+        if (radio) radio.checked = true;
+        evalCI(parseInt(qId), chosen, false);
+      });
+    }
+
+    function evalCI(id, chosen, save = true) {
+      const q = ciQuestions.find(x => x.id === id);
+      const fb = document.getElementById(`ci-fb-${id}`);
+      const isRight = (chosen === q.correct);
+
+      if (save) {
+        userCIChoices[id] = chosen;
+        LocalDB.saveModule('mod3_ci', userCIChoices);
+      }
+
+      const lblCorrect = document.getElementById(`ci-label-${id}-correct`);
+      const lblIncorrect = document.getElementById(`ci-label-${id}-incorrect`);
+      if (lblCorrect) lblCorrect.classList.remove('opt-correct', 'opt-incorrect');
+      if (lblIncorrect) lblIncorrect.classList.remove('opt-correct', 'opt-incorrect');
+
+      if (q.correct === 'correct') {
+        if (lblCorrect) lblCorrect.classList.add('opt-correct');
+        if (!isRight && lblIncorrect) lblIncorrect.classList.add('opt-incorrect');
+      } else {
+        if (lblIncorrect) lblIncorrect.classList.add('opt-correct');
+        if (!isRight && lblCorrect) lblCorrect.classList.add('opt-incorrect');
+      }
+
+      fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+      fb.innerHTML = `
+        <div class="badge-result-status ${isRight ? 'correct' : 'incorrect'}">
+          ${isRight 
+            ? '✔️ ¡RESPUESTA CORRECTA! Identificaste la regla a la perfección.' 
+            : `❌ INCORRECTO EN TU ELECCIÓN (Marcaste: "${chosen}" | La respuesta correcta es: "<b>${q.correct}</b>")`}
+        </div>
+        <div style="margin-bottom:6px; color:#f3f4f6; font-size:13.5px; line-height:1.5;">
+          💡 <b>Explicación de la regla:</b> ${q.rule}
+        </div>
+        ${q.correct === 'incorrect' ? `
+          <div style="color:#6ee7b7; font-weight:800; font-size:14px; margin-top:8px; background:rgba(16,185,129,0.12); padding:8px 12px; border-radius:6px;">
+            ✏️ Forma correcta que debes escribir en la prueba: "<b>${q.right}</b>"
+          </div>
+        ` : ''}
+      `;
+      fb.style.display = 'block';
+    }
+
+    function resetAllCI() {
+      userCIChoices = {};
+      LocalDB.saveModule('mod3_ci', {});
+      renderCI();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCI);
+  </script>
+</body>
+</html>

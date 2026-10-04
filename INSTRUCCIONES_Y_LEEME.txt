@@ -1,0 +1,114 @@
+========================================================================
+       EVALUACIÓN 3 - INGLÉS NIVEL 1B (UNIT 7: SIMPLE PAST & WEATHER)
+========================================================================
+
+¡Bienvenido! Este paquete contiene la plataforma interactiva de estudio
+renovada y 100% modular, la tarea oficial en Word de 8 oraciones, la guía 
+completa de estudio y el vocabulario oficial de Oxford University Press.
+
+------------------------------------------------------------------------
+¿CÓMO EJECUTAR LA PLATAFORMA?
+------------------------------------------------------------------------
+Simplemente haz DOBLE CLIC en cualquiera de estos dos archivos:
+  1. "Evaluacion_3_Ingles.exe"  (Aplicación de escritorio directa)
+  2. "Iniciar_Evaluacion_3.bat"   (Acceso directo alternativo)
+
+No requiere conexión a Internet ni instalar programas adicionales.
+Funciona 100% OFFLINE en cualquier computador con Windows 10 u 11.
+
+------------------------------------------------------------------------
+ARQUITECTURA MODULAR Y BASE DE DATOS LOCAL:
+------------------------------------------------------------------------
+Para facilitar el estudio, personalización y mantenimiento sin tener que
+leer un archivo gigante ("papiro"), cada módulo ahora vive en su propio 
+archivo HTML independiente dentro de la carpeta `app/modulos/`.
+
+Además, cuenta con una BASE DE DATOS LOCAL OFFLINE (`LocalDB` en `app/js/db.js`):
+- Guarda automáticamente tus respuestas y progresos al cambiar de módulo.
+- Si cierras la aplicación o el .exe y vuelves a abrirlo, se reanuda 
+  exactamente en el último módulo y con tus notas guardadas.
+
+------------------------------------------------------------------------
+ESTRUCTURA DE CARPETAS Y CONTENIDOS:
+------------------------------------------------------------------------
+Evaluacion_3/
+├── Evaluacion_3_Ingles.exe       -> Aplicación de escritorio
+├── Iniciar_Evaluacion_3.bat      -> Lanzador de respaldo
+├── INSTRUCCIONES_Y_LEEME.txt     -> Esta guía explicativa
+│
+├── documentos/                   -> Archivos listos para entregar o imprimir
+│   ├── Tarea_8_Oraciones.docx    -> Tarea oficial formateada con tus 8
+│   │                                oraciones sobre Quintero y Ventanas,
+│   │                                conectores y 4 preguntas en pasado.
+│   ├── Guia_Estudio_Unit7.docx   -> Guía de estudio con reglas ortográficas,
+│   │                                verbos regulares e irregulares y Was/Were.
+│   └── WA_01_U07_word_lists.pdf  -> Lista oficial de vocabulario Oxford Unit 7.
+│
+└── app/
+    ├── index.html                -> Shell principal con barra de navegación lateral y carga dinámica
+    ├── app_icon.ico              -> Ícono de la aplicación
+    ├── css/
+    │   └── common.css            -> Estilos compartidos premium y modo oscuro
+    ├── js/
+    │   └── db.js                 -> Motor de persistencia LocalDB y cálculo de notas al 60%
+    ├── img/                      -> 9 Imágenes reales optimizadas para uso 100% offline
+    └── modulos/                  -> 15 Módulos HTML individuales independientes
+        ├── mod_01_weather.html
+        ├── mod_02_stories.html
+        ├── mod_03_correct_incorrect.html
+        ├── mod_04_multiple_choice.html
+        ├── mod_05_writing_studio.html
+        ├── mod_05_1_connectors.html
+        ├── mod_06_dictionary.html
+        ├── mod_07_flashcards.html
+        ├── mod_07_1_image_quiz.html
+        ├── mod_08_trap_game.html
+        ├── mod_09_exam_simulator.html
+        ├── mod_10_written_exam.html
+        ├── mod_11_four_questions.html
+        ├── mod_12_documents.html
+        └── mod_13_final_exam.html
+
+------------------------------------------------------------------------
+DETALLE DE LOS 15 MÓDULOS DE ESTUDIO:
+------------------------------------------------------------------------
+1.  ☀️ 7.1 Weather Classifier: Clasifica frases en Nice/Bad weather con
+    botón READ para leer el email de Joe en España.
+2.  📖 7.2 Reading & Stories (4 Historias con Audio y Traducción):
+    - Historia 1: The Race to the South Pole (Scott vs. Amundsen).
+    - Historia 2: A Summer Trip to Quintero & Ventanas (Chile).
+    - Historia 3: Storm in the Andes Mountains.
+    - Historia 4: A Cozy Rainy Weekend in London.
+    Todas con narrador de voz en inglés, alternador de traducción al español 
+    y preguntas de comprensión gramatical.
+3.  ✍️ 7.3 Regular Verbs (18 Preguntas Correct/Incorrect con subrayado):
+    Palabras clave subrayadas (<u>palabra</u>) ubicadas en distintas 
+    posiciones de la oración (inicio, centro, cláusulas y final).
+4.  🎯 7.4 Selección Múltiple (25 Preguntas Desordenadas):
+    Preguntas variadas (was, went, weren't, -ed, Did you go, didn't buy, etc.)
+    con análisis comparativo detallado de las 3 alternativas y ejemplos
+    reales de cuándo sí se usarían las opciones incorrectas.
+5.  📝 Writing Studio: Taller de redacción para tus 8 oraciones con fórmulas 
+    visuales, chequeador de rúbrica y detector de ortografía.
+5.1 🕒 Conectores en Español e Inglés: Guía bilingüe de cuándo usar last week, 
+    yesterday, and, but, because, etc.
+6.  📖 Verb Dictionary: Diccionario interactivo pasado-presente con buscador
+    en tiempo real y modo de práctica escrita (take -> took, go -> went, etc.).
+7.  🃏 Flashcards: Tarjetas interactivas de memorización activo-reactiva.
+7.1 🖼️ Quiz Visual con 9 Fotos Reales (100% Offline): Estaciones (verano, invierno,
+    otoño, primavera), clima, emociones y acciones en pasado con análisis de 3 opciones.
+8.  ⚠️ Cazador de Trampas de Examen:
+    Banco de 28 trampas frecuentes de evaluación. Cada partida toma 10 trampas 
+    al azar con contadores en vivo de Aciertos y Fallos, cálculo de nota 
+    en escala chilena (1.0 a 7.0 al 60%), resumen final con explicaciones de errores 
+    y botón "🔄 Reintentar (Nuevas 10 Trampas)".
+9.  🎓 Simulador de Examen Oxford: Prueba de práctica con escala chilena al 60% y botón de reintento.
+10. ⌨️ Simulador Escrito con Teclado: 20 oraciones para completar escribiendo con tolerancia a apóstrofes.
+11. ❓ Las 4 Preguntas Clave: Fórmulas paso a paso de preguntas y respuestas en pasado.
+12. 📁 Centro de Documentos: Acceso directo y descarga de los archivos Word y PDF.
+13. 🏆 Mega Examen Final Integral: 
+    30 preguntas combinando 5 ejercicios clave de cada módulo anterior para 
+    simular la prueba real definitiva. Incluye nota en escala chilena al 60%, 
+    desglose de errores con soluciones y botón de reintento.
+
+========================================================================

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 13 - Mega Examen Final Integrador (30 Preguntas)</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 980px; margin: 0 auto; }
+    .cat-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      color: #93c5fd;
+      background: rgba(59,130,246,0.18);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div>
+      <h1>🏆 Mega Examen Final Integrador (30 Preguntas)</h1>
+      <p>Simulacro definitivo de la Evaluación 3 combinando <b>5 preguntas de cada módulo estudiado</b>: Clima y Estaciones, Was/Were, Verbos Regulares e Irregulares, Preguntas con Did, Conectores de Tiempo y Comprensión de Escenarios. Calificación oficial en escala chilena al 60% de exigencia.</p>
+    </div>
+    <div>
+      <button class="btn btn-secondary" onclick="resetFinalExam()">🔄 Reintentar Examen</button>
+    </div>
+  </div>
+
+  <div class="banner-grammar">
+    <h3>📌 Escala de Calificación Oficial (Exigencia 60%):</h3>
+    <p>
+      • <b>Total de Preguntas:</b> 30 preguntas.<br>
+      • <b>Puntaje de Aprobación (Nota 4.0):</b> 18 preguntas correctas (60%).<br>
+      • <b>Puntaje Máximo (Nota 7.0):</b> 30 preguntas correctas (100%).<br>
+      • Responde todas las preguntas a tu ritmo y al final presiona <b>"📊 Finalizar Examen y Ver Mi Nota"</b>.
+    </p>
+  </div>
+
+  <div id="exam-questions-container"></div>
+
+  <div style="margin: 28px 0; text-align: center;">
+    <button class="btn btn-success" style="padding: 16px 36px; font-size: 17px; font-weight: 800;" onclick="calculateFinalGrade()">
+      📊 Finalizar Examen y Ver Mi Nota Oficial
+    </button>
+  </div>
+
+  <div id="final-grade-card" style="display:none;"></div>
+
+  <script>
+    const finalQuestions = [
+  {
+    "q": "1. In London, the sun was out and there was no rain. The weather was ______ .",
+    "opts": [
+      "bad",
+      "nice",
+      "cloudy"
+    ],
+    "ans": "nice",
+    "cat": "Clima y Estaciones",
+    "exp": "Según el email de Joe en Oxford 7.1: sol brillante y sin lluvia corresponde a 'nice weather' (buen clima)."
+  },
+  {
+    "q": "2. In the Spanish mountains, the sky was dark and there was freezing snow. The weather was ______ .",
+    "opts": [
+      "nice",
+      "bad",
+      "warm"
+    ],
+    "ans": "bad",
+    "cat": "Clima y Estaciones",
+    "exp": "Nubes oscuras, viento helado y nieve en las montañas corresponde a 'bad weather' (mal clima)."
+  },
+  {
+    "q": "3. Which season of the year is characterized by golden falling leaves and windy weather?",
+    "opts": [
+      "summer",
+      "fall / autumn",
+      "spring"
+    ],
+    "ans": "fall / autumn",
+    "cat": "Clima y Estaciones",
+    "exp": "En otoño ('fall' o 'autumn') caen las hojas secas de los árboles y el viento se pone fresco."
+  },
+  {
+    "q": "4. In January at Quintero beach, the temperature was high and sunny. The season was ______ .",
+    "opts": [
+      "winter",
+      "summer",
+      "autumn"
+    ],
+    "ans": "summer",
+    "cat": "Clima y Estaciones",
+    "exp": "En el hemisferio sur, enero y febrero corresponden a la estación de verano ('summer')."
+  },
+  {
+    "q": "5. It was raining heavily outside, ______ we took our umbrellas before leaving the hotel.",
+    "opts": [
+      "so",
+      "because",
+      "but"
+    ],
+    "ans": "so",
+    "cat": "Clima y Estaciones",
+    "exp": "'so' (por lo tanto / por eso) expresa la consecuencia directa: estaba lloviendo, por eso llevamos paraguas."
+  },
+  {
+    "q": "6. There ______ a family with two children playing on the sand.",
+    "opts": [
+      "were",
+      "was",
+      "are"
+    ],
+    "ans": "was",
+    "cat": "Was / Were / Wasn't / Weren't",
+    "exp": "'a family' es un sustantivo colectivo singular. En pasado simple afirmativo requiere 'was'."
+  },
+  {
+    "q": "7. Anna and Naomi ______ at the office today because they had a doctor's appointment.",
+    "opts": [
+      "wasn't",
+      "weren't",
+      "was"
+    ],
+    "ans": "weren't",
+    "cat": "Was / Were / Wasn't / Weren't",
+    "exp": "Anna y Naomi son dos personas (plural 'they'). La forma negativa en pasado simple de be es 'weren't'."
+  },
+  {
+    "q": "8. The weather at the coast ______ sunny in the morning, but cold in the evening.",
+    "opts": [
+      "were",
+      "was",
+      "is"
+    ],
+    "ans": "was",
+    "cat": "Was / Were / Wasn't / Weren't",
+    "exp": "'The weather' es un sustantivo singular incontable ('it'). En pasado afirmativo simple usa 'was'."
+  },
+  {
+    "q": "9. Where ______ you yesterday afternoon at 4:00 PM?",
+    "opts": [
+      "was",
+      "were",
+      "are"
+    ],
+    "ans": "were",
+    "cat": "Was / Were / Wasn't / Weren't",
+    "exp": "En preguntas en pasado simple con el pronombre 'you' (tú/ustedes), la forma de be es siempre 'were'."
+  },
+  {
+    "q": "10. Robert Scott and his brave explorers ______ lost in the Antarctic snow.",
+    "opts": [
+      "was",
+      "were",
+      "is"
+    ],
+    "ans": "were",
+    "cat": "Was / Were / Wasn't / Weren't",
+    "exp": "'Scott and his brave explorers' es un sujeto plural ('they'). Requiere 'were'."
+  },
+  {
+    "q": "11. They ______ their vacation to Chile two months ago.",
+    "opts": [
+      "planed",
+      "planned",
+      "plan"
+    ],
+    "ans": "planned",
+    "cat": "Verbos y Ortografía",
+    "exp": "Regla CVC (consonante-vocal-consonante): 'plan' duplica la 'n' antes de '-ed' ('planned')."
+  },
+  {
+    "q": "12. To help the animal shelter, we ______ money with a concert.",
+    "opts": [
+      "raiseed",
+      "raised",
+      "raise"
+    ],
+    "ans": "raised",
+    "cat": "Verbos y Ortografía",
+    "exp": "'raise' ya termina en la letra 'e'. Solo agrega una '-d' ('raised', nunca doble 'ee')."
+  },
+  {
+    "q": "13. Last summer in 2025, I ______ to Quintero beach with my family.",
+    "opts": [
+      "goed",
+      "went",
+      "go"
+    ],
+    "ans": "went",
+    "cat": "Verbos y Ortografía",
+    "exp": "'go' es un verbo irregular. Su pasado simple es 'went', jamás 'goed'."
+  },
+  {
+    "q": "14. She ______ very hard for the final English exam last night.",
+    "opts": [
+      "studyed",
+      "studied",
+      "study"
+    ],
+    "ans": "studied",
+    "cat": "Verbos y Ortografía",
+    "exp": "Regla de consonante + 'y': 'study' cambia la 'y' por 'i' antes de '-ed' ('studied')."
+  },
+  {
+    "q": "15. Otto ______ many pictures of the ocean with his digital camera.",
+    "opts": [
+      "taked",
+      "took",
+      "takes"
+    ],
+    "ans": "took",
+    "cat": "Verbos y Ortografía",
+    "exp": "'take' es irregular. Su forma de pasado simple es 'took', jamás 'taked'."
+  },
+  {
+    "q": "16. Did you ______ to the concert with your friends last Saturday?",
+    "opts": [
+      "went",
+      "go",
+      "goes"
+    ],
+    "ans": "go",
+    "cat": "Preguntas con Did y Negativos",
+    "exp": "Con el auxiliar 'Did' al inicio de la pregunta, el verbo principal SIEMPRE va en forma base ('go')."
+  },
+  {
+    "q": "17. We ______ outside because the blizzard was too dangerous.",
+    "opts": [
+      "didn't went",
+      "didn't go",
+      "don't went"
+    ],
+    "ans": "didn't go",
+    "cat": "Preguntas con Did y Negativos",
+    "exp": "En pasado negativo se usa didn't + verbo en forma base ('didn't go', jamás doble pasado 'didn't went')."
+  },
+  {
+    "q": "18. I didn't ______ any souvenirs because they were very expensive.",
+    "opts": [
+      "bought",
+      "buy",
+      "buying"
+    ],
+    "ans": "buy",
+    "cat": "Preguntas con Did y Negativos",
+    "exp": "Tras el auxiliar negativo 'didn't', el verbo va en forma base ('buy')."
+  },
+  {
+    "q": "19. ______ they visit the museum during their stay in London?",
+    "opts": [
+      "Did",
+      "Were",
+      "Do"
+    ],
+    "ans": "Did",
+    "cat": "Preguntas con Did y Negativos",
+    "exp": "Para hacer preguntas en pasado simple con verbos de acción ('visit') se utiliza el auxiliar 'Did'."
+  },
+  {
+    "q": "20. Did she see the famous church in Ventanas? - Yes, she ______ .",
+    "opts": [
+      "saw",
+      "did",
+      "was"
+    ],
+    "ans": "did",
+    "cat": "Preguntas con Did y Negativos",
+    "exp": "En respuestas cortas a preguntas con Did se responde: 'Yes, she did' o 'No, she didn't'."
+  },
+  {
+    "q": "21. I stayed at home on Sunday ______ the rain was falling heavily.",
+    "opts": [
+      "because",
+      "but",
+      "finally"
+    ],
+    "ans": "because",
+    "cat": "Conectores y Expresiones de Tiempo",
+    "exp": "'because' (porque) introduce la causa o razón de la acción."
+  },
+  {
+    "q": "22. We wanted to swim in the pool, ______ the water was freezing cold.",
+    "opts": [
+      "and",
+      "but",
+      "first"
+    ],
+    "ans": "but",
+    "cat": "Conectores y Expresiones de Tiempo",
+    "exp": "'but' (pero) conecta dos ideas opuestas o contrastantes."
+  },
+  {
+    "q": "23. ______ , we arrived at the hotel. Then, we unpacked our luggage.",
+    "opts": [
+      "Finally",
+      "First",
+      "Because"
+    ],
+    "ans": "First",
+    "cat": "Conectores y Expresiones de Tiempo",
+    "exp": "'First' (Primero) es la palabra de secuencia requerida para iniciar una narración."
+  },
+  {
+    "q": "24. After sightseeing all day, we ______ returned home and went to bed.",
+    "opts": [
+      "finally",
+      "first",
+      "because"
+    ],
+    "ans": "finally",
+    "cat": "Conectores y Expresiones de Tiempo",
+    "exp": "'finally' (finalmente) se emplea para concluir la última acción de un relato."
+  },
+  {
+    "q": "25. ______ , I stayed at home and studied for my English evaluation.",
+    "opts": [
+      "Last week,",
+      "Next week,",
+      "Tomorrow,"
+    ],
+    "ans": "Last week,",
+    "cat": "Conectores y Expresiones de Tiempo",
+    "exp": "'Last week,' (La semana pasada) es la expresión temporal que sitúa la acción en el pasado."
+  },
+  {
+    "q": "26. When Roald Amundsen reached the South Pole in 1911, his journey was ______ .",
+    "opts": [
+      "a tragedy",
+      "successful",
+      "slow on foot"
+    ],
+    "ans": "successful",
+    "cat": "Comprensión de Lectura y Escenarios",
+    "exp": "Amundsen y su equipo llegaron primeros y su viaje sobre el hielo fue exitoso ('successful')."
+  },
+  {
+    "q": "27. For lunch at the coastal restaurant, the family ______ fresh seafood.",
+    "opts": [
+      "eated",
+      "ate",
+      "eating"
+    ],
+    "ans": "ate",
+    "cat": "Comprensión de Lectura y Escenarios",
+    "exp": "'eat' es irregular. Su pasado simple es 'ate' (comieron), jamás 'eated'."
+  },
+  {
+    "q": "28. Because the weather was cold in the evening, they ______ hot tea inside their tent.",
+    "opts": [
+      "drank",
+      "drinked",
+      "drink"
+    ],
+    "ans": "drank",
+    "cat": "Comprensión de Lectura y Escenarios",
+    "exp": "'drink' es irregular. Su pasado simple es 'drank' (bebieron)."
+  },
+  {
+    "q": "29. In a photo of a family smiling on the beach in swimsuits, were they happy?",
+    "opts": [
+      "Yes, they were.",
+      "No, they weren't.",
+      "Yes, they was."
+    ],
+    "ans": "Yes, they were.",
+    "cat": "Comprensión de Lectura y Escenarios",
+    "exp": "Respuesta corta afirmativa plural con were: 'Yes, they were.' (Sí, lo estaban)."
+  },
+  {
+    "q": "30. The Nguyen family ______ to Vietnam after they lived in China for three years.",
+    "opts": [
+      "returns",
+      "returned",
+      "return"
+    ],
+    "ans": "returned",
+    "cat": "Comprensión de Lectura y Escenarios",
+    "exp": "El verbo regular 'return' en pasado simple con -ed: 'returned'."
+  }
+];
+    let userFinalAnswers = LocalDB.loadModule('mod13_final_answers') || {};
+
+    function renderFinalExam() {
+      const container = document.getElementById('exam-questions-container');
+      let html = '';
+
+      finalQuestions.forEach((eq, idx) => {
+        let optsHtml = '';
+        eq.opts.forEach(o => {
+          const safeId = o.replace(/\s+/g, '_');
+          optsHtml += `
+            <label class="opt-label" id="fe-lbl-${idx}-${safeId}" onclick="selectFinalOpt(${idx}, '${o}')">
+              <input type="radio" name="fe-${idx}" value="${o}">
+              <span style="font-weight:700;">${o}</span>
+            </label>
+          `;
+        });
+
+        html += `
+          <div class="card" style="margin-bottom:18px; border:1px solid rgba(255,255,255,0.1);">
+            <div class="cat-badge">${eq.cat}</div>
+            <div style="font-size:15.5px; font-weight:700; color:#fff; margin-bottom:12px; line-height:1.5;">
+              ${eq.q}
+            </div>
+            <div class="options-row">${optsHtml}</div>
+            <div id="fe-fb-${idx}" class="feedback-box"></div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Restaurar selección previa
+      Object.keys(userFinalAnswers).forEach(idx => {
+        const chosen = userFinalAnswers[idx];
+        const radio = document.querySelector(`input[name="fe-${idx}"][value="${chosen}"]`);
+        if (radio) radio.checked = true;
+        selectFinalOpt(parseInt(idx), chosen, false);
+      });
+    }
+
+    function selectFinalOpt(idx, val, save = true) {
+      userFinalAnswers[idx] = val;
+      if (save) {
+        LocalDB.saveModule('mod13_final_answers', userFinalAnswers);
+      }
+
+      const eq = finalQuestions[idx];
+      eq.opts.forEach(o => {
+        const safeId = o.replace(/\s+/g, '_');
+        const lbl = document.getElementById(`fe-lbl-${idx}-${safeId}`);
+        if (lbl) {
+          if (o === val) {
+            lbl.style.borderColor = '#60a5fa';
+            lbl.style.background = 'rgba(59,130,246,0.2)';
+          } else {
+            lbl.style.borderColor = 'rgba(255,255,255,0.08)';
+            lbl.style.background = 'rgba(31, 41, 55, 0.7)';
+          }
+        }
+      });
+    }
+
+    function calculateFinalGrade() {
+      let correctCount = 0;
+      let mistakes = [];
+
+      finalQuestions.forEach((eq, idx) => {
+        const userChoice = userFinalAnswers[idx];
+        const isRight = (userChoice === eq.ans);
+        if (isRight) correctCount++;
+        else {
+          mistakes.push({
+            num: idx + 1,
+            q: eq.q,
+            userChoice: userChoice || 'Sin responder',
+            ans: eq.ans,
+            cat: eq.cat,
+            exp: eq.exp
+          });
+        }
+
+        // Mostrar retroalimentación en cada pregunta
+        const fb = document.getElementById(`fe-fb-${idx}`);
+        fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+        fb.innerHTML = `
+          <b>${isRight ? '✔️ Correcto' : '❌ Incorrecto'}</b>: Marcaste "${userChoice || 'sin responder'}". Respuesta correcta: <b>"${eq.ans}"</b>.<br>
+          💡 ${eq.exp}
+        `;
+        fb.style.display = 'block';
+
+        // Resaltar opciones verde/rojo
+        eq.opts.forEach(o => {
+          const safeId = o.replace(/\s+/g, '_');
+          const lbl = document.getElementById(`fe-lbl-${idx}-${safeId}`);
+          if (lbl) {
+            if (o === eq.ans) {
+              lbl.classList.add('opt-correct');
+            } else if (o === userChoice && !isRight) {
+              lbl.classList.add('opt-incorrect');
+            }
+          }
+        });
+      });
+
+      const total = finalQuestions.length; // 30
+      const grade = calcChileanGrade(correctCount, total);
+      LocalDB.saveModule('mod13_final_best', { score: correctCount, total: total, grade: grade, date: new Date().toISOString() });
+
+      let mistakesReviewHtml = '';
+      if (mistakes.length === 0) {
+        mistakesReviewHtml = `
+          <div style="background:rgba(16,185,129,0.18); border:1px solid #10b981; padding:18px; border-radius:10px; color:#d1fae5; font-size:15px; margin-top:20px;">
+            🎉 <b>¡EXTRAORDINARIO! NOTA 7.0 PERFECTA</b><br>
+            Has respondido las 30 preguntas de todos los módulos correctamente. ¡Estás 100% preparado para arrasar en la prueba escrita oficial!
+          </div>
+        `;
+      } else {
+        mistakesReviewHtml = `
+          <div style="margin-top:24px;">
+            <h3 style="color:#fca5a5; font-size:17px; font-weight:800; margin-bottom:14px;">
+              🔍 Repaso de tus ${mistakes.length} errores para estudiar:
+            </h3>
+            ${mistakes.map(m => `
+              <div style="background:rgba(15,23,42,0.9); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:14px 16px; margin-bottom:12px; text-align:left;">
+                <div style="font-size:11px; color:#93c5fd; font-weight:800; text-transform:uppercase; margin-bottom:4px;">${m.cat} &bull; Pregunta ${m.num}</div>
+                <div style="font-size:14.5px; font-weight:700; color:#fff; margin-bottom:6px;">${m.q}</div>
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:13px; margin-bottom:6px;">
+                  <span style="color:#f87171;">Marcaste: <b>"${m.userChoice}"</b></span>
+                  <span style="color:#34d399; font-weight:700;">Respuesta correcta: <b>"${m.ans}"</b></span>
+                </div>
+                <div style="font-size:13px; color:#cbd5e1; line-height:1.45;">💡 <b>Explicación:</b> ${m.exp}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      const gCard = document.getElementById('final-grade-card');
+      gCard.style.display = 'block';
+      gCard.innerHTML = `
+        <div class="grade-display-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+              <div style="font-size:13px; color:#9ca3af; text-transform:uppercase; font-weight:700;">Tu Calificación Final Estimada (Escala Chilena 60%)</div>
+              <div style="font-size:52px; font-weight:900; color:${grade >= 4.0 ? '#34d399' : '#f87171'}; margin:4px 0;">
+                NOTA ${grade.toFixed(1)}
+              </div>
+              <p style="font-size:15px; color:#e5e7eb; margin:0;">
+                Puntaje obtenido: <b>${correctCount}</b> de <b>${total}</b> preguntas correctas.
+              </p>
+              <p style="font-size:12.5px; color:#94a3b8; margin-top:4px;">
+                Criterio oficial: 60% de exigencia (18 correctas = 4.0 | 30 correctas = 7.0).
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-primary" style="padding:14px 28px; font-size:15px; font-weight:800;" onclick="resetFinalExam()">
+                🔄 Reintentar Examen Completo
+              </button>
+            </div>
+          </div>
+          ${mistakesReviewHtml}
+        </div>
+      `;
+
+      gCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetFinalExam() {
+      userFinalAnswers = {};
+      LocalDB.saveModule('mod13_final_answers', {});
+      renderFinalExam();
+      document.getElementById('final-grade-card').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('DOMContentLoaded', renderFinalExam);
+  </script>
+</body>
+</html>

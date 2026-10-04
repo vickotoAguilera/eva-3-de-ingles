@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 1 - 7.1 Weather Classifier</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+const weatherPhrases = [
+      { id: 1, text: "The sun is out.", trans: "El sol está afuera / Soleado", display: "El sol está afuera (The sun is out)", target: "nice" },
+      { id: 2, text: "It's cool and there's a lot of wind.", trans: "Está fresco y hay mucho viento", display: "Está fresco y hay mucho viento (It's cool and there's a lot of wind)", target: "bad" },
+      { id: 3, text: "There's no rain.", trans: "No hay lluvia", display: "No hay lluvia (There's no rain)", target: "nice" },
+      { id: 4, text: "The sky is filled with clouds.", trans: "El cielo está lleno de nubes / Nublado", display: "El cielo está lleno de nubes (The sky is filled with clouds)", target: "bad" },
+      { id: 5, text: "It's warm.", trans: "Hace calor / Templado", display: "Hace calor / Templado (It's warm)", target: "nice" },
+      { id: 6, text: "There's snow and cold weather.", trans: "Hay nieve y clima frío", display: "Hay nieve y clima frío (There's snow and cold weather)", target: "bad" }
+    ];
+
+    let userNice = [];
+    let userBad = [];
+    let draggedPhraseId = null;
+    let hasCheckedWeather = false;
+
+    function renderWeatherSort(container) {
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>☀️ 7.1 VOCABULARY: Weather (Clasificador Oficial con Drag & Drop)</h1>
+            <p>Toma cada frase con el mouse y <b>arrástrala directamente</b> a su respectiva caja de clima.</p>
+          </div>
+          <div>
+            <button class="btn btn-secondary" onclick="document.getElementById('email-card-section').scrollIntoView({behavior:'smooth'})">
+              ⬇️ Ver Email de Joe Abajo
+            </button>
+          </div>
+        </div>
+
+        <div class="banner-grammar">
+          <h3>🖱️ Instrucción: Arrastra y Suelta con el Mouse</h3>
+          <p>
+            • <b>Arrastra:</b> Haz clic sobre cualquier frase, mantén presionado y <b>arrástrala</b> a la caja <b>☀️ Nice weather</b> (buen clima) o a <b>🌧️ Bad weather</b> (mal clima).<br>
+            • <b>Comprobar:</b> Al pulsar <b>Comprobar Clasificación</b>, las frases buenas tendrán un <b>ticket verde ✔️</b> y las incorrectas marcarán <b>❌</b> con la explicación de Joe.
+          </p>
+        </div>
+
+        <!-- Caja de frases pendientes (Drop zone para devolver) -->
+        <div class="card" id="available-phrases-box"
+             ondragover="onDragOver(event)"
+             ondragenter="onDragEnter(event, 'pool')"
+             ondragleave="onDragLeave(event)"
+             ondrop="onDrop(event, 'pool')">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+            <h4 style="font-size:14px; color:#93c5fd; margin:0; display:flex; align-items:center; gap:6px;">
+              <span>📦 Frases para clasificar (Haz clic y arrastra con el mouse):</span>
+            </h4>
+            <span style="font-size:12px; color:#64748b;">(Zona para soltar frases si las quieres regresar)</span>
+          </div>
+          <div id="phrases-pool" style="display:flex; flex-wrap:wrap; gap:10px; min-height:50px; align-items:center;"></div>
+        </div>
+
+        <!-- Cajas receptoras (Buckets) con Drag & Drop -->
+        <div class="buckets-grid">
+          <div class="bucket" id="bucket-nice"
+               ondragover="onDragOver(event)"
+               ondragenter="onDragEnter(event, 'nice')"
+               ondragleave="onDragLeave(event)"
+               ondrop="onDrop(event, 'nice')">
+            <h4 style="color:#34d399; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between;">
+              <span>☀️ Buen clima (Nice weather)</span>
+              <span style="font-size:11px; font-weight:normal; color:#6ee7b7; background:rgba(16,185,129,0.15); padding:2px 8px; border-radius:4px;">Soltar aquí</span>
+            </h4>
+            <div class="bucket-items" id="items-nice"></div>
+          </div>
+
+          <div class="bucket target-bad" id="bucket-bad"
+               ondragover="onDragOver(event)"
+               ondragenter="onDragEnter(event, 'bad')"
+               ondragleave="onDragLeave(event)"
+               ondrop="onDrop(event, 'bad')">
+            <h4 style="color:#f87171; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between;">
+              <span>🌧️ Mal clima (Bad weather)</span>
+              <span style="font-size:11px; font-weight:normal; color:#fca5a5; background:rgba(239,68,68,0.15); padding:2px 8px; border-radius:4px;">Soltar aquí</span>
+            </h4>
+            <div class="bucket-items" id="items-bad"></div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+          <button class="btn btn-success" onclick="checkWeatherSort()">🔍 Comprobar Clasificación</button>
+          <button class="btn btn-secondary" onclick="resetWeatherSort()">🔄 Reiniciar</button>
+        </div>
+
+        <div class="feedback-box" id="weather-feedback"></div>
+
+        <!-- CARTA / EMAIL DE JOE SIEMPRE VISIBLE ABAJO -->
+        <div class="card" id="email-card-section" style="margin-top:24px; border-left:4px solid #60a5fa; background:linear-gradient(180deg, #1e293b 0%, #0f172a 100%);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+            <div>
+              <h3 style="color:#60a5fa; font-size:17px; margin:0; display:flex; align-items:center; gap:8px;">
+                ✉️ Email de Joe a Sinai (Lectura Oficial Oxford 7.1)
+              </h3>
+              <p style="font-size:12px; color:#9ca3af; margin:3px 0 0 0;">
+                Este email está <b>siempre visible</b> para que leas y fundamentes tu clasificación. Usa los botones para escucharlo en inglés o en español.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="playJoeEmailAudio()" style="font-size:13px; padding:8px 14px; display:inline-flex; align-items:center; gap:6px;">
+                🔊 Escuchar en Inglés
+              </button>
+              <button class="btn btn-secondary" onclick="playJoeEmailSpanishAudio()" style="font-size:13px; padding:8px 14px; display:inline-flex; align-items:center; gap:6px; background:#1e293b; color:#fbbf24; border-color:rgba(251,191,36,0.4);">
+                🔊 Escuchar en Español
+              </button>
+              <button class="btn btn-secondary" onclick="window.speechSynthesis.cancel()" style="font-size:13px; padding:8px 14px;">
+                ⏹️ Detener
+              </button>
+            </div>
+          </div>
+
+          <div style="background:#090d16; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:18px; font-size:14.5px; line-height:1.75; color:#e2e8f0; font-family:'Segoe UI', sans-serif;">
+            <div style="font-size:12px; color:#64748b; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
+              <b>De (From):</b> Joe &lt;joe@oxfordstudy.com&gt; &nbsp;|&nbsp; <b>Para (To):</b> Sinai &lt;sinai@oxfordstudy.com&gt; &nbsp;|&nbsp; <b>Asunto (Subject):</b> ¡Clima de vacaciones! (Vacation weather!)
+            </div>
+            <p style="margin-bottom:8px;"><b>Querida Sinai (Dear Sinai),</b></p>
+            <p style="margin-bottom:8px; line-height:2.0;">
+              <b>¿Cómo estás? (How are you?)</b> ¡No puedo creer <b>mis vacaciones (my vacation)</b>! En Londres (In London), el clima (the weather) está <b style="background:rgba(52,211,153,0.25); color:#34d399; padding:2px 6px; border-radius:4px;">bueno (nice)</b>: <span style="color:#6ee7b7; font-weight:600;"><span style="color:#a7f3d0; background:rgba(16,185,129,0.15); padding:1px 5px; border-radius:3px;">hace calor / templado (it's warm)</span> y <span style="color:#a7f3d0; background:rgba(16,185,129,0.15); padding:1px 5px; border-radius:3px;">el sol está afuera (the sun is out)</span>. <span style="color:#a7f3d0; background:rgba(16,185,129,0.15); padding:1px 5px; border-radius:3px;">No hay lluvia (there's no rain)</span></span>, pero aquí en España (but here in Spain), el clima (the weather) está <b style="background:rgba(248,113,113,0.25); color:#f87171; padding:2px 6px; border-radius:4px;">malo (bad)</b>: <span style="color:#fca5a5; font-weight:600;"><span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">¡No hay sol! (There is no sun!)</span> <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">El cielo está lleno de nubes (The sky is filled with clouds)</span>. <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">Está fresco/frío (It's cool)</span> y <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">hay mucho viento (there's a lot of wind)</span>. <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">¡Hay nieve en las montañas! (There's snow in the mountains!)</span></span> ¡No tengo <b>ropa (clothes)</b> para este <b>clima frío (cold weather)</b>! ¡Ya <b>no veo la hora / no puedo esperar (can't wait)</b> de <b>volver a casa (come home)</b>!
+            </p>
+            <p style="margin-top:8px; margin-bottom:14px;">¡<b>Espero verte pronto (Hope to see you soon)</b>!<br><b>Joe</b></p>
+
+            <!-- TRADUCCIÓN COMPLETA AL ESPAÑOL -->
+            <div style="margin-top:16px; padding:16px 18px; background:rgba(30, 41, 59, 0.7); border-radius:8px; border-left:4px solid #fbbf24; border:1px solid rgba(251,191,36,0.25);">
+              <div style="font-size:12.5px; font-weight:700; color:#fbbf24; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                <span>🌍 Traducción al Español (Párrafo por Párrafo):</span>
+              </div>
+              <p style="font-size:13.5px; line-height:1.7; color:#cbd5e1; margin-bottom:8px;">
+                <b>Querida Sinai:</b>
+              </p>
+              <p style="font-size:13.5px; line-height:1.7; color:#cbd5e1; margin-bottom:8px;">
+                ¿Cómo estás? ¡No puedo creer mis vacaciones! En Londres, el clima está <b style="color:#34d399; background:rgba(52,211,153,0.15); padding:1px 6px; border-radius:4px;">bueno (nice)</b>: <span style="color:#a7f3d0;">hace calor/está templado y el sol está afuera. No hay lluvia</span>, pero aquí en España, el clima está <b style="color:#f87171; background:rgba(248,113,113,0.15); padding:1px 6px; border-radius:4px;">malo (bad)</b>: <span style="color:#fecaca;">¡No hay sol! El cielo está lleno de nubes. Está fresco/frío y hay mucho viento. ¡Hay nieve en las montañas!</span> ¡No tengo ropa para este clima tan frío! ¡Ya no veo la hora de volver a casa!
+              </p>
+              <p style="font-size:13.5px; line-height:1.7; color:#cbd5e1; margin-top:8px; margin-bottom:0;">
+                ¡Espero verte pronto!<br><b>Joe</b>
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      resetWeatherSort();
+    }
+
+    function resetWeatherSort() {
+      userNice = [];
+      userBad = [];
+      draggedPhraseId = null;
+      hasCheckedWeather = false;
+      renderPhrasesPool();
+      updateBuckets();
+      document.getElementById('weather-feedback').style.display = 'none';
+    }
+
+    // Funciones nativas de Drag and Drop
+    function onDragStart(event, id) {
+      draggedPhraseId = id;
+      event.dataTransfer.setData('text/plain', String(id));
+      event.dataTransfer.effectAllowed = 'move';
+      const target = event.currentTarget || event.target;
+      target.classList.add('dragging');
+    }
+
+    function onDragEnd(event) {
+      const target = event.currentTarget || event.target;
+      if (target) target.classList.remove('dragging');
+      document.querySelectorAll('.bucket, #available-phrases-box').forEach(el => {
+        el.classList.remove('drag-over-nice', 'drag-over-bad', 'drag-over-pool');
+      });
+    }
+
+    function onDragOver(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+    }
+
+    function onDragEnter(event, targetType) {
+      event.preventDefault();
+      const el = event.currentTarget;
+      if (targetType === 'nice') el.classList.add('drag-over-nice');
+      else if (targetType === 'bad') el.classList.add('drag-over-bad');
+      else if (targetType === 'pool') el.classList.add('drag-over-pool');
+    }
+
+    function onDragLeave(event) {
+      const el = event.currentTarget;
+      el.classList.remove('drag-over-nice', 'drag-over-bad', 'drag-over-pool');
+    }
+
+    function onDrop(event, targetBox) {
+      event.preventDefault();
+      const idStr = event.dataTransfer.getData('text/plain');
+      const id = draggedPhraseId || parseInt(idStr);
+
+      document.querySelectorAll('.bucket, #available-phrases-box').forEach(el => {
+        el.classList.remove('drag-over-nice', 'drag-over-bad', 'drag-over-pool');
+      });
+
+      if (!id) return;
+
+      // Al mover una frase, reiniciamos el estado de evaluación para recalificar cuando pulse el botón
+      hasCheckedWeather = false;
+      document.getElementById('weather-feedback').style.display = 'none';
+
+      // Retirar de ambas cajas primero
+      userNice = userNice.filter(x => x !== id);
+      userBad = userBad.filter(x => x !== id);
+
+      if (targetBox === 'nice') {
+        userNice.push(id);
+      } else if (targetBox === 'bad') {
+        userBad.push(id);
+      } // si targetBox es 'pool', queda de vuelta en las frases disponibles
+
+      draggedPhraseId = null;
+      renderPhrasesPool();
+      updateBuckets();
+    }
+
+    function renderPhrasesPool() {
+      const pool = document.getElementById('phrases-pool');
+      if (!pool) return;
+      pool.innerHTML = '';
+      weatherPhrases.forEach(p => {
+        if (!userNice.includes(p.id) && !userBad.includes(p.id)) {
+          const btn = document.createElement('div');
+          btn.className = 'phrase-chip draggable-chip';
+          btn.setAttribute('draggable', 'true');
+          btn.ondragstart = (e) => onDragStart(e, p.id);
+          btn.ondragend = (e) => onDragEnd(e);
+          btn.innerHTML = `
+            <span style="display:flex; flex-direction:column; gap:3px;">
+              <span style="display:flex; align-items:center; gap:8px;">
+                <span class="drag-handle" title="Arrastra con el mouse">⠿</span>
+                <b style="font-size:14px; color:#ffffff;">${p.display}</b>
+              </span>
+              <span style="font-size:11.5px; color:#93c5fd; margin-left:22px; font-weight:500;">
+                👉 En inglés de Oxford: <i>"${p.text}"</i>
+              </span>
+            </span>
+            <span style="font-size:11.5px; color:#60a5fa; margin-left:10px; background:rgba(96,165,250,0.15); padding:2px 8px; border-radius:4px; pointer-events:none; align-self:center;">
+              Arrastrar ➔
+            </span>
+          `;
+          // Soporte opcional de clic para accesibilidad
+          btn.onclick = (e) => {
+            if (e.target.classList.contains('drag-handle')) return;
+            showMoveMenu(p, btn);
+          };
+          pool.appendChild(btn);
+        }
+      });
+
+      if (pool.children.length === 0) {
+        pool.innerHTML = '<span style="color:#9ca3af; font-size:13.5px; padding:6px 0;">🎉 Todas las frases han sido arrastradas a las cajas. Pulsa <b>Comprobar Clasificación</b> para evaluar.</span>';
+      }
+    }
+
+    function showMoveMenu(phrase, el) {
+      if (confirm(`¿Mover "${phrase.text}" a NICE WEATHER (Aceptar) o a BAD WEATHER (Cancelar)?`)) {
+        userNice.push(phrase.id);
+      } else {
+        userBad.push(phrase.id);
+      }
+      hasCheckedWeather = false;
+      document.getElementById('weather-feedback').style.display = 'none';
+      renderPhrasesPool();
+      updateBuckets();
+    }
+
+    function updateBuckets() {
+      const nBox = document.getElementById('items-nice');
+      const bBox = document.getElementById('items-bad');
+      if (!nBox || !bBox) return;
+
+      // Caja NICE WEATHER
+      nBox.innerHTML = '';
+      userNice.forEach(id => {
+        const p = weatherPhrases.find(x => x.id === id);
+        const item = document.createElement('div');
+        item.className = 'phrase-chip draggable-chip';
+        item.setAttribute('draggable', 'true');
+        item.ondragstart = (e) => onDragStart(e, p.id);
+        item.ondragend = (e) => onDragEnd(e);
+
+        if (hasCheckedWeather) {
+          const isCorrect = (p.target === 'nice');
+          item.style.borderColor = isCorrect ? '#10b981' : '#ef4444';
+          item.style.background = isCorrect ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
+          item.innerHTML = `
+            <span style="display:flex; flex-direction:column; gap:2px;">
+              <span style="display:flex; align-items:center; gap:8px;">
+                <span class="drag-handle">⠿</span>
+                <span><b>${p.display}</b></span>
+              </span>
+              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            </span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${isCorrect ?
+                '<span class="chip-status-badge chip-status-correct">✔️ Correcto</span>' :
+                '<span class="chip-status-badge chip-status-incorrect">❌ Incorrecto</span>'
+              }
+              <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'nice'); event.stopPropagation();" title="Mover de vuelta">↩️</span>
+            </div>
+          `;
+        } else {
+          item.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          item.innerHTML = `
+            <span style="display:flex; flex-direction:column; gap:2px;">
+              <span style="display:flex; align-items:center; gap:8px;">
+                <span class="drag-handle">⠿</span>
+                <span><b>${p.display}</b></span>
+              </span>
+              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            </span>
+            <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'nice'); event.stopPropagation();" title="Quitar de esta caja">↩️ Quitar</span>
+          `;
+        }
+        nBox.appendChild(item);
+      });
+      if (userNice.length === 0) {
+        nBox.innerHTML = '<div class="empty-bucket-hint">Arrastra y suelta aquí las frases de <b>buen clima</b>...</div>';
+      }
+
+      // Caja BAD WEATHER
+      bBox.innerHTML = '';
+      userBad.forEach(id => {
+        const p = weatherPhrases.find(x => x.id === id);
+        const item = document.createElement('div');
+        item.className = 'phrase-chip draggable-chip';
+        item.setAttribute('draggable', 'true');
+        item.ondragstart = (e) => onDragStart(e, p.id);
+        item.ondragend = (e) => onDragEnd(e);
+
+        if (hasCheckedWeather) {
+          const isCorrect = (p.target === 'bad');
+          item.style.borderColor = isCorrect ? '#10b981' : '#ef4444';
+          item.style.background = isCorrect ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
+          item.innerHTML = `
+            <span style="display:flex; flex-direction:column; gap:2px;">
+              <span style="display:flex; align-items:center; gap:8px;">
+                <span class="drag-handle">⠿</span>
+                <span><b>${p.display}</b></span>
+              </span>
+              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            </span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${isCorrect ?
+                '<span class="chip-status-badge chip-status-correct">✔️ Correcto</span>' :
+                '<span class="chip-status-badge chip-status-incorrect">❌ Incorrecto</span>'
+              }
+              <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'bad'); event.stopPropagation();" title="Mover de vuelta">↩️</span>
+            </div>
+          `;
+        } else {
+          item.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+          item.innerHTML = `
+            <span style="display:flex; flex-direction:column; gap:2px;">
+              <span style="display:flex; align-items:center; gap:8px;">
+                <span class="drag-handle">⠿</span>
+                <span><b>${p.display}</b></span>
+              </span>
+              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            </span>
+            <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'bad'); event.stopPropagation();" title="Quitar de esta caja">↩️ Quitar</span>
+          `;
+        }
+        bBox.appendChild(item);
+      });
+      if (userBad.length === 0) {
+        bBox.innerHTML = '<div class="empty-bucket-hint">Arrastra y suelta aquí las frases de <b>mal clima</b>...</div>';
+      }
+    }
+
+    function removePhrase(id, from) {
+      if (from === 'nice') userNice = userNice.filter(x => x !== id);
+      else userBad = userBad.filter(x => x !== id);
+      hasCheckedWeather = false;
+      document.getElementById('weather-feedback').style.display = 'none';
+      renderPhrasesPool();
+      updateBuckets();
+    }
+
+    function checkWeatherSort() {
+      hasCheckedWeather = true;
+      let errors = 0;
+      let feedbackHtml = '<b>📋 Resultados del Análisis:</b><br><br>';
+
+      weatherPhrases.forEach(p => {
+        const userLoc = userNice.includes(p.id) ? 'nice' : (userBad.includes(p.id) ? 'bad' : 'none');
+        if (userLoc !== p.target) {
+          errors++;
+          feedbackHtml += `❌ <b>"${p.display}"</b> debe ir en <b>${p.target === 'nice' ? '☀️ BUEN CLIMA (Nice weather)' : '🌧️ MAL CLIMA (Bad weather)'}</b>. En el email de Joe, explica: ${p.target === 'nice' ? 'en Londres hace buen tiempo porque sale el sol, está templado y no llueve.' : 'en España hace mal tiempo porque el cielo se llena de nubes, hay viento frío y nieve en las montañas.'}<br><br>`;
+        } else {
+          feedbackHtml += `✔️ <b>"${p.display}"</b> está correctamente clasificada en <b>${p.target === 'nice' ? '☀️ BUEN CLIMA (Nice weather)' : '🌧️ MAL CLIMA (Bad weather)'}</b>.<br><br>`;
+        }
+      });
+
+      // Actualizar visualmente cada frase con su badge verde o rojo
+      updateBuckets();
+
+      const box = document.getElementById('weather-feedback');
+      box.className = `feedback-box ${errors === 0 ? 'correct' : 'incorrect'}`;
+      box.innerHTML = feedbackHtml;
+      box.style.display = 'block';
+    }
+
+    function closeEmailModal(e) {
+      document.getElementById('email-modal').style.display = 'none';
+    }
+
+document.addEventListener('DOMContentLoaded', () => { renderWeatherSort(document.getElementById('module-container')); });
+  </script>
+</body>
+</html>

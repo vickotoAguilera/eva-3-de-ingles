@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 7 - Flashcards de Estudio</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 680px; margin: 0 auto; text-align: center; }
+    .flashcard {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 36px 24px;
+      margin: 20px 0;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: all 0.25s ease;
+    }
+    .flashcard:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+    const masterVerbs = [
+      { base: "take", past: "took", trans: "tomar / sacar fotos", ex: "I took many pictures at the beach." },
+      { base: "go", past: "went", trans: "ir", ex: "We went to Quintero beach last summer." },
+      { base: "buy", past: "bought", trans: "comprar", ex: "I bought nice handmade souvenirs." },
+      { base: "see", past: "saw", trans: "ver / divisar", ex: "We saw sea lions swimming in the ocean." },
+      { base: "have", past: "had", trans: "tener / comer / almorzar", ex: "We had lunch at a local restaurant." },
+      { base: "eat", past: "ate", trans: "comer", ex: "They ate fresh seafood for dinner." },
+      { base: "drink", past: "drank", trans: "beber / tomar líquido", ex: "She drank hot tea to keep warm." },
+      { base: "meet", past: "met", trans: "conocer / reunirse", ex: "I met friendly local people in town." },
+      { base: "feel", past: "felt", trans: "sentirse", ex: "Finally, I felt very relaxed and happy." },
+      { base: "swim", past: "swam", trans: "nadar", ex: "The children swam in the cool ocean." },
+      { base: "drive", past: "drove", trans: "conducir / manejar", ex: "My father drove the car to the coast." },
+      { base: "spend", past: "spent", trans: "pasar tiempo / gastar", ex: "We spent two days exploring Ventanas." },
+      { base: "leave", past: "left", trans: "salir / partir / dejar", ex: "The bus left the terminal on time." },
+      { base: "get", past: "got", trans: "obtener / llegar", ex: "We got to the hotel in the morning." },
+      { base: "sleep", past: "slept", trans: "dormir", ex: "We slept in a quiet hotel room." },
+      { base: "come", past: "came", trans: "venir / llegar", ex: "My cousins came with us to the trip." },
+      { base: "make", past: "made", trans: "hacer / preparar", ex: "They made a big snowman in the snow." },
+      { base: "write", past: "wrote", trans: "escribir", ex: "I wrote eight sentences for my assignment." },
+      { base: "read", past: "read", trans: "leer (/red/)", ex: "Joe read an interesting email about weather." },
+      { base: "do", past: "did", trans: "hacer (auxiliar)", ex: "Did you go to the party? Yes, I did." },
+      { base: "give", past: "gave", trans: "dar", ex: "He gave me a souvenir from the trip." },
+      { base: "find", past: "found", trans: "encontrar", ex: "We found a beautiful shell on the sand." },
+      { base: "think", past: "thought", trans: "pensar", ex: "I thought the weather was sunny." },
+      { base: "bring", past: "brought", trans: "traer", ex: "We brought umbrellas because of the rain." },
+      { base: "wear", past: "wore", trans: "vestir / usar ropa", ex: "I wore sunglasses because it was sunny." },
+      { base: "visit", past: "visited", trans: "visitar (regular)", ex: "We visited the historic church in Ventanas." },
+      { base: "walk", past: "walked", trans: "caminar (regular)", ex: "We walked on the beach." },
+      { base: "plan", past: "planned", trans: "planear (CVC: duplica n)", ex: "They planned their trip two months ago." },
+      { base: "raise", past: "raised", trans: "recaudar (termina en e)", ex: "We raised money for charity." },
+      { base: "study", past: "studied", trans: "estudiar (y -> ied)", ex: "I studied English in the evening." },
+      { base: "arrive", past: "arrived", trans: "llegar (termina en e)", ex: "We arrived at the beach at noon." },
+      { base: "taste", past: "tasted", trans: "probar comida", ex: "We tasted delicious seafood." }
+    ];
+
+    let fcIndex = 0;
+    let fcFlipped = false;
+
+    function renderFlashcards(container) {
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>🗂️ Flashcards Rápidas: Verbos y Pasado Simple</h1>
+            <p>Haz clic en la tarjeta para voltearla y verificar cómo se dice en pasado simple antes de la prueba escrita.</p>
+          </div>
+        </div>
+
+        <div style="max-width:540px; margin: 0 auto;">
+          <div class="flashcard" id="flashcard-box" onclick="flipFlashcard()">
+            <div id="fc-front">
+              <span style="font-size:12px; color:#60a5fa; text-transform:uppercase; font-weight:700;">Español / Forma Base</span>
+              <h2 id="fc-title" style="margin:16px 0; font-size:24px; color:#fff;"></h2>
+              <span style="font-size:12px; color:#9ca3af;">(Toca aquí para voltear y ver el pasado)</span>
+            </div>
+            <div id="fc-back" style="display:none;">
+              <span style="font-size:12px; color:#34d399; text-transform:uppercase; font-weight:700;">Pasado Simple en Inglés</span>
+              <h2 id="fc-answer" style="margin:16px 0; font-size:28px; color:#34d399; font-weight:900;"></h2>
+              <p id="fc-example" style="font-size:14px; color:#e5e7eb; font-style:italic; margin-bottom:12px;"></p>
+              <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="event.stopPropagation(); speak(document.getElementById('fc-answer').innerText)">🔊 Escuchar</button>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="btn btn-secondary" onclick="prevFlashcard()">◀ Anterior</button>
+            <span id="fc-counter" style="font-size:13px; color:#94a3b8; font-weight:700;"></span>
+            <button class="btn btn-primary" onclick="nextFlashcard()">Siguiente ▶</button>
+          </div>
+        </div>
+      `;
+
+      showFlashcard();
+    }
+
+    function showFlashcard() {
+      const v = masterVerbs[fcIndex];
+      fcFlipped = false;
+      document.getElementById('fc-front').style.display = 'block';
+      document.getElementById('fc-back').style.display = 'none';
+
+      document.getElementById('fc-title').innerText = `${v.trans} (${v.base})`;
+      document.getElementById('fc-answer').innerText = `${v.past.toUpperCase()}`;
+      document.getElementById('fc-example').innerText = `"${v.ex}"`;
+      document.getElementById('fc-counter').innerText = `Tarjeta ${fcIndex + 1} de ${masterVerbs.length}`;
+    }
+
+    function flipFlashcard() {
+      fcFlipped = !fcFlipped;
+      document.getElementById('fc-front').style.display = fcFlipped ? 'none' : 'block';
+      document.getElementById('fc-back').style.display = fcFlipped ? 'block' : 'none';
+    }
+
+    function nextFlashcard() {
+      fcIndex = (fcIndex + 1) % masterVerbs.length;
+      showFlashcard();
+    }
+
+    function prevFlashcard() {
+      fcIndex = (fcIndex - 1 + masterVerbs.length) % masterVerbs.length;
+      showFlashcard();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFlashcards(document.getElementById('module-container'));
+    });
+  </script>
+</body>
+</html>

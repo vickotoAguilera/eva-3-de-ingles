@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 5 - Writing Studio (8 Oraciones)</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+const vacationSentences = [
+      "Last summer in 2025, I went to Quintero beach because I wanted to explore the coast.",
+      "First, I arrived at a hotel and the weather was sunny and warm.",
+      "Then, we visited the city of Ventanas and took many pictures.",
+      "We walked on the beach, but the wind suddenly became very cold.",
+      "After that, we had lunch at a local restaurant and tasted delicious seafood.",
+      "In the afternoon, I bought nice souvenirs because my family loved the place.",
+      "Later, it started to rain, so we didn't stay on the beach.",
+      "Finally, we returned home and I felt very happy about our trip."
+    ];
+
+    const lastWeekSentences = [
+      "Last week, I stayed at home with my family because the weather was very rainy.",
+      "First, on Monday I cleaned my room and the morning was cold and cloudy.",
+      "Then, I studied for my English test and watched an interesting movie.",
+      "I wanted to play soccer with my friends, but it rained heavily in the afternoon.",
+      "After that, my mom cooked dinner and we talked about our week.",
+      "On Saturday, I bought groceries at the supermarket and visited my grandparents.",
+      "On Sunday, I rested at home, listened to music, and enjoyed the quiet day.",
+      "Finally, I went to bed early on Sunday night and felt ready for a new week."
+    ];
+
+    const sentenceGuides = [
+      {
+        num: 1,
+        title: "Oración 1: Introducción Temporal + Conector de Causa (because)",
+        badge: "Conector: because | Verbo clave: went (fui)",
+        blueprint: "[Tiempo con coma: Last summer in 2025,] + [Sujeto: I] + [Verbo en Pasado: went] + [Lugar: to Quintero beach] + [because] + [Sujeto: I] + [Verbo en Pasado: wanted] + [Objetivo: to explore the coast.]",
+        tip: "Indica cuándo ocurrió tu experiencia (<b>Last week</b>, <b>Last weekend</b>, <b>In 2025</b>, <b>Last summer</b>), usa <b>went</b> (fui/fuimos) o <b>stayed</b> (me quedé), y explica la razón usando <b>because</b> (porque).",
+        vacation: "Last summer in 2025, I went to Quintero beach because I wanted to explore the coast.",
+        vacationEs: "El verano pasado en 2025, fui a la playa de Quintero porque quería explorar la costa.",
+        week: "Last week, I stayed at home with my family because the weather was very rainy.",
+        weekEs: "La semana pasada, me quedé en casa con mi familia porque el clima estaba muy lluvioso.",
+        vocab: [
+          { en: "went", es: "fui / fuimos (pasado de go)" },
+          { en: "wanted", es: "quería / quise (pasado de want)" },
+          { en: "because", es: "porque (explica la razón)" },
+          { en: "beach", es: "playa" },
+          { en: "stayed", es: "me quedé (pasado de stay)" }
+        ]
+      },
+      {
+        num: 2,
+        title: "Oración 2: Secuencia First + Clima en Pasado (was)",
+        badge: "Secuencia: First (Primero) | Clima: was sunny/cold",
+        blueprint: "[Secuencia: First,] + [Sujeto: I] + [Verbo Regular -ed: arrived] + [Lugar: at a hotel] + [and] + [the weather was] + [Clima 1: sunny] + [and] + [Clima 2: warm.]",
+        tip: "Usa la palabra de secuencia obligatoria <b>First</b> (Primero) para iniciar el relato y describe el clima usando <b>was</b> (estaba / era) con palabras de clima (<b>sunny, warm, cold, rainy, cloudy</b>).",
+        vacation: "First, I arrived at a hotel and the weather was sunny and warm.",
+        vacationEs: "Primero, llegué a un hotel y el clima estaba soleado y agradable (cálido).",
+        week: "First, on Monday I cleaned my room and the morning was cold and cloudy.",
+        weekEs: "Primero, el lunes limpié mi pieza y la mañana estaba fría y nublada.",
+        vocab: [
+          { en: "First", es: "Primero (abre el relato)" },
+          { en: "arrived", es: "llegué (pasado de arrive)" },
+          { en: "weather", es: "clima / tiempo" },
+          { en: "was", es: "estaba / era (pasado de is)" },
+          { en: "sunny", es: "soleado ☀️" },
+          { en: "warm", es: "cálido / agradable 🌤️" },
+          { en: "cleaned", es: "limpié (pasado de clean)" }
+        ]
+      },
+      {
+        num: 3,
+        title: "Oración 3: Secuencia Then + Verbo Regular + Verbo Irregular (took / saw)",
+        badge: "Secuencia: Then (Luego) | Verbos: visited & took",
+        blueprint: "[Secuencia: Then,] + [Sujeto: we] + [Verbo Regular -ed: visited] + [Lugar: the city of Ventanas] + [and] + [Verbo Irregular: took] + [Objeto: many pictures.]",
+        tip: "Usa <b>Then</b> (Luego / Después) para continuar la narración y conecta dos acciones con <b>and</b> (y). Combina un verbo regular (<i>visited, studied</i>) y uno irregular (<i>took = saqué fotos, saw = vi</i>).",
+        vacation: "Then, we visited the city of Ventanas and took many pictures.",
+        vacationEs: "Luego, visitamos la ciudad de Ventanas y sacamos muchas fotos.",
+        week: "Then, I studied for my English test and watched an interesting movie.",
+        weekEs: "Luego, estudié para mi prueba de inglés y vi una película interesante.",
+        vocab: [
+          { en: "Then", es: "Luego / Después" },
+          { en: "visited", es: "visitamos (pasado de visit)" },
+          { en: "took", es: "tomamos / sacamos fotos (pasado de take)" },
+          { en: "and", es: "y (conecta 2 ideas)" },
+          { en: "studied", es: "estudié (pasado de study)" },
+          { en: "watched", es: "vi / miré (pasado de watch)" }
+        ]
+      },
+      {
+        num: 4,
+        title: "Oración 4: Conector de Contraste BUT + Imprevisto o Cambio de Clima",
+        badge: "Conector: but (pero) | Imprevisto de clima",
+        blueprint: "[Sujeto: We] + [Verbo Pasado: walked] + [Lugar: on the beach,] + [, but (coma + pero)] + [the wind] + [Verbo Pasado: suddenly became] + [Clima: very cold.]",
+        tip: "Usa el conector de contraste obligatorio <b>but</b> (pero) para narrar un cambio de planes o de clima (ej: querías salir pero llovió, caminamos pero el viento se puso muy frío).",
+        vacation: "We walked on the beach, but the wind suddenly became very cold.",
+        vacationEs: "Caminamos por la playa, pero el viento de repente se puso muy frío.",
+        week: "I wanted to play soccer with my friends, but it rained heavily in the afternoon.",
+        weekEs: "Quería jugar a la pelota con mis amigos, pero llovió fuerte en la tarde.",
+        vocab: [
+          { en: "walked", es: "caminamos (pasado de walk)" },
+          { en: "but", es: "pero (contraste / imprevisto)" },
+          { en: "wind", es: "viento 💨" },
+          { en: "became", es: "se puso / se volvió (pasado de become)" },
+          { en: "cold", es: "frío ❄️" },
+          { en: "rained", es: "llovió (pasado de rain)" }
+        ]
+      },
+      {
+        num: 5,
+        title: "Oración 5: Secuencia After that + Actividad o Comida (had lunch / cooked)",
+        badge: "Secuencia: After that (Después de eso)",
+        blueprint: "[Secuencia: After that,] + [Sujeto: we] + [had lunch (almorzamos)] + [Lugar: at a local restaurant] + [and] + [Verbo Pasado: tasted] + [Detalle: delicious seafood.]",
+        tip: "Usa la expresión de secuencia obligatoria <b>After that</b> (Después de eso) junto a un verbo en pasado simple (<i>had lunch = almorzamos, cooked = cocinó, talked = conversamos</i>).",
+        vacation: "After that, we had lunch at a local restaurant and tasted delicious seafood.",
+        vacationEs: "Después de eso, almorzamos en un restaurante local y probamos deliciosos mariscos.",
+        week: "After that, my mom cooked dinner and we talked about our week.",
+        weekEs: "Después de eso, mi mamá cocinó la cena y conversamos sobre nuestra semana.",
+        vocab: [
+          { en: "After that", es: "Después de eso" },
+          { en: "had lunch", es: "almorzamos (had = pasado de have)" },
+          { en: "tasted", es: "probamos / degustamos (pasado de taste)" },
+          { en: "cooked", es: "cocinó (pasado de cook)" },
+          { en: "talked", es: "conversamos (pasado de talk)" }
+        ]
+      },
+      {
+        num: 6,
+        title: "Oración 6: Verbo Irregular BOUGHT (compré) + because / and",
+        badge: "Verbo Irregular: bought (compré)",
+        blueprint: "[Momento: In the afternoon,] + [Sujeto: I] + [Verbo Irregular: bought] + [Objeto: nice souvenirs] + [because] + [Sujeto: my family] + [Verbo Pasado: loved the place.]",
+        tip: "Narra algo que compraste usando <b>bought</b> (pasado de buy: compré / compramos), explicando el motivo con <b>because</b> o agregando detalles con <b>and</b>.",
+        vacation: "In the afternoon, I bought nice souvenirs because my family loved the place.",
+        vacationEs: "En la tarde, compré lindos recuerdos porque a mi familia le encantó el lugar.",
+        week: "On Saturday, I bought groceries at the supermarket and visited my grandparents.",
+        weekEs: "El sábado, compré mercadería en el supermercado y visité a mis abuelos.",
+        vocab: [
+          { en: "bought", es: "compré / compramos (pasado de buy)" },
+          { en: "souvenirs", es: "recuerdos / regalitos" },
+          { en: "loved", es: "le encantó / amó (pasado de love)" },
+          { en: "groceries", es: "mercadería / comida del súper" },
+          { en: "grandparents", es: "abuelos" }
+        ]
+      },
+      {
+        num: 7,
+        title: "Oración 7: Verbo Regular de Descanso o Actividad (rested, enjoyed, didn't stay)",
+        badge: "Verbo Regular: -ed | Negación: didn't",
+        blueprint: "[Momento: Later,] + [it started to rain,] + [, so] + [Sujeto: we] + [Negación: didn't stay (verbo base stay)] + [Lugar: on the beach.]",
+        tip: "Añade un momento de relajo usando un verbo regular en pasado (<i>rested = descansé, enjoyed = disfruté, listened = escuché</i>) o una negación con <b>didn't</b> (<i>didn't stay = no nos quedamos</i>).",
+        vacation: "Later, it started to rain, so we didn't stay on the beach.",
+        vacationEs: "Más tarde, empezó a llover, así que no nos quedamos en la playa.",
+        week: "On Sunday, I rested at home, listened to music, and enjoyed the quiet day.",
+        weekEs: "El domingo, descansé en la casa, escuché música y disfruté el día tranquilo.",
+        vocab: [
+          { en: "started", es: "empezó (pasado de start)" },
+          { en: "didn't stay", es: "no nos quedamos (stay vuelve a forma base)" },
+          { en: "rested", es: "descansé (pasado de rest)" },
+          { en: "listened", es: "escuché (pasado de listen)" },
+          { en: "enjoyed", es: "disfruté (pasado de enjoy)" }
+        ]
+      },
+      {
+        num: 8,
+        title: "Oración 8: Secuencia Final Finally + Sentimiento de Conclusión (felt)",
+        badge: "Secuencia: Finally (Finalmente) | Sentimiento: felt",
+        blueprint: "[Secuencia: Finally,] + [Sujeto: we] + [Verbo Pasado: returned home] + [and] + [Sujeto: I] + [Verbo Pasado: felt] + [Sentimiento: very happy about our trip.]",
+        tip: "Cierra tu narración con la palabra de secuencia obligatoria <b>Finally</b> (Finalmente) y cuenta cómo concluyó el viaje o la semana y cómo te sentiste usando <b>felt</b> (pasado de feel: <i>felt happy = me sentí feliz, felt ready = me sentí listo</i>).",
+        vacation: "Finally, we returned home and I felt very happy about our trip.",
+        vacationEs: "Finalmente, volvimos a casa y me sentí muy feliz por nuestro viaje.",
+        week: "Finally, I went to bed early on Sunday night and felt ready for a new week.",
+        weekEs: "Finalmente, me fui a acostar temprano el domingo en la noche y me sentí listo para una nueva semana.",
+        vocab: [
+          { en: "Finally", es: "Finalmente (cierra la historia)" },
+          { en: "returned", es: "volvimos / regresamos (pasado de return)" },
+          { en: "felt", es: "me sentí / nos sentimos (pasado de feel)" },
+          { en: "went to bed", es: "me fui a acostar (went = fui)" },
+          { en: "ready", es: "listo / preparado" }
+        ]
+      }
+    ];
+
+    function renderWritingStudio(container) {
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>✍️ Taller de Redacción: Las 8 Oraciones en Pasado Simple</h1>
+            <p>Escribe sobre un viaje/vacaciones O sobre lo que hiciste la semana pasada. Cada oración tiene su tip de ayuda y el botón para verificar si está bien o mal.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="loadView('connectors-guide')" style="background:linear-gradient(135deg, #2563eb, #7c3aed); border:none; display:inline-flex; align-items:center; gap:6px; font-weight:600;">
+              🕒 Guía Bilingüe: Conectores & "Last week"
+            </button>
+            <button class="btn btn-secondary" onclick="loadWritingExample('vacation')">
+              🏖️ Cargar Ejemplo: Vacaciones
+            </button>
+            <button class="btn btn-secondary" onclick="loadWritingExample('week')">
+              📅 Cargar Ejemplo: Semana Pasada
+            </button>
+            <button class="btn btn-secondary" onclick="clearWritingInputs()">
+              🗑️ Limpiar Campos
+            </button>
+          </div>
+        </div>
+
+        <div class="banner-grammar">
+          <h3>📋 Pauta Oficial del Profesor (Rúbrica de Evaluación):</h3>
+          <p>
+            • <b>Tema:</b> Experiencia personal en pasado simple (puedes escribir sobre <b>vacaciones/viaje</b> O sobre <b>lo que hiciste la semana pasada / fin de semana</b>).<br>
+            • <b>Extensión:</b> Exactamente <b>8 oraciones</b> bien estructuradas en pasado simple.<br>
+            • <b>Verbos:</b> Uso de <b>verbos regulares</b> (-ed) e <b>irregulares</b> (went, took, bought, had, felt, etc.).<br>
+            • <b>Conectores obligatorios:</b> <b>and</b> (adición), <b>but</b> (contraste), <b>because</b> (causa).<br>
+            • <b>Secuencia obligatoria:</b> <b>First</b>, <b>Then</b>, <b>After that</b>, <b>Finally</b>.<br>
+            • <b>Vocabulario de clima:</b> <b>sunny, warm, cold, wind, rain, cloudy</b>.
+          </p>
+        </div>
+
+        <!-- ALERTA Y PROTOCOLO: PRUEBA ESCRITA CON LÁPIZ Y PAPEL -->
+        <div style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.15), rgba(15, 23, 42, 0.9)); border: 2px solid #ef4444; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+            <h3 style="color:#fca5a5; font-size:18px; margin:0; display:flex; align-items:center; gap:8px;">
+              📝 PROTOCOLO PARA LA PRUEBA ESCRITA (Con Lápiz y Papel)
+            </h3>
+            <span style="font-size:12px; background:rgba(239,68,68,0.3); color:#fca5a5; padding:3px 10px; border-radius:12px; font-weight:700;">
+              ⚠️ Los 6 Errores que los Profes Más Cobran
+            </span>
+          </div>
+          <p style="font-size:13.5px; color:#f1f5f9; line-height:1.6; margin:0 0 12px 0;">
+            En una prueba escrita no tienes corrector automático. Para asegurar el <b>7.0</b>, memoriza estas 6 reglas fijas antes de escribir con tu lápiz:
+          </p>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:10px; font-size:13px;">
+            <div style="background:rgba(0,0,0,0.4); border-left:3px solid #ef4444; padding:10px 12px; border-radius:6px;">
+              <b style="color:#f87171;">1. Dónde va el Apóstrofe:</b><br>
+              Va <b>entre la n y la t</b>: <b style="color:#fff;">wasn't</b>, <b style="color:#fff;">weren't</b>, <b style="color:#fff;">didn't</b>.<br>
+              <span style="color:#94a3b8; font-size:11.5px;">(Mnemotecnia: el apóstrofe mata a la 'o' de not).</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.4); border-left:3px solid #ef4444; padding:10px 12px; border-radius:6px;">
+              <b style="color:#f87171;">2. La letra 'I' (Yo) SIEMPRE en Mayúscula:</b><br>
+              Escribe siempre <b style="color:#fff;">I went</b>, nunca <s>i went</s>.<br>
+              <span style="color:#94a3b8; font-size:11.5px;">(En inglés el 'yo' en minúscula es falta ortográfica grave).</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.4); border-left:3px solid #ef4444; padding:10px 12px; border-radius:6px;">
+              <b style="color:#f87171;">3. Días y Lugares con Mayúscula:</b><br>
+              <b style="color:#fff;">Monday</b>, <b style="color:#fff;">Saturday</b>, <b style="color:#fff;">Quintero</b>, <b style="color:#fff;">Ventanas</b>.<br>
+              <span style="color:#94a3b8; font-size:11.5px;">(Los días de la semana en inglés SIEMPRE llevan mayúscula inicial).</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.4); border-left:3px solid #ef4444; padding:10px 12px; border-radius:6px;">
+              <b style="color:#f87171;">4. Ortografía Letra por Letra (Spelling):</b><br>
+              • <b style="color:#fff;">weather</b> (w-e-a-t-h-e-r) ¡NO wheater!<br>
+              • <b style="color:#fff;">sunny</b> (doble n) &nbsp;|&nbsp; <b style="color:#fff;">planned</b> (doble n)<br>
+              • <b style="color:#fff;">studied</b> (cambia y por ied) &nbsp;|&nbsp; <b style="color:#fff;">because</b>
+            </div>
+            <div style="background:rgba(0,0,0,0.4); border-left:3px solid #ef4444; padding:10px 12px; border-radius:6px;">
+              <b style="color:#f87171;">5. La Coma de Secuencia y Tiempo:</b><br>
+              Pon coma después de: <b style="color:#fff;">Last week,</b> | <b style="color:#fff;">First,</b> | <b style="color:#fff;">Then,</b> | <b style="color:#fff;">After that,</b> | <b style="color:#fff;">Finally,</b>
+            </div>
+            <div style="background:rgba(0,0,0,0.4); border-left:3px solid #ef4444; padding:10px 12px; border-radius:6px;">
+              <b style="color:#f87171;">6. Con DID o DIDN'T el verbo vuelve a base:</b><br>
+              • <i>I didn't <b>go</b></i> ✅ (NO <i>didn't went</i> ❌)<br>
+              • <i>Did you <b>go</b>?</i> ✅ (NO <i>Did you went</i> ❌)
+            </div>
+          </div>
+        </div>
+
+        <!-- GUÍA VISUAL COMPLETA: WENT Y VOCABULARIO -->
+        <div class="card" style="border: 2px solid rgba(59, 130, 246, 0.45); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 58, 138, 0.25)); margin-bottom: 22px; padding: 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
+            <div>
+              <h3 style="font-size:18px; color:#93c5fd; margin:0; display:flex; align-items:center; gap:8px;">
+                💡 Guía Rápida: ¿Qué significa "went" y las demás palabras que salen en las oraciones?
+              </h3>
+              <p style="font-size:13px; color:#94a3b8; margin:4px 0 0 0;">
+                Explicación en español palabra por palabra para entender tus 8 oraciones y no equivocarte en la prueba.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-secondary" onclick="toggleWritingGuideTab('went')" id="tab-btn-went" style="font-size:12px; padding:6px 12px; background:rgba(59,130,246,0.3); border-color:#3b82f6; color:#fff;">
+                ⭐ ¿Cuándo se usa "went"?
+              </button>
+              <button class="btn btn-secondary" onclick="toggleWritingGuideTab('verbs')" id="tab-btn-verbs" style="font-size:12px; padding:6px 12px;">
+                📖 Los demás Verbos
+              </button>
+              <button class="btn btn-secondary" onclick="toggleWritingGuideTab('connectors')" id="tab-btn-connectors" style="font-size:12px; padding:6px 12px;">
+                🔗 Conectores & Secuencia
+              </button>
+              <button class="btn btn-secondary" onclick="toggleWritingGuideTab('weather')" id="tab-btn-weather" style="font-size:12px; padding:6px 12px;">
+                ☀️ Clima (Weather)
+              </button>
+            </div>
+          </div>
+
+          <!-- TAB 1: WENT -->
+          <div id="writing-guide-went" style="display:block;">
+            <div style="background:rgba(30,58,138,0.35); border-left:4px solid #3b82f6; padding:16px; border-radius:8px; margin-bottom:14px;">
+              <h4 style="color:#60a5fa; margin:0 0 8px 0; font-size:16px;">
+                ⭐ 1. ¿Qué significa "WENT"?
+              </h4>
+              <p style="font-size:14px; color:#e2e8f0; line-height:1.6; margin:0 0 8px 0;">
+                <b>"Went"</b> es el <b>pasado simple del verbo GO (ir)</b>.<br>
+                En español significa: <b>fui, fuiste, fue, fuimos, fueron</b>.
+              </p>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px; margin-top:10px;">
+                <div style="background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:6px;">
+                  <b style="color:#38bdf8;">I went to Quintero beach</b><br>
+                  <span style="color:#94a3b8; font-size:12.5px;">= Yo fui a la playa de Quintero.</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:6px;">
+                  <b style="color:#38bdf8;">We went to Ventanas</b><br>
+                  <span style="color:#94a3b8; font-size:12.5px;">= Nosotros fuimos a Ventanas.</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:6px;">
+                  <b style="color:#38bdf8;">I went to bed early</b><br>
+                  <span style="color:#94a3b8; font-size:12.5px;">= Me fui a acostar temprano.</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px;">
+              <!-- Cuándo se usa -->
+              <div style="background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:14px;">
+                <h4 style="color:#34d399; margin:0 0 6px 0; font-size:14px;">
+                  ✅ ¿Cuándo se usa "went"? (En afirmativo)
+                </h4>
+                <p style="font-size:13px; color:#cbd5e1; line-height:1.55; margin:0;">
+                  Se usa en <b>oraciones afirmativas en pasado</b> cuando cuentas adónde fuiste o adónde fue alguien:<br>
+                  • En la <b>Oración 1</b>: <i>"Last summer, I <b>went</b> to Quintero..."</i> (El verano pasado, fui a Quintero...).<br>
+                  • En la <b>Oración 8</b> (Semana): <i>"Finally, I <b>went</b> to bed early..."</i> (Finalmente me fui a acostar temprano).
+                </p>
+              </div>
+
+              <!-- Las 2 Trampas -->
+              <div style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:14px;">
+                <h4 style="color:#f87171; margin:0 0 6px 0; font-size:14px;">
+                  ⚠️ Las 2 Trampas de la prueba que DEBES evitar:
+                </h4>
+                <ul style="font-size:13px; color:#cbd5e1; line-height:1.55; margin:0; padding-left:18px;">
+                  <li><b>NUNCA escribas "goed" ❌</b>: En inglés no existe "goed". Como es irregular, cambia totalmente a <b>went</b>.</li>
+                  <li><b>Con "didn't" o "did" vuelve a "go"</b>:<br>
+                    • Afirmativo: <i>I <b>went</b> to the beach</i> ✅ (Fui a la playa).<br>
+                    • Negativo: <i>I didn't <b>go</b> to the beach</i> ✅ (NO <i>"didn't went"</i> ❌).<br>
+                    • Pregunta: <i>Did you <b>go</b> to the beach?</i> ✅ (NO <i>"Did you went"</i> ❌).
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: VERBOS -->
+          <div id="writing-guide-verbs" style="display:none;">
+            <h4 style="color:#60a5fa; margin:0 0 10px 0; font-size:15px;">
+              📖 ¿Qué significan los verbos que salen en tus 8 oraciones?
+            </h4>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:10px;">
+              
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">went</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de GO (irregular)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Fui / Fuimos (adónde te trasladaste).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "I <b>went</b> to Quintero beach."</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">took</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de TAKE (irregular)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Tomé / Saqué (fotos).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "We <b>took</b> many pictures." (Sacamos muchas fotos).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">bought</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de BUY (irregular)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Compré / Compramos.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "I <b>bought</b> nice souvenirs." (Compré lindos recuerdos).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">had</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de HAVE (irregular)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Tuve / Almorcé / Comí.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "We <b>had</b> lunch at a restaurant." (Almorzamos en un restaurante).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">saw</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de SEE (irregular)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Vi / Vimos.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "We <b>saw</b> the ocean." (Vimos el océano).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">felt</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de FEEL (irregular)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Me sentí / Nos sentimos.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "I <b>felt</b> very happy." (Me sentí muy feliz).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">became</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de BECOME (irregular)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Se puso / Se volvió.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "The wind <b>became</b> cold." (El viento se puso frío).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#38bdf8; font-size:14px;">was / were</b>
+                  <span style="font-size:11px; background:rgba(56,189,248,0.2); color:#7dd3fc; padding:2px 6px; border-radius:4px;">de BE (ser / estar)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Estaba / Era (was = 1 persona o clima; were = varias).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "The weather <b>was</b> sunny." / "We <b>were</b> happy."</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#a78bfa; font-size:14px;">arrived / visited / walked</b>
+                  <span style="font-size:11px; background:rgba(167,139,250,0.2); color:#c4b5fd; padding:2px 6px; border-radius:4px;">Regulares (-ed)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Llegué (arrived), Visité (visited), Caminé (walked).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "We <b>walked</b> on the beach and <b>visited</b> Ventanas."</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <b style="color:#a78bfa; font-size:14px;">cleaned / studied / watched</b>
+                  <span style="font-size:11px; background:rgba(167,139,250,0.2); color:#c4b5fd; padding:2px 6px; border-radius:4px;">Regulares (-ed)</span>
+                </div>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Significado:</b> Limpié (cleaned), Estudié (studied), Miré (watched).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "I <b>cleaned</b> my room and <b>watched</b> a movie."</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TAB 3: CONECTORES -->
+          <div id="writing-guide-connectors" style="display:none;">
+            <h4 style="color:#60a5fa; margin:0 0 10px 0; font-size:15px;">
+              🔗 ¿Qué significan y cuándo se usan los conectores y palabras de secuencia?
+            </h4>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:10px;">
+              
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#fbbf24; font-size:14px;">First (Primero)</b>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Cuándo se usa:</b> Obligatorio al inicio de la <b>Oración 2</b> para abrir el orden cronológico de tus actividades.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "<b>First</b>, I arrived at a hotel..." (Primero, llegué al hotel...).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#fbbf24; font-size:14px;">Then (Luego / Después)</b>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Cuándo se usa:</b> Obligatorio en la <b>Oración 3</b> para continuar con la siguiente acción que hiciste.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "<b>Then</b>, we visited the city of Ventanas..." (Luego, visitamos Ventanas...).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#fbbf24; font-size:14px;">After that (Después de eso)</b>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Cuándo se usa:</b> Obligatorio en la <b>Oración 5</b> para indicar la tercera etapa del día o el almuerzo.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "<b>After that</b>, we had lunch at a restaurant..." (Después de eso, almorzamos...).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#fbbf24; font-size:14px;">Finally (Finalmente)</b>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Cuándo se usa:</b> Obligatorio en la <b>Oración 8</b> para cerrar tu relato y concluir la narración.</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "<b>Finally</b>, we returned home..." (Finalmente volvimos a casa...).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#38bdf8; font-size:14px;">because (porque)</b>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Cuándo se usa:</b> Para dar una razón o explicación de por qué hiciste algo o por qué pasó (Oración 1 y 6).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "...<b>because</b> I wanted to explore the coast." (...porque quería explorar la costa).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#38bdf8; font-size:14px;">and (y)</b>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Cuándo se usa:</b> Para unir dos acciones o dos palabras afines (Oración 2, 3, 5).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "...visited Ventanas <b>and</b> took pictures." (...visitamos Ventanas y sacamos fotos).</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#f87171; font-size:14px;">but (pero)</b>
+                <div style="font-size:12.5px; color:#e2e8f0; margin-top:4px;"><b>Cuándo se usa:</b> Para contrastar o contar un imprevisto o cambio de planes (Oración 4).</div>
+                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;"><i>Ejemplo:</i> "We walked on the beach, <b>but</b> the wind became cold." (Caminamos, pero el viento se puso frío).</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TAB 4: CLIMA -->
+          <div id="writing-guide-weather" style="display:none;">
+            <h4 style="color:#60a5fa; margin:0 0 10px 0; font-size:15px;">
+              ☀️ Vocabulario del Clima (Weather) para tu Oración 2 y 4:
+            </h4>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#facc15;">☀️ sunny</b> = soleado
+                <div style="font-size:12px; color:#94a3b8; margin-top:2px;"><i>"The weather was sunny."</i></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#fb923c;">🌤️ warm</b> = cálido / agradable
+                <div style="font-size:12px; color:#94a3b8; margin-top:2px;"><i>"It was sunny and warm."</i></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#38bdf8;">❄️ cold</b> = frío
+                <div style="font-size:12px; color:#94a3b8; margin-top:2px;"><i>"The wind became cold."</i></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#60a5fa;">🌧️ rainy / rain</b> = lluvioso / llover
+                <div style="font-size:12px; color:#94a3b8; margin-top:2px;"><i>"It started to rain."</i></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#94a3b8;">☁️ cloudy</b> = nublado
+                <div style="font-size:12px; color:#94a3b8; margin-top:2px;"><i>"The morning was cloudy."</i></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px;">
+                <b style="color:#a78bfa;">💨 wind / windy</b> = viento / ventoso
+                <div style="font-size:12px; color:#94a3b8; margin-top:2px;"><i>"The wind suddenly became cold."</i></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card">
+          <h4 style="color:#93c5fd; margin-bottom:14px; font-size:15px;">Completa tus 8 oraciones siguiendo los tips de ayuda:</h4>
+          <div id="sentences-inputs"></div>
+
+          <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="verifyWriting()" style="font-size:15px; padding:12px 24px;">
+              🔍 ¿Está bien o mal? Verificar Mis Oraciones
+            </button>
+            <button class="btn btn-secondary" onclick="copyAllSentences()">
+              📋 Copiar Todo el Texto
+            </button>
+            <button class="btn btn-secondary" onclick="speakAllWriting()">
+              🔊 Escuchar Texto en Inglés
+            </button>
+          </div>
+        </div>
+
+        <div id="writing-results" class="card" style="display:none;"></div>
+      `;
+
+      renderSentenceInputs();
+    }
+
+    function toggleWritingGuideTab(tab) {
+      const tabs = ['went', 'verbs', 'connectors', 'weather'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`writing-guide-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (el) el.style.display = (t === tab) ? 'block' : 'none';
+        if (btn) {
+          if (t === tab) {
+            btn.style.background = 'rgba(59, 130, 246, 0.3)';
+            btn.style.borderColor = '#3b82f6';
+            btn.style.color = '#fff';
+          } else {
+            btn.style.background = 'transparent';
+            btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            btn.style.color = '#cbd5e1';
+          }
+        }
+      });
+    }
+
+    function useSentenceExample(num, type) {
+      const g = sentenceGuides.find(x => x.num === num);
+      if (!g) return;
+      const text = (type === 'vacation') ? g.vacation : g.week;
+      const inp = document.getElementById(`sent-${num}`);
+      if (inp) {
+        inp.value = text;
+        inp.focus();
+        inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function speakSentenceGuideExample(num, type) {
+      const g = sentenceGuides.find(x => x.num === num);
+      if (!g) return;
+      const text = (type === 'vacation') ? g.vacation : g.week;
+      speak(text);
+    }
+
+    function renderSentenceInputs() {
+      const box = document.getElementById('sentences-inputs');
+      if (!box) return;
+      box.innerHTML = '';
+
+      sentenceGuides.forEach((g) => {
+        const vocabHtml = (g.vocab || []).map(v => `
+          <span style="display:inline-flex; align-items:center; gap:4px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#bfdbfe; font-size:11.5px; padding:2px 8px; border-radius:12px; margin-right:6px; margin-bottom:4px;">
+            <b style="color:#60a5fa;">${v.en}</b> = <span>${v.es}</span>
+          </span>
+        `).join('');
+
+        box.innerHTML += `
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; margin-bottom:18px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+              <span style="font-size:14.5px; font-weight:700; color:#60a5fa;">
+                ${g.title}
+              </span>
+              <span style="font-size:11px; background:rgba(96,165,250,0.15); color:#93c5fd; padding:3px 8px; border-radius:6px; font-weight:600;">
+                ${g.badge}
+              </span>
+            </div>
+
+            <!-- Blueprint / Referencia de Estructura arriba del tip -->
+            <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(59,130,246,0.4); border-radius:6px; padding:10px 14px; margin-bottom:12px;">
+              <div style="font-size:11.5px; font-weight:800; color:#93c5fd; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+                <span>📐 FÓRMULA / ESTRUCTURA DE LA ORACIÓN (¿Cómo va armada?):</span>
+              </div>
+              <div style="font-size:12.5px; font-family:monospace; color:#38bdf8; line-height:1.6; word-break:break-word;">
+                ${g.blueprint}
+              </div>
+            </div>
+
+            <!-- Tip y Ayuda arriba del input con traducciones completas -->
+            <div style="background:rgba(30,58,138,0.22); border-left:3px solid #3b82f6; padding:12px 14px; border-radius:6px; font-size:12.5px; line-height:1.55; color:#cbd5e1; margin-bottom:12px;">
+              <div>💡 <b>Tip / Ayuda:</b> ${g.tip}</div>
+              
+              <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.08);">
+                <div style="margin-bottom:8px;">
+                  <span style="color:#38bdf8; font-weight:600;">🏖️ Ejemplo Vacaciones:</span> 
+                  <span style="color:#fff;">"${g.vacation}"</span><br>
+                  <span style="color:#94a3b8; font-size:11.5px; margin-left:18px;">↳ <i>Español:</i> "${g.vacationEs}"</span>
+                  <div style="margin-left:18px; margin-top:4px; display:inline-flex; gap:6px;">
+                    <button class="btn btn-secondary" onclick="speakSentenceGuideExample(${g.num}, 'vacation')" style="font-size:10.5px; padding:2px 8px;">🔊 Escuchar</button>
+                    <button class="btn btn-secondary" onclick="useSentenceExample(${g.num}, 'vacation')" style="font-size:10.5px; padding:2px 8px; color:#38bdf8; border-color:rgba(56,189,248,0.4);">📋 Usar como base</button>
+                  </div>
+                </div>
+
+                <div>
+                  <span style="color:#a78bfa; font-weight:600;">📅 Ejemplo Semana Pasada:</span> 
+                  <span style="color:#fff;">"${g.week}"</span><br>
+                  <span style="color:#94a3b8; font-size:11.5px; margin-left:18px;">↳ <i>Español:</i> "${g.weekEs}"</span>
+                  <div style="margin-left:18px; margin-top:4px; display:inline-flex; gap:6px;">
+                    <button class="btn btn-secondary" onclick="speakSentenceGuideExample(${g.num}, 'week')" style="font-size:10.5px; padding:2px 8px;">🔊 Escuchar</button>
+                    <button class="btn btn-secondary" onclick="useSentenceExample(${g.num}, 'week')" style="font-size:10.5px; padding:2px 8px; color:#a78bfa; border-color:rgba(167,139,250,0.4);">📋 Usar como base</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Vocabulario clave de esta oración -->
+              <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:11px; font-weight:700; color:#93c5fd; margin-bottom:5px;">🔑 Vocabulario clave de esta oración (¿qué significa cada palabra?):</div>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  ${vocabHtml}
+                </div>
+              </div>
+            </div>
+
+            <input type="text" id="sent-${g.num}" class="search-box" style="margin-bottom:0;" placeholder="Escribe aquí tu Oración ${g.num} en inglés..." value="">
+          </div>
+        `;
+      });
+    }
+
+    function loadWritingExample(type) {
+      const arr = (type === 'vacation') ? vacationSentences : lastWeekSentences;
+      arr.forEach((s, idx) => {
+        const inp = document.getElementById(`sent-${idx+1}`);
+        if (inp) inp.value = s;
+      });
+      verifyWriting();
+    }
+
+    function clearWritingInputs() {
+      for (let i = 1; i <= 8; i++) {
+        const inp = document.getElementById(`sent-${i}`);
+        if (inp) inp.value = '';
+      }
+      const res = document.getElementById('writing-results');
+      if (res) res.style.display = 'none';
+    }
+
+    function verifyWriting() {
+      const results = document.getElementById('writing-results');
+      results.style.display = 'block';
+
+      let textTotal = '';
+      let checklist = {
+        count: 0,
+        hasRegular: false,
+        hasIrregular: false,
+        hasAnd: false,
+        hasBut: false,
+        hasBecause: false,
+        hasFirst: false,
+        hasThen: false,
+        hasAfterThat: false,
+        hasFinally: false,
+        hasWeather: false
+      };
+
+      let errorsList = [];
+      let sentencesArray = [];
+
+      for (let i = 1; i <= 8; i++) {
+        const val = (document.getElementById(`sent-${i}`)?.value || '').trim();
+        if (val.length > 5) {
+          checklist.count++;
+          sentencesArray.push(val);
+          textTotal += val + ' ';
+
+          // Comprobar errores ortográficos o de conjugación típicos
+          if (/raiseed/i.test(val)) errorsList.push(`Oración ${i}: Error en 'raiseed'. 'raise' ya termina en 'e', solo agrega 'd' (raised).`);
+          if (/studyed/i.test(val)) errorsList.push(`Oración ${i}: Error en 'studyed'. Consonante + 'y' cambia a 'studied'.`);
+          if (/planed/i.test(val)) errorsList.push(`Oración ${i}: Error en 'planed'. Debe duplicar la n: 'planned'.`);
+          if (/goed/i.test(val)) errorsList.push(`Oración ${i}: 'go' es irregular. Se escribe 'went', jamás 'goed'.`);
+          if (/taked/i.test(val)) errorsList.push(`Oración ${i}: 'take' es irregular. Se escribe 'took', jamás 'taked'.`);
+          if (/buyed/i.test(val)) errorsList.push(`Oración ${i}: 'buy' es irregular. Se escribe 'bought', jamás 'buyed'.`);
+          if (/eated/i.test(val)) errorsList.push(`Oración ${i}: 'eat' es irregular. Se escribe 'ate', jamás 'eated'.`);
+          if (/seed/i.test(val)) errorsList.push(`Oración ${i}: 'see' es irregular. Se escribe 'saw', jamás 'seed'.`);
+          if (/didn't went/i.test(val)) errorsList.push(`Oración ${i}: Después de 'didn't' se usa verbo base: 'didn't go', no 'didn't went'.`);
+          if (/Wheater/i.test(val)) errorsList.push(`Oración ${i}: Corrección ortográfica: se escribe 'weather', no 'Wheater'.`);
+          if (/explore the beautiful/i.test(val) && !/wanted to explore|explored/i.test(val)) errorsList.push(`Oración ${i}: 'explore' está en presente simple. En pasado debes poner 'explored' o 'wanted to explore'.`);
+          if (/then we visit/i.test(val)) errorsList.push(`Oración ${i}: 'visit' está en presente simple. En pasado debe ser 'visited'.`);
+          if (/then I study/i.test(val)) errorsList.push(`Oración ${i}: 'study' está en presente. En pasado debe ser 'studied'.`);
+          if (/I clean my room/i.test(val)) errorsList.push(`Oración ${i}: 'clean' está en presente. En pasado debe ser 'cleaned'.`);
+        }
+      }
+
+      // Analizar pauta en el texto completo (soporta tanto viaje como semana pasada)
+      const lower = textTotal.toLowerCase();
+      if (/visited|walked|tasted|arrived|returned|started|explored|loved|cleaned|studied|watched|cooked|played|rested|enjoyed|listened|talked|prepared|practiced/.test(lower)) checklist.hasRegular = true;
+      if (/went|took|bought|had|became|felt|was|were|ate|drank|saw|made|did|read|got|met/.test(lower)) checklist.hasIrregular = true;
+      if (/\band\b/.test(lower)) checklist.hasAnd = true;
+      if (/\bbut\b/.test(lower)) checklist.hasBut = true;
+      if (/\bbecause\b/.test(lower)) checklist.hasBecause = true;
+      if (/\bfirst\b/.test(lower)) checklist.hasFirst = true;
+      if (/\bthen\b/.test(lower)) checklist.hasThen = true;
+      if (/after that/.test(lower)) checklist.hasAfterThat = true;
+      if (/\bfinally\b/.test(lower)) checklist.hasFinally = true;
+      if (/sunny|warm|cold|wind|windy|rain|rainy|cloudy|clouds|snow|cool|weather/.test(lower)) checklist.hasWeather = true;
+
+      const allChecksPass = (checklist.count === 8 && checklist.hasRegular && checklist.hasIrregular &&
+                             checklist.hasAnd && checklist.hasBut && checklist.hasBecause &&
+                             checklist.hasFirst && checklist.hasThen && checklist.hasAfterThat &&
+                             checklist.hasFinally && checklist.hasWeather && errorsList.length === 0);
+
+      results.innerHTML = `
+        <div style="font-size:18px; font-weight:800; color:${allChecksPass ? '#34d399' : '#f87171'}; margin-bottom:12px;">
+          ${allChecksPass ? '🎉 ¡EXCELENTE! Tu redacción cumple con el 100% de la pauta y no tiene errores.' : '⚠️ Revisión en progreso: Chequea las observaciones a continuación para sacar un 7.0:'}
+        </div>
+
+        ${errorsList.length > 0 ? `
+          <div class="feedback-box incorrect" style="display:block; margin-bottom:16px;">
+            <b>❌ Errores ortográficos o gramaticales detectados:</b><br>
+            ${errorsList.map(e => `• ${e}`).join('<br>')}
+          </div>
+        ` : ''}
+
+        <h4 style="color:#93c5fd; margin-bottom:8px;">Checklist de Requisitos de la Pauta Oficial:</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13.5px;">
+          <div>${checklist.count === 8 ? '✅' : '❌'} 8 Oraciones escritas (${checklist.count}/8)</div>
+          <div>${checklist.hasRegular ? '✅' : '❌'} Verbos regulares en pasado (-ed)</div>
+          <div>${checklist.hasIrregular ? '✅' : '❌'} Verbos irregulares en pasado (went, took, bought, had, felt)</div>
+          <div>${checklist.hasBecause ? '✅' : '❌'} Conector de causa: <b>because</b></div>
+          <div>${checklist.hasAnd ? '✅' : '❌'} Conector de adición: <b>and</b></div>
+          <div>${checklist.hasBut ? '✅' : '❌'} Conector de contraste: <b>but</b></div>
+          <div>${checklist.hasFirst ? '✅' : '❌'} Secuencia obligatoria: <b>First</b></div>
+          <div>${checklist.hasThen ? '✅' : '❌'} Secuencia obligatoria: <b>Then</b></div>
+          <div>${checklist.hasAfterThat ? '✅' : '❌'} Secuencia obligatoria: <b>After that</b></div>
+          <div>${checklist.hasFinally ? '✅' : '❌'} Secuencia obligatoria: <b>Finally</b></div>
+          <div>${checklist.hasWeather ? '✅' : '❌'} Vocabulario de Clima (sunny, warm, cold, wind, rain, cloudy)</div>
+        </div>
+      `;
+    }
+
+    function copyAllSentences() {
+      let t = '';
+      for (let i = 1; i <= 8; i++) {
+        t += `${i}. ${document.getElementById(`sent-${i}`)?.value || ''}\n`;
+      }
+      navigator.clipboard.writeText(t);
+      alert('¡Tus 8 oraciones han sido copiadas al portapapeles!');
+    }
+
+    function speakAllWriting() {
+      let t = '';
+      for (let i = 1; i <= 8; i++) {
+        t += (document.getElementById(`sent-${i}`)?.value || '') + '. ';
+      }
+      if (t.trim().length < 5) {
+        alert('Por favor escribe algunas oraciones o carga un ejemplo primero.');
+        return;
+      }
+      speak(t);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { 
+      renderWritingStudio(document.getElementById('module-container')); 
+    });
+  </script>
+</body>
+</html>

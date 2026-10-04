@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 10 - Simulacro Escrito con Teclado</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+
+function normalizeWritten(s) {
+  if (!s) return '';
+  return s.toLowerCase().trim().replace(/['´`’]/g, "'").replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ');
+}
+
+    /* ========================================================
+       10. SIMULACRO ESCRITO CON TECLADO (FILL-IN-THE-BLANK)
+       ======================================================== */
+    const writtenExamQuestions = [
+      {
+        id: 1,
+        sentence: "He ____________ at school yesterday because he was sick.",
+        hint: "verbo be en pasado negativo (sujeto: He)",
+        official: "wasn't",
+        accepted: ["wasn't", "wasnt", "wasent", "wasen't", "was'nt", "was not", "wasn´t", "wasn’t"],
+        rule: "El sujeto es 'He' (singular). En pasado negativo se usa 'wasn't' (o 'was not').",
+        spellingTip: "Si escribiste 'wasent' o 'wasnt', te la contamos como buena porque se comprende tu idea. Recuerda que la ortografía formal exigida en la prueba de Oxford es **wasn't** con apóstrofe entre la n y la t."
+      },
+      {
+        id: 2,
+        sentence: "They ____________ happy with the hotel because the room was cold.",
+        hint: "verbo be en pasado negativo (sujeto: They)",
+        official: "weren't",
+        accepted: ["weren't", "werent", "werent'", "weren´t", "weren’t", "were not"],
+        rule: "El sujeto es 'They' (plural). En pasado negativo se usa 'weren't' (o 'were not').",
+        spellingTip: "Si escribiste 'werent', te la contamos como correcta por intención. La forma formal en la prueba lleva apóstrofe: **weren't**."
+      },
+      {
+        id: 3,
+        sentence: "It ____________ warm in Antarctica; the climate was freezing cold.",
+        hint: "verbo be en pasado negativo (sujeto: It)",
+        official: "wasn't",
+        accepted: ["wasn't", "wasnt", "wasent", "wasen't", "was'nt", "was not", "wasn´t", "wasn’t"],
+        rule: "El sujeto es 'It' (el clima, singular). En negativo lleva 'wasn't'.",
+        spellingTip: "La forma oficial es **wasn't** (contracción de was not)."
+      },
+      {
+        id: 4,
+        sentence: "Why ____________ you at the party on Saturday night?",
+        hint: "verbo be en pasado negativo con 'you'",
+        official: "weren't",
+        accepted: ["weren't", "werent", "werent'", "weren´t", "weren’t", "were not"],
+        rule: "Con el pronombre 'you' (tú/ustedes), el negativo en pasado siempre es 'weren't'.",
+        spellingTip: "Pregunta negativa formal: 'Why weren't you...?'."
+      },
+      {
+        id: 5,
+        sentence: "Robert Falcon Scott ____________ a very brave British explorer.",
+        hint: "verbo be en pasado afirmativo (sujeto: Scott)",
+        official: "was",
+        accepted: ["was"],
+        rule: "Scott es una sola persona (singular, 'he'). Lleva 'was'.",
+        spellingTip: "He was..."
+      },
+      {
+        id: 6,
+        sentence: "Roald Amundsen and his people ____________ experienced in cold weather.",
+        hint: "verbo be en pasado afirmativo (sujeto plural)",
+        official: "were",
+        accepted: ["were"],
+        rule: "'Roald Amundsen and his people' es un sujeto plural ('they'). Lleva 'were'.",
+        spellingTip: "They were..."
+      },
+      {
+        id: 7,
+        sentence: "They ____________ (plan) their journey across the ice very carefully.",
+        hint: "verbo regular 'plan' en pasado simple",
+        official: "planned",
+        accepted: ["planned", "planed"],
+        rule: "Regla C-V-C (Consonante-Vocal-Consonante monosílabo): se duplica la última 'n' antes de -ed: 'planned'.",
+        spellingTip: "Si escribiste 'planed', te la tomamos por comprensión, pero ¡OJO! En la prueba te descontarán si no duplicas la 'n': la forma correcta es **planned**."
+      },
+      {
+        id: 8,
+        sentence: "Yesterday the student ____________ (ask) the teacher an important question.",
+        hint: "verbo regular 'ask' en pasado simple",
+        official: "asked",
+        accepted: ["asked"],
+        rule: "El verbo 'ask' es regular y añade la terminación '-ed': 'asked'.",
+        spellingTip: "ask + ed = asked."
+      },
+      {
+        id: 9,
+        sentence: "The historic race to the South Pole ____________ (start) in 1911.",
+        hint: "verbo regular 'start' en pasado simple",
+        official: "started",
+        accepted: ["started"],
+        rule: "El verbo 'start' termina en consonante 't' y añade '-ed': 'started'.",
+        spellingTip: "start + ed = started."
+      },
+      {
+        id: 10,
+        sentence: "The polar expedition ____________ (end) with a tragic return journey.",
+        hint: "verbo regular 'end' en pasado simple",
+        official: "ended",
+        accepted: ["ended"],
+        rule: "El verbo 'end' añade '-ed': 'ended' (se pronuncia con sílaba /ɪd/).",
+        spellingTip: "end + ed = ended."
+      },
+      {
+        id: 11,
+        sentence: "I ____________ (study) English vocabulary all afternoon for the exam.",
+        hint: "verbo regular 'study' en pasado simple",
+        official: "studied",
+        accepted: ["studied", "studyed"],
+        rule: "Regla de consonante + y: 'study' cambia la 'y' por 'i' antes de '-ed': 'studied'.",
+        spellingTip: "Si escribiste 'studyed', te la contamos como buena por intención, pero recuerda la regla ortográfica: se cambia la 'y' por 'i' &rarr; **studied**."
+      },
+      {
+        id: 12,
+        sentence: "\"____________ were you on Friday night?\" - \"I was at home.\"",
+        hint: "palabra interrogativa para lugar (¿Dónde?)",
+        official: "Where",
+        accepted: ["where", "were"],
+        rule: "'Where' pregunta por un lugar ('¿Dónde?'). No confundir con el verbo 'were'.",
+        spellingTip: "Si escribiste 'were' te la tomamos por sonido, pero la pregunta es **Where** (con 'h')."
+      },
+      {
+        id: 13,
+        sentence: "\"____________ was he angry?\" - \"Because he missed his train.\"",
+        hint: "palabra interrogativa para pedir razones (¿Por qué?)",
+        official: "Why",
+        accepted: ["why"],
+        rule: "'Why' pregunta '¿Por qué?' y se responde indicando la razón con 'Because...'.",
+        spellingTip: "Why was he...?"
+      },
+      {
+        id: 14,
+        sentence: "\"____________ was the English class?\" - \"It was at 8:30 AM.\"",
+        hint: "palabra interrogativa para tiempo u hora (¿Cuándo?)",
+        official: "When",
+        accepted: ["when"],
+        rule: "'When' pregunta por el tiempo o momento ('¿Cuándo?').",
+        spellingTip: "When was the class?"
+      },
+      {
+        id: 15,
+        sentence: "There was a terrible ____________ with freezing wind and blinding snow.",
+        hint: "palabra de clima para tormenta de nieve severa / ventisca",
+        official: "blizzard",
+        accepted: ["blizzard", "blizard", "snowstorm"],
+        rule: "'blizzard' significa tormenta de nieve severa con viento helado.",
+        spellingTip: "Si escribiste 'blizard', te la contamos por buena. Recuerda que en inglés formal lleva doble 'z': **blizzard**."
+      },
+      {
+        id: 16,
+        sentence: "In London, the summer weather was nice and ____________ , with sunshine and no rain.",
+        hint: "adjetivo de clima cálido / templado agradable",
+        official: "warm",
+        accepted: ["warm", "sunny"],
+        rule: "El texto oficial de Oxford dice textualmente: 'nice and warm' (bueno y templado/cálido).",
+        spellingTip: "warm = cálido/templado agradable."
+      },
+      {
+        id: 17,
+        sentence: "The sky was completely dark and filled with heavy gray ____________ .",
+        hint: "palabra de clima para 'nubes'",
+        official: "clouds",
+        accepted: ["clouds", "cloud"],
+        rule: "'clouds' = nubes. El cielo estaba lleno de nubes oscuras.",
+        spellingTip: "clouds (plural)."
+      },
+      {
+        id: 18,
+        sentence: "On our vacation in the south, we ____________ (take) lots of photos.",
+        hint: "pasado irregular de 'take' (tomar/sacar fotos)",
+        official: "took",
+        accepted: ["took", "taked"],
+        rule: "'take' es un verbo irregular. Su pasado simple es 'took'. Jamás se dice 'taked'.",
+        spellingTip: "Si escribiste 'taked', te la contamos para que aprendas, pero la forma correcta es el irregular **took**."
+      },
+      {
+        id: 19,
+        sentence: "Last weekend, my friends and I ____________ (go) to the cinema.",
+        hint: "pasado irregular de 'go' (ir)",
+        official: "went",
+        accepted: ["went", "goed"],
+        rule: "'go' es un verbo irregular. Su forma en pasado simple es 'went'.",
+        spellingTip: "Si escribiste 'goed', te la tomamos por intención, pero el pasado real es **went**."
+      },
+      {
+        id: 20,
+        sentence: "We wanted to play soccer outside, ____________ it started to snow heavily.",
+        hint: "conector de contraste: 'pero'",
+        official: "but",
+        accepted: ["but"],
+        rule: "'but' (pero) conecta dos ideas contrastantes: queríamos jugar, pero nevó.",
+        spellingTip: "but = pero."
+      }
+    ];
+
+    function normalizeWritten(s) {
+      if (!s) return '';
+      return s.trim()
+        .toLowerCase()
+        .replace(/[\u2018\u2019´`']/g, "'")
+        .replace(/\s+/g, ' ');
+    }
+
+    function checkWrittenAnswer(idx) {
+      const q = writtenExamQuestions[idx];
+      const inputEl = document.getElementById(`wq-input-${idx}`);
+      const fbEl = document.getElementById(`wq-fb-${idx}`);
+      if (!inputEl || !fbEl) return null;
+
+      const rawVal = inputEl.value.trim();
+      if (!rawVal) {
+        fbEl.style.display = 'none';
+        inputEl.className = 'written-input';
+        return null;
+      }
+
+      const normUser = normalizeWritten(rawVal);
+      const normOfficial = normalizeWritten(q.official);
+      const normAccepted = q.accepted.map(normalizeWritten);
+
+      const isExact = (normUser === normOfficial);
+      const isTolerant = !isExact && (
+        normAccepted.includes(normUser) ||
+        normUser.replace(/'/g, '') === normOfficial.replace(/'/g, '') ||
+        (normOfficial === "wasn't" && (normUser === "wasent" || normUser === "wasen't" || normUser === "wasnt" || normUser === "was not")) ||
+        (normOfficial === "weren't" && (normUser === "werent" || normUser === "weren't" || normUser === "werent'" || normUser === "were not"))
+      );
+
+      if (isExact) {
+        inputEl.className = 'written-input is-correct';
+        fbEl.className = 'feedback-box correct';
+        fbEl.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        fbEl.style.background = 'var(--success-bg)';
+        fbEl.style.color = '#d1fae5';
+        fbEl.innerHTML = `
+          <b>✔️ ¡Excelente! Ortografía Perfecta:</b> Escribiste <b>"${rawVal}"</b>.<br>
+          💡 <b>Regla:</b> ${q.rule}
+        `;
+        fbEl.style.display = 'block';
+        return { isCorrect: true, isTolerant: false, user: rawVal, official: q.official };
+      } else if (isTolerant) {
+        inputEl.className = 'written-input is-tolerant';
+        fbEl.className = 'feedback-box correct';
+        fbEl.style.borderColor = '#f59e0b';
+        fbEl.style.background = 'rgba(245, 158, 11, 0.15)';
+        fbEl.style.color = '#fef3c7';
+        fbEl.innerHTML = `
+          <b>✔️ ¡Buena! Te la contamos como correcta (+1 punto):</b> Escribiste <b>"${rawVal}"</b>.<br>
+          ✍️ <b>Cómo se escribe en la prueba:</b> La forma formal y exigida es: <b style="color:#fbbf24; font-size:15px; text-decoration:underline;">${q.official}</b>.<br>
+          💡 ${q.spellingTip}
+        `;
+        fbEl.style.display = 'block';
+        return { isCorrect: true, isTolerant: true, user: rawVal, official: q.official };
+      } else {
+        inputEl.className = 'written-input is-incorrect';
+        fbEl.className = 'feedback-box incorrect';
+        fbEl.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        fbEl.style.background = 'var(--error-bg)';
+        fbEl.style.color = '#fee2e2';
+        fbEl.innerHTML = `
+          <b>❌ Incorrecto:</b> Escribiste <b>"${rawVal}"</b>.<br>
+          ✍️ <b>La respuesta correcta es:</b> <b style="color:#60a5fa; font-size:15px;">${q.official}</b>.<br>
+          💡 <b>Regla:</b> ${q.rule}
+        `;
+        fbEl.style.display = 'block';
+        return { isCorrect: false, isTolerant: false, user: rawVal, official: q.official };
+      }
+    }
+
+    function revealSingleWrittenAnswer(idx) {
+      const q = writtenExamQuestions[idx];
+      const inputEl = document.getElementById(`wq-input-${idx}`);
+      if (inputEl) {
+        inputEl.value = q.official;
+        checkWrittenAnswer(idx);
+      }
+    }
+
+    function calculateWrittenGrade() {
+      let score = 0;
+      let answeredCount = 0;
+
+      writtenExamQuestions.forEach((q, idx) => {
+        const res = checkWrittenAnswer(idx);
+        if (res) {
+          answeredCount++;
+          if (res.isCorrect) score++;
+        }
+      });
+
+      const total = writtenExamQuestions.length; // 20
+      const passing = total * 0.6; // 12.0
+      let grade = 1.0;
+
+      if (score < passing) {
+        grade = 1.0 + 3.0 * (score / passing);
+      } else {
+        grade = 4.0 + 3.0 * ((score - passing) / (total - passing));
+      }
+      grade = Math.round(grade * 10) / 10;
+
+      const gCard = document.getElementById('written-grade-card');
+      gCard.style.display = 'block';
+      gCard.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="font-size:13px; color:#9ca3af; text-transform:uppercase; font-weight:700;">Tu Calificación en el Simulacro Escrito</div>
+            <div style="font-size:48px; font-weight:900; color:${grade >= 4.0 ? '#34d399' : '#f87171'}; margin:4px 0;">
+              NOTA ${grade.toFixed(1)}
+            </div>
+            <p style="font-size:14px; color:#e5e7eb; margin:0;">
+              Puntaje obtenido: <b>${score}</b> de <b>${total}</b> preguntas correctas. (Respondidas: ${answeredCount}/${total})
+            </p>
+            <p style="font-size:12px; color:#94a3b8; margin-top:4px;">
+              Escala Chilena al 60% de exigencia (12 correctas = nota 4.0 | 20 correctas = nota 7.0).
+            </p>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:20px; font-weight:700; color:${grade >= 6.0 ? '#34d399' : (grade >= 4.0 ? '#60a5fa' : '#f87171')};">
+              ${grade >= 6.0 ? '🌟 ¡Excelente dominio escrito!' : (grade >= 5.0 ? '👏 ¡Muy buen trabajo de redacción!' : (grade >= 4.0 ? '👍 ¡Aprobado!' : '⚠️ Necesitas practicar la escritura'))}
+            </span>
+          </div>
+        </div>
+      `;
+      gCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function solveAllWrittenExam() {
+      writtenExamQuestions.forEach((q, idx) => {
+        const el = document.getElementById(`wq-input-${idx}`);
+        if (el) {
+          el.value = q.official;
+          checkWrittenAnswer(idx);
+        }
+      });
+    }
+
+    function resetAllWrittenExam() {
+      writtenExamQuestions.forEach((q, idx) => {
+        const el = document.getElementById(`wq-input-${idx}`);
+        const fb = document.getElementById(`wq-fb-${idx}`);
+        if (el) {
+          el.value = '';
+          el.className = 'written-input';
+        }
+        if (fb) fb.style.display = 'none';
+      });
+      const gCard = document.getElementById('written-grade-card');
+      if (gCard) gCard.style.display = 'none';
+    }
+
+    function renderWrittenExam(container) {
+      let cardsHtml = '';
+      writtenExamQuestions.forEach((q, idx) => {
+        const inputHtml = `<input type="text" class="written-input" id="wq-input-${idx}" placeholder="Escribe aquí..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkWrittenAnswer(${idx})" oninput="checkWrittenAnswer(${idx})">`;
+        const renderedSentence = q.sentence.replace('____________', inputHtml);
+
+        cardsHtml += `
+          <div class="card" style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+              <span style="font-size:12px; font-weight:800; color:#60a5fa; text-transform:uppercase; letter-spacing:0.05em;">Pregunta ${idx + 1} de 20</span>
+              <span style="font-size:12px; background:rgba(59,130,246,0.15); color:#93c5fd; padding:2px 8px; border-radius:6px; font-weight:600;">Pista: ${q.hint}</span>
+            </div>
+            <div style="font-size:15.5px; font-weight:700; color:#fff; line-height:1.7; margin-bottom:12px;">
+              ${renderedSentence}
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <button class="btn btn-secondary" style="padding:6px 14px; font-size:12.5px; border-radius:6px;" onclick="checkWrittenAnswer(${idx})">
+                ✓ Comprobar Respuesta
+              </button>
+              <button class="btn btn-secondary" style="padding:6px 12px; font-size:12.5px; border-radius:6px; color:#9ca3af;" onclick="revealSingleWrittenAnswer(${idx})">
+                👁️ Ver Oficial
+              </button>
+            </div>
+            <div id="wq-fb-${idx}" class="feedback-box"></div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>⌨️ Simulacro Escrito con Teclado (Fill-in-the-Blank)</h1>
+            <p>Escribe las respuestas directamente con tu teclado. Si escribes <b>wasent</b> o <b>wasnt</b>, el sistema <b>te la cuenta como correcta</b> y te enseña cómo se escribe formalmente en la prueba (<b>wasn't</b>).</p>
+          </div>
+        </div>
+
+        <div class="banner-grammar" style="margin-bottom:20px;">
+          <h3 style="color:#fbbf24;">💡 Corrector Inteligente y Tolerante:</h3>
+          <p>
+            • <b>Acepta variaciones fonéticas:</b> Si escribes <i>wasent, wasnt, wasen't</i> o <i>werent</i> te la califica como <b>buena (+1 punto)</b> y te muestra la ortografía formal con apóstrofe.<br>
+            • <b>Cálculo de Nota Oficial:</b> Exigencia al 60% (12 correctas = nota 4.0 | 20 correctas = nota 7.0).<br>
+            • <b>Interactivo:</b> Puedes presionar <i>Enter</i> o escribir y ver la retroalimentación inmediata.
+          </p>
+        </div>
+
+        ${cardsHtml}
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; margin-bottom:24px;">
+          <button class="btn btn-success" style="font-size:16px; padding:14px 28px;" onclick="calculateWrittenGrade()">
+            📊 Finalizar y Ver Mi Nota Escrita
+          </button>
+          <button class="btn btn-secondary" onclick="solveAllWrittenExam()">
+            👁️ Rellenar Todas las Respuestas Oficiales
+          </button>
+          <button class="btn btn-secondary" onclick="resetAllWrittenExam()">
+            🔄 Limpiar y Volver a Escribir
+          </button>
+        </div>
+
+        <div id="written-grade-card" class="card" style="display:none; margin-top:20px;"></div>
+      `;
+    }
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderWrittenExam(document.getElementById('module-container'));
+});
+  </script>
+</body>
+</html>

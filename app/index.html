@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluación 3 - Inglés Nivel 1B (Unit 7)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/common.css">
+  <script src="js/db.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background: #090d16;
+    }
+
+    /* Mobile Top Bar (Hidden on desktop) */
+    .mobile-top-bar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0 14px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+    }
+
+    .hamburger-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .mobile-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .mobile-title span:first-child {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #60a5fa;
+    }
+
+    .mobile-title span:last-child {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* Sidebar Backdrop for Mobile */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .sidebar-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Sidebar Navigation */
+    aside {
+      width: 320px;
+      min-width: 320px;
+      background: #0f172a;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-header h2 {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .sidebar-header p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+      margin-bottom: 0;
+    }
+
+    .close-drawer-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 10px;
+    }
+
+    .nav-group-title {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      font-weight: 800;
+      padding: 12px 10px 6px 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.18s ease;
+      margin-bottom: 3px;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .nav-btn.active {
+      background: rgba(37, 99, 235, 0.18);
+      color: #60a5fa;
+      border-color: rgba(59, 130, 246, 0.35);
+      font-weight: 800;
+    }
+
+    .nav-btn.nav-btn-highlight {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .nav-btn.nav-btn-highlight.active {
+      background: #10b981;
+      color: #fff;
+      border-color: #059669;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11.5px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    /* Main Viewport */
+    main {
+      flex: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #090d16;
+    }
+
+    #module-viewport {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+    }
+
+    /* Responsive Drawer for Screens <= 768px (Metro / Micro / Mobile) */
+    @media (max-width: 768px) {
+      .mobile-top-bar {
+        display: flex;
+      }
+
+      aside {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 290px;
+        min-width: 290px;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6);
+      }
+
+      aside.open {
+        transform: translateX(0);
+      }
+
+      .close-drawer-btn {
+        display: block;
+      }
+
+      main {
+        padding-top: 56px;
+        height: calc(100vh - 56px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Top Bar with Hamburger -->
+  <header class="mobile-top-bar">
+    <button class="hamburger-btn" onclick="toggleSidebar(true)" aria-label="Abrir Menú">
+      ☰
+    </button>
+    <div class="mobile-title">
+      <span>Evaluación 3 (Unit 7)</span>
+      <span id="mobile-mod-name">Cargando módulo...</span>
+    </div>
+    <div style="width: 40px; display:flex; justify-content:flex-end;">
+      <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981;" title="Offline activo"></span>
+    </div>
+  </header>
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
+
+  <!-- Sidebar Navigation Drawer -->
+  <aside id="main-sidebar">
+    <div class="sidebar-header">
+      <div>
+        <h2>🇬🇧 Evaluación 3 - Unit 7</h2>
+        <p>Plataforma Modular 100% Offline</p>
+      </div>
+      <button class="close-drawer-btn" onclick="toggleSidebar(false)" aria-label="Cerrar Menú">✕</button>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-group-title">Lecciones Oficiales Oxford</div>
+      <button class="nav-btn" id="btn-mod-01" onclick="loadModule('mod_01_weather')">
+        <span>☀️</span> 1. Clima: Nice vs Bad
+      </button>
+      <button class="nav-btn" id="btn-mod-02" onclick="loadModule('mod_02_stories')">
+        <span>📖</span> 2. Lecturas: Scott & 4 Historias
+      </button>
+      <button class="nav-btn" id="btn-mod-03" onclick="loadModule('mod_03_correct_incorrect')">
+        <span>⚖️</span> 3. Verbos: Correct vs Incorrect
+      </button>
+      <button class="nav-btn" id="btn-mod-04" onclick="loadModule('mod_04_multiple_choice')">
+        <span>📝</span> 4. Test Unit 7: 25 Alternativas
+      </button>
+
+      <div class="nav-group-title">Taller de Escritura & Conectores</div>
+      <button class="nav-btn" id="btn-mod-05" onclick="loadModule('mod_05_writing_studio')">
+        <span>✍️</span> 5. Redacción: 8 Oraciones
+      </button>
+      <button class="nav-btn" id="btn-mod-05_1" onclick="loadModule('mod_05_1_connectors')">
+        <span>🕒</span> 5.1 Conectores & "Last week"
+      </button>
+      <button class="nav-btn" id="btn-mod-11" onclick="loadModule('mod_11_four_questions')">
+        <span>❓</span> 11. Las 4 Preguntas Clave
+      </button>
+
+      <div class="nav-group-title">Entrenamiento Activo & Fotos</div>
+      <button class="nav-btn" id="btn-mod-06" onclick="loadModule('mod_06_dictionary')">
+        <span>📚</span> 6. Diccionario Pasado-Presente
+      </button>
+      <button class="nav-btn" id="btn-mod-07" onclick="loadModule('mod_07_flashcards')">
+        <span>🃏</span> 7. Flashcards Interactivas
+      </button>
+      <button class="nav-btn" id="btn-mod-07_1" onclick="loadModule('mod_07_1_image_quiz')">
+        <span>🖼️</span> 7.1 Quiz Visual: 9 Fotos + Modelos Viña/Alaska
+      </button>
+      <button class="nav-btn" id="btn-mod-08" onclick="loadModule('mod_08_trap_game')">
+        <span>🎮</span> 8. Cazador de Trampas (10 Random)
+      </button>
+
+      <div class="nav-group-title">Simulacros con Calificación (Escala 60%)</div>
+      <button class="nav-btn" id="btn-mod-09" onclick="loadModule('mod_09_exam_simulator')">
+        <span>🏆</span> 9. Simulacro Alternativas (20 Q)
+      </button>
+      <button class="nav-btn" id="btn-mod-10" onclick="loadModule('mod_10_written_exam')">
+        <span>⌨️</span> 10. Simulacro Escrito con Teclado
+      </button>
+      <button class="nav-btn nav-btn-highlight" id="btn-mod-13" onclick="loadModule('mod_13_final_exam')">
+        <span>🌟</span> 13. MEGA EXAMEN FINAL (30 Q)
+      </button>
+
+      <div class="nav-group-title">Recursos de Descarga</div>
+      <button class="nav-btn" id="btn-mod-12" onclick="loadModule('mod_12_documents')">
+        <span>📁</span> 12. Documentos Word y PDF
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <span style="display:flex; align-items:center; gap:6px;">
+        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+        <span>LocalDB Activa (Offline)</span>
+      </span>
+      <span>Unit 7</span>
+    </div>
+  </aside>
+
+  <!-- Main Viewport Frame -->
+  <main>
+    <iframe id="module-viewport" src="modulos/mod_04_multiple_choice.html"></iframe>
+  </main>
+
+  <script>
+    const moduleMap = {
+      'mod_01_weather': { btn: 'btn-mod-01', name: '1. Clima Nice vs Bad' },
+      'mod_02_stories': { btn: 'btn-mod-02', name: '2. 4 Historias con Audio' },
+      'mod_03_correct_incorrect': { btn: 'btn-mod-03', name: '3. Verbos: C vs I' },
+      'mod_04_multiple_choice': { btn: 'btn-mod-04', name: '4. Test Unit 7 (25 Q)' },
+      'mod_05_writing_studio': { btn: 'btn-mod-05', name: '5. Redacción 8 Oraciones' },
+      'mod_05_1_connectors': { btn: 'btn-mod-05_1', name: '5.1 Conectores' },
+      'mod_06_dictionary': { btn: 'btn-mod-06', name: '6. Diccionario de Verbos' },
+      'mod_07_flashcards': { btn: 'btn-mod-07', name: '7. Flashcards' },
+      'mod_07_1_image_quiz': { btn: 'btn-mod-07_1', name: '7.1 Quiz Visual & Fotos' },
+      'mod_08_trap_game': { btn: 'btn-mod-08', name: '8. Cazador de Trampas' },
+      'mod_09_exam_simulator': { btn: 'btn-mod-09', name: '9. Simulacro Oxford' },
+      'mod_10_written_exam': { btn: 'btn-mod-10', name: '10. Examen Escrito' },
+      'mod_11_four_questions': { btn: 'btn-mod-11', name: '11. Las 4 Preguntas' },
+      'mod_12_documents': { btn: 'btn-mod-12', name: '12. Descarga Documentos' },
+      'mod_13_final_exam': { btn: 'btn-mod-13', name: '13. Mega Examen Final' }
+    };
+
+    function toggleSidebar(open) {
+      const sidebar = document.getElementById('main-sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (open) {
+        sidebar.classList.add('open');
+        backdrop.classList.add('active');
+      } else {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('active');
+      }
+    }
+
+    function loadModule(moduleId) {
+      const frame = document.getElementById('module-viewport');
+      if (!frame) return;
+
+      frame.src = `modulos/${moduleId}.html`;
+      LocalDB.save('active_module', moduleId);
+
+      // Actualizar botones de navegación
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      const modInfo = moduleMap[moduleId];
+      if (modInfo) {
+        const btn = document.getElementById(modInfo.btn);
+        if (btn) btn.classList.add('active');
+        const mobLabel = document.getElementById('mobile-mod-name');
+        if (mobLabel) mobLabel.textContent = modInfo.name;
+      }
+
+      // Si está en pantalla móvil, cerrar el drawer automáticamente
+      if (window.innerWidth <= 768) {
+        toggleSidebar(false);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Restaurar el último módulo visitado o por defecto el Módulo 4
+      const lastMod = LocalDB.load('active_module', 'mod_04_multiple_choice');
+      loadModule(lastMod);
+    });
+  </script>
+</body>
+</html>

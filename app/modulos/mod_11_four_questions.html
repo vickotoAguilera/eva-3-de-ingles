@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo 11 - Las 4 Preguntas Clave</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <script src="../js/db.js"></script>
+  <style>
+    body { max-width: 1040px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="module-container"></div>
+  <script>
+const fourQuestionsData = {
+      1: {
+        title: "1. Wh- Question 1: Lugar / Destino con Did",
+        badge: "Fórmula: Wh- + did + you + go",
+        qOfficial: "Where did you go last summer?",
+        qEs: "¿A dónde fuiste el verano pasado?",
+        qBlueprint: "[1. Wh- Word: Where] + [2. Auxiliar: did] + [3. Sujeto: you] + [4. Verbo BASE (sin conjugar): go] + [5. Tiempo: last summer] + [6. Signo: ?]",
+        qFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° Where</b> = Palabra Wh- interrogativa (¿A dónde?).<br>• <b>2° did</b> = Auxiliar obligatorio de pasado para preguntas.<br>• <b>3° you</b> = Sujeto (tú / ustedes).<br>• <b>4° go</b> = <b>¡VERBO EN FORMA BASE NORMAL!</b> Como el auxiliar <i>did</i> ya absorbió el tiempo pasado, el verbo principal NO se conjuga (es <b>go</b>, ¡NUNCA <i>went</i> ni <i>goed</i>!).<br>• <b>5° last summer</b> = Complemento de tiempo (el verano pasado).<br>• <b>6° ?</b> = Signo de interrogación final (en inglés no existe el de apertura ¿).",
+        aOfficial: "I went to Quintero beach in 2025.",
+        aEs: "Fui a la playa de Quintero en 2025.",
+        aBlueprint: "[1. Sujeto: I (Mayúscula)] + [2. Verbo CONJUGADO en Pasado: went] + [3. Preposición + Lugar: to Quintero beach] + [4. Año: in 2025] + [5. Punto: .]",
+        aFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° I</b> = Sujeto 'Yo' (siempre con mayúscula en inglés).<br>• <b>2° went</b> = <b>¡VERBO CONJUGADO EN PASADO!</b> Al ser una respuesta afirmativa no existe el auxiliar <i>did</i>, por lo que debes conjugar obligatoriamente el verbo a su forma de pasado irregular (<i>go &rarr; went = fui</i>).<br>• <b>3° to Quintero beach</b> = Hacia la playa de Quintero (la preposición <i>to</i> indica destino).<br>• <b>4° in 2025</b> = En 2025 (los años siempre van acompañados de la preposición <i>in</i>).<br>• <b>5° .</b> = Punto final obligatorio.",
+        evalQ: function(norm, raw) {
+          if (norm.includes("where did you go") || norm.includes("where did you travel")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Excelente pregunta! Usaste la fórmula perfecta: <b>Where + did + you + go</b> (verbo en forma base).' };
+          }
+          if (norm.includes("where") && (norm.includes("you went") || norm.includes("did you went"))) {
+            return { ok: true, status: 'tolerant', msg: '✔️ ¡Bien planteada la idea! Pero cuidado con el verbo: con el auxiliar "did", el verbo va en forma base: <b>Where did you go</b> (no went).' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ Recuerda la fórmula Wh-: <b>Where + did + you + go last summer?</b>' };
+        },
+        evalA: function(norm, raw) {
+          if (norm.includes("went")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Perfecto! Usaste el pasado irregular del verbo go: <b>went</b> ("I went to Quintero beach...").' };
+          }
+          if (norm.includes("goed")) {
+            return { ok: true, status: 'tolerant', msg: '✔️ ¡Buena intención! Pero "go" es irregular y su pasado es <b>went</b> (jamás "goed").' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ En la respuesta afirmativa debes usar el verbo en pasado: <b>I went to Quintero beach in 2025</b>.' };
+        }
+      },
+      2: {
+        title: "2. Wh- Question 2: Clima / Condición con Was",
+        badge: "Fórmula: How was the weather...?",
+        qOfficial: "How was the weather in Quintero?",
+        qEs: "¿Cómo estuvo el clima en Quintero?",
+        qBlueprint: "[1. Wh- Word: How] + [2. Verbo To Be Pasado: was] + [3. Sujeto: the weather] + [4. Lugar con preposición: in Quintero] + [5. Signo: ?]",
+        qFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° How</b> = Palabra interrogativa (¿Cómo?).<br>• <b>2° was</b> = Pasado del verbo <i>to be</i> para cosas singulares o incontables (estuvo / fue). <b>¡ATENCIÓN!</b> Con el verbo <i>to be</i> <b>NO se usa did</b>.<br>• <b>3° the weather</b> = Sujeto (el clima). ¡Ojo con el deletreo exacto para la prueba: <b>w-e-a-t-h-e-r</b>!<br>• <b>4° in Quintero</b> = En Quintero (las ciudades llevan la preposición <i>in</i>).<br>• <b>5° ?</b> = Signo de interrogación final.",
+        aOfficial: "The weather was sunny and warm, but later it was cold.",
+        aEs: "El clima estuvo soleado y cálido, pero después estuvo frío.",
+        aBlueprint: "[1. Sujeto: The weather] + [2. Verbo Pasado: was] + [3. Clima: sunny and warm] + [4. Conector: , but] + [5. Imprevisto: later it was cold] + [6. Punto: .]",
+        aFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° The weather</b> = Sujeto.<br>• <b>2° was</b> = Verbo en pasado (estuvo).<br>• <b>3° sunny and warm</b> = Vocabulario oficial del libro Oxford (soleado y cálido).<br>• <b>4° , but</b> = Conector de contraste obligatorio de la rúbrica (coma + pero).<br>• <b>5° later it was cold</b> = Oración secundaria que narra el imprevisto de clima.<br>• <i>Opción Negativa alternativa:</i> <b>It wasn't cold.</b> (apóstrofe entre la <b>n</b> y la <b>t</b>: <b>wasn't</b>).",
+        evalQ: function(norm, raw) {
+          if (norm.includes("how was the weather") || norm.includes("what was the weather like")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Pregunta impecable! Usaste <b>How was the weather...?</b> (o What was the weather like?).' };
+          }
+          if (norm.includes("weather") && norm.includes("was")) {
+            return { ok: true, status: 'tolerant', msg: '✔️ Bien formulado el concepto. La forma estándar oficial es: <b>How was the weather in Quintero?</b>' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ Pregunta con el pasado de be: <b>How was the weather in Quintero?</b>' };
+        },
+        evalA: function(norm, raw) {
+          if (norm.includes("wasn't")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Excelente! Usaste la forma negativa formal con apóstrofe: <b>wasn\'t</b>.' };
+          }
+          if (norm.includes("wasent") || norm.includes("wasnt") || norm.includes("wasen't") || norm.includes("was'nt")) {
+            return { ok: true, status: 'tolerant', msg: '✔️ ¡Buena! Te la contamos como correcta por intención: escribiste <b>"' + raw + '"</b>.<br>✍️ Recuerda que en la prueba formal debe llevar apóstrofe entremedio: <b style="color:#fbbf24; text-decoration:underline;">wasn\'t</b>.' };
+          }
+          if (norm.includes("was") && (norm.includes("sunny") || norm.includes("warm") || norm.includes("cold") || norm.includes("nice") || norm.includes("good"))) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Excelente respuesta! Describiste el clima usando <b>was</b> y vocabulario oficial de la unidad.' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ Recuerda usar el pasado del clima: <b>The weather was sunny and warm, but later it was cold</b>.' };
+        }
+      },
+      3: {
+        title: "3. Closed Question 1: Yes/No con Did",
+        badge: "Fórmula: Did you buy...?",
+        qOfficial: "Did you buy souvenirs at the market?",
+        qEs: "¿Compraste recuerdos en el mercado?",
+        qBlueprint: "[1. Auxiliar Pasado: Did] + [2. Sujeto: you] + [3. Verbo BASE (sin conjugar): buy] + [4. Objeto: souvenirs] + [5. Preposición + Lugar: at the market] + [6. Signo: ?]",
+        qFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° Did</b> = Arranca directamente con el auxiliar (las preguntas de Sí/No NO llevan palabra Wh-).<br>• <b>2° you</b> = Sujeto (tú).<br>• <b>3° buy</b> = <b>¡VERBO EN FORMA BASE!</b> Como ya pusiste <i>Did</i> al inicio, el verbo NUNCA se conjuga a pasado (es <b>buy</b>, ¡jamás pongas <i>bought</i>!).<br>• <b>4° souvenirs</b> = Objeto directo (recuerdos / suvenires).<br>• <b>5° at the market</b> = Lugar específico con la preposición <i>at</i>.<br>• <b>6° ?</b> = Signo de interrogación final.",
+        aOfficial: "Yes, I did. I bought nice souvenirs for my family.",
+        aEs: "Sí, lo hice. Compré lindos recuerdos para mi familia.",
+        aBlueprint: "[1. Respuesta Corta: Yes, I did.  O  No, I didn't.] + [2. Sujeto: I] + [3. Verbo Pasado: bought] + [4. Objeto: souvenirs] + [5. Punto: .]",
+        aFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° Yes, I did. / No, I didn't.</b> = Respuesta corta oficial de examen. Lleva coma tras Yes/No y punto final. En <b>didn't</b> el apóstrofe va entre la <b>n</b> y la <b>t</b>.<br>• <b>2° I bought souvenirs</b> = Si agregas la oración explicativa afirmativa, el verbo <i>buy</i> SÍ cambia a su pasado irregular <b>bought</b> (porque aquí no hay did). Si fuera negativa: <i>I didn't buy souvenirs</i> (con buy en base).",
+        evalQ: function(norm, raw) {
+          if (norm.includes("did you buy")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Fórmula perfecta! <b>Did + you + buy</b> (sujeto + verbo en forma base).' };
+          }
+          if (norm.includes("did you bought")) {
+            return { ok: true, status: 'tolerant', msg: '✔️ ¡Cuidado con la trampa clásica! El auxiliar "did" ya indica pasado, por eso el verbo va en forma base: <b>Did you buy</b> (no bought).' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ Fórmula cerrada con Did: <b>Did you buy souvenirs at the market?</b>' };
+        },
+        evalA: function(norm, raw) {
+          if (norm.includes("didn't")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Respuesta negativa perfecta! Usaste la forma formal con apóstrofe: <b>didn\'t</b> ("No, I didn\'t").' };
+          }
+          if (norm.includes("dident") || norm.includes("didnt") || norm.includes("diden't") || norm.includes("diden´t") || norm.includes("did'nt")) {
+            return { ok: true, status: 'tolerant', msg: '✔️ ¡Buena! Te la contamos como correcta por intención: escribiste <b>"' + raw + '"</b>.<br>✍️ Recuerda que en la prueba formal debe llevar apóstrofe entremedio: <b style="color:#fbbf24; text-decoration:underline;">didn\'t</b> (con apóstrofe entre la n y la t).' };
+          }
+          if (norm.includes("yes, i did") || norm.includes("yes i did") || norm.includes("bought")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Respuesta afirmativa perfecta! Usaste "Yes, I did" o el pasado irregular "bought".' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ Puedes responder afirmativo (<b>Yes, I did. I bought...</b>) o negativo (<b>No, I didn\'t</b>).' };
+        }
+      },
+      4: {
+        title: "4. Closed Question 2: Yes/No con Was",
+        badge: "Fórmula: Was the water cold...?",
+        qOfficial: "Was the water cold at the beach?",
+        qEs: "¿Estaba el agua fría en la playa?",
+        qBlueprint: "[1. Verbo To Be Pasado: Was] + [2. Sujeto Singular: the water] + [3. Adjetivo: cold] + [4. Lugar con preposición: at the beach] + [5. Signo: ?]",
+        qFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° Was</b> = Arranca directamente con el verbo <i>to be</i> en pasado (singular/incontable). <b>¡ATENCIÓN!</b> Nunca se usa auxiliar <i>did</i> con el verbo <i>to be</i>.<br>• <b>2° the water</b> = Sujeto singular/incontable (el agua).<br>• <b>3° cold</b> = Adjetivo que describe la cualidad (fría).<br>• <b>4° at the beach</b> = Preposición de lugar + playa.<br>• <b>5° ?</b> = Signo de interrogación final.",
+        aOfficial: "Yes, it was. The ocean water was very cold.",
+        aEs: "Sí, lo estaba. El agua del océano estaba muy fría.",
+        aBlueprint: "[1. Respuesta Corta: Yes, it was.  O  No, it wasn't.] + [2. Opcional detalle: The water was cold.] + [3. Punto: .]",
+        aFormulaExplanation: "<b>¿Cómo y por qué va armada así?:</b><br>• <b>1° Yes, it was. / No, it wasn't.</b> = Respuesta corta oficial. Como la pregunta fue con <i>Was the water...?</i>, en la respuesta el agua se reemplaza por el pronombre singular neutro <b>it</b>.<br>• <b>wasn't</b> = En caso negativo, recuerda que el apóstrofe va entre la <b>n</b> y la <b>t</b> (reemplaza a la 'o' de <i>not</i>).<br>• <b>2° .</b> = Punto final obligatorio.",
+        evalQ: function(norm, raw) {
+          if (norm.includes("was the water")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Pregunta perfecta! <b>Was + the water</b> (sujeto incontable/singular) + cold...?' };
+          }
+          if (norm.includes("were the water") || norm.includes("did the water")) {
+            return { ok: true, status: 'tolerant', msg: '✔️ El agua ("the water") es incontable/singular, por eso va con <b>Was</b> (no were ni did).' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ Pregunta con be: <b>Was the water cold at the beach?</b>' };
+        },
+        evalA: function(norm, raw) {
+          if (norm.includes("wasn't")) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Respuesta negativa perfecta! Usaste la forma formal con apóstrofe: <b>wasn\'t</b> ("No, it wasn\'t").' };
+          }
+          if (norm.includes("wasent") || norm.includes("wasnt") || norm.includes("wasen't") || norm.includes("wasen´t") || norm.includes("was'nt")) {
+            return { ok: true, status: 'tolerant', msg: '✔️ ¡Buena! Te la contamos como correcta por intención: escribiste <b>"' + raw + '"</b>.<br>✍️ Recuerda que en la prueba formal debe llevar apóstrofe entremedio: <b style="color:#fbbf24; text-decoration:underline;">wasn\'t</b> (con apóstrofe entre la n y la t).' };
+          }
+          if (norm.includes("yes, it was") || norm.includes("yes it was") || (norm.includes("was") && norm.includes("cold"))) {
+            return { ok: true, status: 'exact', msg: '✔️ ¡Respuesta afirmativa perfecta! <b>Yes, it was. The ocean water was very cold.</b>' };
+          }
+          return { ok: false, status: 'incorrect', msg: '❌ Puedes responder afirmativo (<b>Yes, it was</b>) o negativo (<b>No, it wasn\'t</b>).' };
+        }
+      }
+    };
+
+    function checkFourQ(qNum, type) {
+      const inputEl = document.getElementById(`fq-${type}-${qNum}`);
+      const fbEl = document.getElementById(`fq-fb-${type}-${qNum}`);
+      const data = fourQuestionsData[qNum];
+      if (!inputEl || !fbEl || !data) return;
+
+      const raw = inputEl.value.trim();
+      if (!raw) {
+        fbEl.style.display = 'none';
+        inputEl.className = 'written-input';
+        return;
+      }
+
+      const norm = normalizeWritten(raw);
+      const res = (type === 'q') ? data.evalQ(norm, raw) : data.evalA(norm, raw);
+
+      if (res.status === 'exact') {
+        inputEl.className = 'written-input is-correct';
+        fbEl.className = 'feedback-box correct';
+        fbEl.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        fbEl.style.background = 'var(--success-bg)';
+        fbEl.style.color = '#d1fae5';
+        fbEl.innerHTML = res.msg;
+        fbEl.style.display = 'block';
+      } else if (res.status === 'tolerant') {
+        inputEl.className = 'written-input is-tolerant';
+        fbEl.className = 'feedback-box correct';
+        fbEl.style.borderColor = '#f59e0b';
+        fbEl.style.background = 'rgba(245, 158, 11, 0.15)';
+        fbEl.style.color = '#fef3c7';
+        fbEl.innerHTML = res.msg;
+        fbEl.style.display = 'block';
+      } else {
+        inputEl.className = 'written-input is-incorrect';
+        fbEl.className = 'feedback-box incorrect';
+        fbEl.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        fbEl.style.background = 'var(--error-bg)';
+        fbEl.style.color = '#fee2e2';
+        fbEl.innerHTML = res.msg;
+        fbEl.style.display = 'block';
+      }
+    }
+
+    function revealFourQ(qNum, type) {
+      const inputEl = document.getElementById(`fq-${type}-${qNum}`);
+      const data = fourQuestionsData[qNum];
+      if (inputEl && data) {
+        inputEl.value = (type === 'q') ? data.qOfficial : data.aOfficial;
+        checkFourQ(qNum, type);
+      }
+    }
+
+    function speakFourQ(qNum, type) {
+      const data = fourQuestionsData[qNum];
+      if (!data) return;
+      const text = (type === 'q') ? data.qOfficial : data.aOfficial;
+      speak(text);
+    }
+
+    function solveAllFourQ() {
+      for (let i = 1; i <= 4; i++) {
+        revealFourQ(i, 'q');
+        revealFourQ(i, 'a');
+      }
+    }
+
+    function resetAllFourQ() {
+      for (let i = 1; i <= 4; i++) {
+        ['q', 'a'].forEach(type => {
+          const el = document.getElementById(`fq-${type}-${i}`);
+          const fb = document.getElementById(`fq-fb-${type}-${i}`);
+          if (el) {
+            el.value = '';
+            el.className = 'written-input';
+          }
+          if (fb) fb.style.display = 'none';
+        });
+      }
+    }
+
+    function normalizeWritten(s) {
+      if (!s) return '';
+      return s.toLowerCase().trim().replace(/['´`’]/g, "'").replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { 
+      renderFourQuestions(document.getElementById('module-container')); 
+    });
+  </script>
+</body>
+</html>
