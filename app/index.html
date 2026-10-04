@@ -268,7 +268,8 @@
       <span>Evaluación 3 (Unit 7)</span>
       <span id="mobile-mod-name">Cargando módulo...</span>
     </div>
-    <div style="width: 40px; display:flex; justify-content:flex-end;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button onclick="openDownloadModal()" style="background:rgba(37,99,235,0.25); border:1px solid #3b82f6; color:#93c5fd; border-radius:6px; padding:4px 8px; font-size:11px; cursor:pointer; font-weight:700;" title="Descargar Material">📥 Descargar</button>
       <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981;" title="Offline activo"></span>
     </div>
   </header>
@@ -284,6 +285,13 @@
         <p>Plataforma Modular 100% Offline</p>
       </div>
       <button class="close-drawer-btn" onclick="toggleSidebar(false)" aria-label="Cerrar Menú">✕</button>
+    </div>
+
+    <!-- Botón Destacado de Descarga para Estudiantes -->
+    <div style="padding: 12px 14px 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(30, 41, 59, 0.4);">
+      <button class="btn btn-primary" onclick="openDownloadModal()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 800; padding: 10px 12px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; border-radius: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35); cursor: pointer;">
+        📥 Descargar Plataforma / PDFs
+      </button>
     </div>
 
     <div class="sidebar-nav">
@@ -357,6 +365,67 @@
     <iframe id="module-viewport" src="modulos/mod_04_multiple_choice.html"></iframe>
   </main>
 
+  <!-- MODAL DE DESCARGA PARA ESTUDIANTES -->
+  <div id="download-hub-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.78); backdrop-filter:blur(6px); z-index:999; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#0f172a; border:1.5px solid rgba(59,130,246,0.35); border-radius:14px; max-width:540px; width:100%; padding:24px; box-shadow:0 12px 40px rgba(0,0,0,0.8); position:relative;">
+      <button onclick="closeDownloadModal()" style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.08); border:none; color:#94a3b8; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer;" aria-label="Cerrar">✕</button>
+      
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+        <span style="font-size:26px;">📥</span>
+        <div>
+          <h3 style="color:#fff; margin:0; font-size:18px; font-weight:800;">Descargar Material & Plataforma</h3>
+          <p style="font-size:12px; color:#94a3b8; margin:3px 0 0 0;">Usa la plataforma completa en tu computador o teléfono sin internet</p>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+        <!-- Opción 1: ZIP Completo de la Plataforma -->
+        <a href="https://github.com/vickotoAguilera/eva-3-de-ingles/archive/refs/heads/main.zip" class="download-card-link" style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:rgba(30,41,59,0.7); border:1px solid rgba(59,130,246,0.3); border-radius:10px; text-decoration:none; color:#fff; transition:all 0.2s;">
+          <div>
+            <div style="font-weight:700; font-size:14px; color:#60a5fa; display:flex; align-items:center; gap:6px;">
+              <span>📦 Descargar Plataforma Completa (.ZIP)</span>
+            </div>
+            <div style="font-size:12px; color:#cbd5e1; margin-top:3px;">
+              Todo el proyecto listo para abrir offline en cualquier PC. Haz doble clic en <code>index.html</code>.
+            </div>
+          </div>
+          <span style="background:#2563eb; color:#fff; font-size:12px; font-weight:700; padding:8px 12px; border-radius:6px; white-space:nowrap; margin-left:10px;">⬇️ Descargar ZIP</span>
+        </a>
+
+        <!-- Opción 2: Guía Maestra Completa PDF -->
+        <a href="../pdf/Guia_Maestra_Completa_Unit7_Oxford.pdf" download target="_blank" class="download-card-link" style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:rgba(30,41,59,0.7); border:1px solid rgba(16,185,129,0.3); border-radius:10px; text-decoration:none; color:#fff; transition:all 0.2s;">
+          <div>
+            <div style="font-weight:700; font-size:14px; color:#34d399; display:flex; align-items:center; gap:6px;">
+              <span>📕 Guía Maestra Completa de Estudio (.PDF)</span>
+            </div>
+            <div style="font-size:12px; color:#cbd5e1; margin-top:3px;">
+              Cuadernillo integral imprimible con todas las reglas, tablas de verbos, conectores y fotos.
+            </div>
+          </div>
+          <span style="background:#059669; color:#fff; font-size:12px; font-weight:700; padding:8px 12px; border-radius:6px; white-space:nowrap; margin-left:10px;">⬇️ Abrir PDF</span>
+        </a>
+
+        <!-- Opción 3: Tarea Oficial en Word -->
+        <a href="../documentos/Tarea_8_Oraciones.docx" download class="download-card-link" style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:rgba(30,41,59,0.7); border:1px solid rgba(245,158,11,0.3); border-radius:10px; text-decoration:none; color:#fff; transition:all 0.2s;">
+          <div>
+            <div style="font-weight:700; font-size:14px; color:#f59e0b; display:flex; align-items:center; gap:6px;">
+              <span>📄 Plantilla Tarea Oficial 8 Oraciones (.docx)</span>
+            </div>
+            <div style="font-size:12px; color:#cbd5e1; margin-top:3px;">
+              Documento Word formateado para redactar y entregar la tarea de vacaciones.
+            </div>
+          </div>
+          <span style="background:#d97706; color:#fff; font-size:12px; font-weight:700; padding:8px 12px; border-radius:6px; white-space:nowrap; margin-left:10px;">⬇️ Descargar Docx</span>
+        </a>
+
+        <!-- Opción 4: Ir al módulo 12 con las 11 guías PDF individuales -->
+        <button onclick="closeDownloadModal(); loadModule('mod_12_documents');" style="margin-top:4px; padding:12px; background:rgba(59,130,246,0.15); border:1px solid #3b82f6; border-radius:8px; color:#93c5fd; font-weight:700; font-size:13px; cursor:pointer;">
+          📁 Ver las 11 Guías PDF Individuales por Módulo &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const moduleMap = {
       'mod_01_weather': { btn: 'btn-mod-01', name: '1. Clima Nice vs Bad' },
@@ -386,6 +455,16 @@
         sidebar.classList.remove('open');
         backdrop.classList.remove('active');
       }
+    }
+
+    function openDownloadModal() {
+      const modal = document.getElementById('download-hub-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeDownloadModal() {
+      const modal = document.getElementById('download-hub-modal');
+      if (modal) modal.style.display = 'none';
     }
 
     function loadModule(moduleId) {

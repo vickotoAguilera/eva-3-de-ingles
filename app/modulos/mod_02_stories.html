@@ -5,6 +5,7 @@
   <title>Módulo 2 - Reading & Grammar: 4 Historias en Pasado Simple y Clima</title>
   <link rel="stylesheet" href="../css/common.css">
   <script src="../js/db.js"></script>
+  <script src="../js/audio_timeline.js"></script>
   <style>
     body { max-width: 980px; margin: 0 auto; }
     .story-nav {
@@ -371,24 +372,30 @@
 
       area.innerHTML = `
         <div class="card" style="border:1px solid rgba(255,255,255,0.12); margin-bottom:24px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
             <h2 style="color:#60a5fa; font-size:19px; font-weight:800; margin:0;">${s.title}</h2>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn btn-primary" onclick="speakStory()">▶️ Escuchar Lectura</button>
-              <button class="btn btn-secondary" onclick="stopAudio()" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#fca5a5;">⏹️ Detener</button>
-              <button class="btn btn-secondary" onclick="restartStoryAudio()" style="background:rgba(245,158,11,0.2); border-color:#f59e0b; color:#fde68a;">🔄 Reiniciar</button>
-              <button class="btn btn-secondary" id="btn-toggle-es" onclick="toggleSpanish()">🌍 Ver Traducción al Español</button>
+            <div>
+              <button class="btn btn-secondary" id="btn-toggle-es" onclick="toggleSpanish()" style="font-size:12.5px; padding:6px 14px;">🌍 Ver Traducción al Español</button>
             </div>
           </div>
 
-          <div style="font-size:12.5px; background:rgba(59,130,246,0.15); color:#93c5fd; padding:6px 12px; border-radius:6px; font-weight:700; margin-bottom:16px; display:inline-block;">
+          <div style="font-size:12.5px; background:rgba(59,130,246,0.15); color:#93c5fd; padding:6px 12px; border-radius:6px; font-weight:700; margin-bottom:14px; display:inline-block;">
             ${s.badge}
           </div>
 
-          <div class="story-box" id="story-en-text">${s.textEn}</div>
+          <!-- RUTA DE TIEMPO INTERACTIVA / CONTROLADOR DE AUDIO -->
+          <div id="story-audio-timeline-box" style="margin-bottom:14px;"></div>
 
-          <div class="story-box" id="story-es-text" style="display:none; background:rgba(30,41,59,0.9); border-color:#3b82f6; color:#e2e8f0;">
-            ${s.textEs}
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; color:#94a3b8;">📖 <b>Texto en Inglés</b> (Haz clic en cualquier frase para escuchar desde allí):</span>
+            <span style="font-size:11.5px; color:#60a5fa;">💡 Seguimiento de lectura activo</span>
+          </div>
+
+          <div class="story-box" id="story-en-text"></div>
+
+          <div class="story-box" id="story-es-text" style="display:none; background:rgba(30,41,59,0.9); border-color:#3b82f6; color:#e2e8f0; margin-top:14px;">
+            <div style="font-weight:700; color:#fbbf24; margin-bottom:8px; font-size:13px;">🌍 Traducción Completa al Español:</div>
+            ${s.textEs.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>')}
           </div>
         </div>
 
@@ -398,6 +405,20 @@
 
         ${questionsHtml}
       `;
+
+      // Inicializar el reproductor con línea de tiempo interactiva
+      if (window.activeStoryPlayer) {
+        window.activeStoryPlayer.stop();
+      }
+      window.activeStoryPlayer = new AudioTimelinePlayer({
+        containerId: 'story-audio-timeline-box',
+        textContainerId: 'story-en-text',
+        text: s.textEn,
+        rate: 0.88,
+        lang: 'en-US'
+      });
+      window.activeStoryPlayer.instanceName = 'activeStoryPlayer';
+      window.activeStoryPlayer.renderControls();
 
       // Restaurar respuestas guardadas
       s.questions.forEach(q => {
@@ -442,16 +463,6 @@
         <div style="font-size:13.5px; color:#f3f4f6;">💡 <b>Regla:</b> ${q.rule}</div>
       `;
       fb.style.display = 'block';
-    }
-
-    function speakStory() {
-      const s = stories.find(x => x.id === activeStoryId);
-      if (s) speak(s.audioText || s.textEn);
-    }
-
-    function restartStoryAudio() {
-      const s = stories.find(x => x.id === activeStoryId);
-      if (s) restartAudio(s.audioText || s.textEn);
     }
 
     function toggleSpanish() {

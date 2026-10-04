@@ -461,3 +461,194 @@ body {
     font-size: 12.5px;
   }
 }
+
+/* ==========================================================================
+   AUDIO TIMELINE PLAYER (Ruta de Tiempo para Textos e Historias)
+   ========================================================================== */
+.audio-timeline-card {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.atp-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.atp-time-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.atp-time-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.atp-sentence-badge {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.atp-speed-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.atp-speed-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.atp-speed-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  color: #fff;
+}
+
+.atp-speed-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #3b82f6;
+  font-weight: 700;
+}
+
+.atp-slider-row {
+  margin: 10px 0 12px 0;
+}
+
+.atp-slider {
+  width: 100%;
+  height: 7px;
+  border-radius: 5px;
+  background: #1e293b;
+  outline: none;
+  cursor: pointer;
+  accent-color: #38bdf8;
+  transition: background 0.2s;
+}
+
+.atp-slider::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #38bdf8;
+  cursor: pointer;
+  box-shadow: 0 0 10px #38bdf8;
+}
+
+.atp-buttons-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.atp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.atp-btn-step {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.atp-btn-step:hover {
+  background: rgba(59, 130, 246, 0.3);
+  color: #fff;
+}
+
+.atp-btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border-color: #1d4ed8;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+}
+
+.atp-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.atp-btn-active-play {
+  background: #0284c7 !important;
+  border-color: #0369a1 !important;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.6) !important;
+}
+
+.atp-btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.atp-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fff;
+}
+
+.atp-btn-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fde68a;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.atp-btn-warning:hover {
+  background: rgba(245, 158, 11, 0.3);
+  color: #fff;
+}
+
+/* Resalte de Frase Activa en el Texto (Efecto Karaoke) */
+.timeline-audio-sentence {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 1px 3px;
+  transition: background 0.2s, color 0.2s;
+  display: inline;
+}
+
+.timeline-audio-sentence:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.atp-active-sentence {
+  background: rgba(37, 99, 235, 0.4) !important;
+  color: #60a5fa !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #38bdf8 !important;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+

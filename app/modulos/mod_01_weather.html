@@ -5,6 +5,7 @@
   <title>Módulo 1 - 7.1 Weather Classifier</title>
   <link rel="stylesheet" href="../css/common.css">
   <script src="../js/db.js"></script>
+  <script src="../js/audio_timeline.js"></script>
   <style>
     body { max-width: 1040px; margin: 0 auto; }
     .buckets-grid {
@@ -84,13 +85,15 @@
   <div id="module-container"></div>
   <script>
 const weatherPhrases = [
-      { id: 1, text: "The sun is out.", trans: "El sol está afuera / Soleado", display: "El sol está afuera (The sun is out)", target: "nice" },
-      { id: 2, text: "It's cool and there's a lot of wind.", trans: "Está fresco y hay mucho viento", display: "Está fresco y hay mucho viento (It's cool and there's a lot of wind)", target: "bad" },
-      { id: 3, text: "There's no rain.", trans: "No hay lluvia", display: "No hay lluvia (There's no rain)", target: "nice" },
-      { id: 4, text: "The sky is filled with clouds.", trans: "El cielo está lleno de nubes / Nublado", display: "El cielo está lleno de nubes (The sky is filled with clouds)", target: "bad" },
-      { id: 5, text: "It's warm.", trans: "Hace calor / Templado", display: "Hace calor / Templado (It's warm)", target: "nice" },
-      { id: 6, text: "There's snow and cold weather.", trans: "Hay nieve y clima frío", display: "Hay nieve y clima frío (There's snow and cold weather)", target: "bad" }
+      { id: 1, text: "The sun is out.", trans: "El sol está afuera", display: "The sun is out.", target: "nice" },
+      { id: 2, text: "It's cool and there's a lot of wind.", trans: "Está fresco y hay mucho viento", display: "It's cool and there's a lot of wind.", target: "bad" },
+      { id: 3, text: "There's no rain.", trans: "No hay lluvia", display: "There's no rain.", target: "nice" },
+      { id: 4, text: "The sky is filled with clouds.", trans: "El cielo está lleno de nubes", display: "The sky is filled with clouds.", target: "bad" },
+      { id: 5, text: "It's warm.", trans: "Hace calor / Está templado", display: "It's warm.", target: "nice" },
+      { id: 6, text: "There's snow and cold weather.", trans: "Hay nieve y clima frío", display: "There's snow and cold weather.", target: "bad" }
     ];
+
+    const joeEmailTextEn = "Dear Sinai,\n\nHow are you? I can't believe my vacation! In London, the weather is nice: it's warm and the sun is out. There's no rain, but here in Spain, the weather is bad: There is no sun! The sky is filled with clouds. It's cool and there's a lot of wind. There's snow in the mountains! I don't have clothes for this cold weather! I can't wait to come home!\n\nHope to see you soon!\nJoe";
 
     let userNice = [];
     let userBad = [];
@@ -102,7 +105,7 @@ const weatherPhrases = [
         <div class="header-bar">
           <div>
             <h1>☀️ 7.1 VOCABULARY: Weather (Clasificador Oficial con Drag & Drop)</h1>
-            <p>Toma cada frase con el mouse y <b>arrástrala directamente</b> a su respectiva caja de clima.</p>
+            <p>Lee las frases en inglés, comprende su significado y <b>arrástralas con el mouse</b> a la caja correcta.</p>
           </div>
           <div>
             <button class="btn btn-secondary" onclick="document.getElementById('email-card-section').scrollIntoView({behavior:'smooth'})">
@@ -114,8 +117,8 @@ const weatherPhrases = [
         <div class="banner-grammar">
           <h3>🖱️ Instrucción: Arrastra y Suelta con el Mouse</h3>
           <p>
-            • <b>Arrastra:</b> Haz clic sobre cualquier frase, mantén presionado y <b>arrástrala</b> a la caja <b>☀️ Nice weather</b> (buen clima) o a <b>🌧️ Bad weather</b> (mal clima).<br>
-            • <b>Comprobar:</b> Al pulsar <b>Comprobar Clasificación</b>, las frases buenas tendrán un <b>ticket verde ✔️</b> y las incorrectas marcarán <b>❌</b> con la explicación de Joe.
+            • <b>Arrastra:</b> Haz clic sobre cualquier frase en inglés, mantén presionado y <b>arrástrala</b> a <b>☀️ Nice weather</b> (buen clima) o a <b>🌧️ Bad weather</b> (mal clima).<br>
+            • <b>Comprensión Real:</b> Lee el texto de Joe abajo sin pistas de colores para aprender qué significa cada expresión antes de comprobar.
           </p>
         </div>
 
@@ -127,9 +130,9 @@ const weatherPhrases = [
              ondrop="onDrop(event, 'pool')">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
             <h4 style="font-size:14px; color:#93c5fd; margin:0; display:flex; align-items:center; gap:6px;">
-              <span>📦 Frases para clasificar (Haz clic y arrastra con el mouse):</span>
+              <span>📦 Frases en Inglés para clasificar (Arrastra hacia una caja):</span>
             </h4>
-            <span style="font-size:12px; color:#64748b;">(Zona para soltar frases si las quieres regresar)</span>
+            <span style="font-size:12px; color:#64748b;">(Zona para soltar frases si deseas regresarlas)</span>
           </div>
           <div id="phrases-pool" style="display:flex; flex-wrap:wrap; gap:10px; min-height:50px; align-items:center;"></div>
         </div>
@@ -170,40 +173,34 @@ const weatherPhrases = [
 
         <!-- CARTA / EMAIL DE JOE SIEMPRE VISIBLE ABAJO -->
         <div class="card" id="email-card-section" style="margin-top:24px; border-left:4px solid #60a5fa; background:linear-gradient(180deg, #1e293b 0%, #0f172a 100%);">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
             <div>
               <h3 style="color:#60a5fa; font-size:17px; margin:0; display:flex; align-items:center; gap:8px;">
                 ✉️ Email de Joe a Sinai (Lectura Oficial Oxford 7.1)
               </h3>
               <p style="font-size:12px; color:#9ca3af; margin:3px 0 0 0;">
-                Este email está <b>siempre visible</b> para que leas y fundamentes tu clasificación. Usa los botones para escucharlo en inglés o en español.
+                Lectura auténtica en inglés sin pistas de colores. Usa la barra de tiempo para escuchar, adelantar o retroceder.
               </p>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn btn-primary" onclick="playJoeEmailAudio()" style="font-size:13px; padding:8px 14px; display:inline-flex; align-items:center; gap:6px;">
-                🔊 Escuchar en Inglés
-              </button>
-              <button class="btn btn-secondary" onclick="playJoeEmailSpanishAudio()" style="font-size:13px; padding:8px 14px; display:inline-flex; align-items:center; gap:6px; background:#1e293b; color:#fbbf24; border-color:rgba(251,191,36,0.4);">
-                🔊 Escuchar en Español
-              </button>
-              <button class="btn btn-secondary" onclick="window.speechSynthesis.cancel()" style="font-size:13px; padding:8px 14px;">
-                ⏹️ Detener
+            <div>
+              <button class="btn btn-secondary" id="btn-toggle-joe-es" onclick="toggleJoeTranslation()" style="font-size:12px; padding:6px 14px;">
+                🌍 Ver Traducción al Español
               </button>
             </div>
           </div>
 
-          <div style="background:#090d16; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:18px; font-size:14.5px; line-height:1.75; color:#e2e8f0; font-family:'Segoe UI', sans-serif;">
-            <div style="font-size:12px; color:#64748b; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
-              <b>De (From):</b> Joe &lt;joe@oxfordstudy.com&gt; &nbsp;|&nbsp; <b>Para (To):</b> Sinai &lt;sinai@oxfordstudy.com&gt; &nbsp;|&nbsp; <b>Asunto (Subject):</b> ¡Clima de vacaciones! (Vacation weather!)
-            </div>
-            <p style="margin-bottom:8px;"><b>Querida Sinai (Dear Sinai),</b></p>
-            <p style="margin-bottom:8px; line-height:2.0;">
-              <b>¿Cómo estás? (How are you?)</b> ¡No puedo creer <b>mis vacaciones (my vacation)</b>! En Londres (In London), el clima (the weather) está <b style="background:rgba(52,211,153,0.25); color:#34d399; padding:2px 6px; border-radius:4px;">bueno (nice)</b>: <span style="color:#6ee7b7; font-weight:600;"><span style="color:#a7f3d0; background:rgba(16,185,129,0.15); padding:1px 5px; border-radius:3px;">hace calor / templado (it's warm)</span> y <span style="color:#a7f3d0; background:rgba(16,185,129,0.15); padding:1px 5px; border-radius:3px;">el sol está afuera (the sun is out)</span>. <span style="color:#a7f3d0; background:rgba(16,185,129,0.15); padding:1px 5px; border-radius:3px;">No hay lluvia (there's no rain)</span></span>, pero aquí en España (but here in Spain), el clima (the weather) está <b style="background:rgba(248,113,113,0.25); color:#f87171; padding:2px 6px; border-radius:4px;">malo (bad)</b>: <span style="color:#fca5a5; font-weight:600;"><span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">¡No hay sol! (There is no sun!)</span> <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">El cielo está lleno de nubes (The sky is filled with clouds)</span>. <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">Está fresco/frío (It's cool)</span> y <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">hay mucho viento (there's a lot of wind)</span>. <span style="color:#fecaca; background:rgba(239,68,68,0.15); padding:1px 5px; border-radius:3px;">¡Hay nieve en las montañas! (There's snow in the mountains!)</span></span> ¡No tengo <b>ropa (clothes)</b> para este <b>clima frío (cold weather)</b>! ¡Ya <b>no veo la hora / no puedo esperar (can't wait)</b> de <b>volver a casa (come home)</b>!
-            </p>
-            <p style="margin-top:8px; margin-bottom:14px;">¡<b>Espero verte pronto (Hope to see you soon)</b>!<br><b>Joe</b></p>
+          <!-- RUTA DE TIEMPO INTERACTIVA / CONTROLADOR DE AUDIO JOE -->
+          <div id="joe-email-timeline-box" style="margin-bottom:14px;"></div>
 
-            <!-- TRADUCCIÓN COMPLETA AL ESPAÑOL -->
-            <div style="margin-top:16px; padding:16px 18px; background:rgba(30, 41, 59, 0.7); border-radius:8px; border-left:4px solid #fbbf24; border:1px solid rgba(251,191,36,0.25);">
+          <div style="background:#090d16; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:18px; font-size:14.5px; line-height:1.75; color:#e2e8f0; font-family:'Segoe UI', sans-serif;">
+            <div style="font-size:12px; color:#64748b; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
+              <b>From:</b> Joe &lt;joe@oxfordstudy.com&gt; &nbsp;|&nbsp; <b>To:</b> Sinai &lt;sinai@oxfordstudy.com&gt; &nbsp;|&nbsp; <b>Subject:</b> Vacation weather!
+            </div>
+            
+            <div id="joe-email-en-body" style="line-height:2.0; font-size:15px; color:#f1f5f9; margin-bottom:12px;"></div>
+
+            <!-- TRADUCCIÓN COMPLETA AL ESPAÑOL (LIMPIA Y SIN PISTAS DE COLOR) -->
+            <div id="joe-email-es-box" style="display:none; margin-top:16px; padding:16px 18px; background:rgba(30, 41, 59, 0.7); border-radius:8px; border-left:4px solid #fbbf24; border:1px solid rgba(251,191,36,0.25);">
               <div style="font-size:12.5px; font-weight:700; color:#fbbf24; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
                 <span>🌍 Traducción al Español (Párrafo por Párrafo):</span>
               </div>
@@ -211,7 +208,7 @@ const weatherPhrases = [
                 <b>Querida Sinai:</b>
               </p>
               <p style="font-size:13.5px; line-height:1.7; color:#cbd5e1; margin-bottom:8px;">
-                ¿Cómo estás? ¡No puedo creer mis vacaciones! En Londres, el clima está <b style="color:#34d399; background:rgba(52,211,153,0.15); padding:1px 6px; border-radius:4px;">bueno (nice)</b>: <span style="color:#a7f3d0;">hace calor/está templado y el sol está afuera. No hay lluvia</span>, pero aquí en España, el clima está <b style="color:#f87171; background:rgba(248,113,113,0.15); padding:1px 6px; border-radius:4px;">malo (bad)</b>: <span style="color:#fecaca;">¡No hay sol! El cielo está lleno de nubes. Está fresco/frío y hay mucho viento. ¡Hay nieve en las montañas!</span> ¡No tengo ropa para este clima tan frío! ¡Ya no veo la hora de volver a casa!
+                ¿Cómo estás? ¡No puedo creer mis vacaciones! En Londres, el clima está bueno: hace calor/está templado y el sol está afuera. No hay lluvia, pero aquí en España, el clima está malo: ¡No hay sol! El cielo está lleno de nubes. Está fresco y hay mucho viento. ¡Hay nieve en las montañas! ¡No tengo ropa para este clima tan frío! ¡Ya no veo la hora de volver a casa!
               </p>
               <p style="font-size:13.5px; line-height:1.7; color:#cbd5e1; margin-top:8px; margin-bottom:0;">
                 ¡Espero verte pronto!<br><b>Joe</b>
@@ -221,7 +218,34 @@ const weatherPhrases = [
         </div>
       `;
 
+      // Inicializar el reproductor con línea de tiempo interactiva para el email de Joe
+      if (window.joeAudioPlayer) {
+        window.joeAudioPlayer.stop();
+      }
+      window.joeAudioPlayer = new AudioTimelinePlayer({
+        containerId: 'joe-email-timeline-box',
+        textContainerId: 'joe-email-en-body',
+        text: joeEmailTextEn,
+        rate: 0.88,
+        lang: 'en-US'
+      });
+      window.joeAudioPlayer.instanceName = 'joeAudioPlayer';
+      window.joeAudioPlayer.renderControls();
+
       resetWeatherSort();
+    }
+
+    function toggleJoeTranslation() {
+      const box = document.getElementById('joe-email-es-box');
+      const btn = document.getElementById('btn-toggle-joe-es');
+      if (!box || !btn) return;
+      if (box.style.display === 'none') {
+        box.style.display = 'block';
+        btn.textContent = '🙈 Ocultar Traducción al Español';
+      } else {
+        box.style.display = 'none';
+        btn.textContent = '🌍 Ver Traducción al Español';
+      }
     }
 
     function resetWeatherSort() {
@@ -311,22 +335,18 @@ const weatherPhrases = [
           btn.ondragstart = (e) => onDragStart(e, p.id);
           btn.ondragend = (e) => onDragEnd(e);
           btn.innerHTML = `
-            <span style="display:flex; flex-direction:column; gap:3px;">
-              <span style="display:flex; align-items:center; gap:8px;">
-                <span class="drag-handle" title="Arrastra con el mouse">⠿</span>
-                <b style="font-size:14px; color:#ffffff;">${p.display}</b>
-              </span>
-              <span style="font-size:11.5px; color:#93c5fd; margin-left:22px; font-weight:500;">
-                👉 En inglés de Oxford: <i>"${p.text}"</i>
-              </span>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span class="drag-handle" title="Arrastra con el mouse">⠿</span>
+              <b style="font-size:14.5px; color:#ffffff;">${p.display}</b>
+              <button class="btn btn-secondary" style="padding:2px 7px; font-size:11px; margin-left:6px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();" title="Escuchar pronunciación">🔊</button>
             </span>
-            <span style="font-size:11.5px; color:#60a5fa; margin-left:10px; background:rgba(96,165,250,0.15); padding:2px 8px; border-radius:4px; pointer-events:none; align-self:center;">
+            <span style="font-size:11px; color:#94a3b8; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px; pointer-events:none;">
               Arrastrar ➔
             </span>
           `;
           // Soporte opcional de clic para accesibilidad
           btn.onclick = (e) => {
-            if (e.target.classList.contains('drag-handle')) return;
+            if (e.target.classList.contains('drag-handle') || e.target.tagName === 'BUTTON') return;
             showMoveMenu(p, btn);
           };
           pool.appendChild(btn);
@@ -370,12 +390,10 @@ const weatherPhrases = [
           item.style.borderColor = isCorrect ? '#10b981' : '#ef4444';
           item.style.background = isCorrect ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
           item.innerHTML = `
-            <span style="display:flex; flex-direction:column; gap:2px;">
-              <span style="display:flex; align-items:center; gap:8px;">
-                <span class="drag-handle">⠿</span>
-                <span><b>${p.display}</b></span>
-              </span>
-              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span class="drag-handle">⠿</span>
+              <b style="font-size:14px; color:#fff;">${p.display}</b>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
             </span>
             <div style="display:flex; align-items:center; gap:6px;">
               ${isCorrect ?
@@ -386,14 +404,13 @@ const weatherPhrases = [
             </div>
           `;
         } else {
-          item.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          item.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          item.style.background = 'rgba(30, 41, 59, 0.9)';
           item.innerHTML = `
-            <span style="display:flex; flex-direction:column; gap:2px;">
-              <span style="display:flex; align-items:center; gap:8px;">
-                <span class="drag-handle">⠿</span>
-                <span><b>${p.display}</b></span>
-              </span>
-              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span class="drag-handle">⠿</span>
+              <b style="font-size:14px; color:#fff;">${p.display}</b>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
             </span>
             <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'nice'); event.stopPropagation();" title="Quitar de esta caja">↩️ Quitar</span>
           `;
@@ -419,12 +436,10 @@ const weatherPhrases = [
           item.style.borderColor = isCorrect ? '#10b981' : '#ef4444';
           item.style.background = isCorrect ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
           item.innerHTML = `
-            <span style="display:flex; flex-direction:column; gap:2px;">
-              <span style="display:flex; align-items:center; gap:8px;">
-                <span class="drag-handle">⠿</span>
-                <span><b>${p.display}</b></span>
-              </span>
-              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span class="drag-handle">⠿</span>
+              <b style="font-size:14px; color:#fff;">${p.display}</b>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
             </span>
             <div style="display:flex; align-items:center; gap:6px;">
               ${isCorrect ?
@@ -435,14 +450,13 @@ const weatherPhrases = [
             </div>
           `;
         } else {
-          item.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+          item.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          item.style.background = 'rgba(30, 41, 59, 0.9)';
           item.innerHTML = `
-            <span style="display:flex; flex-direction:column; gap:2px;">
-              <span style="display:flex; align-items:center; gap:8px;">
-                <span class="drag-handle">⠿</span>
-                <span><b>${p.display}</b></span>
-              </span>
-              <span style="font-size:11.5px; color:#cbd5e1; margin-left:22px;">👉 <i>${p.text}</i></span>
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span class="drag-handle">⠿</span>
+              <b style="font-size:14px; color:#fff;">${p.display}</b>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
             </span>
             <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'bad'); event.stopPropagation();" title="Quitar de esta caja">↩️ Quitar</span>
           `;
