@@ -144,6 +144,133 @@ const fourQuestionsData = {
       }
     };
 
+    function renderFourQuestions(container) {
+      if (!container) return;
+
+      let cardsHtml = '';
+      for (let i = 1; i <= 4; i++) {
+        const item = fourQuestionsData[i];
+        cardsHtml += `
+          <div class="card" style="margin-bottom:24px; border:1px solid rgba(255,255,255,0.12);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+              <h3 style="color:#60a5fa; font-size:17px; font-weight:800; margin:0;">
+                ${item.title}
+              </h3>
+              <span style="font-size:12px; background:rgba(59,130,246,0.2); color:#93c5fd; padding:3px 10px; border-radius:12px; font-weight:700;">
+                ${item.badge}
+              </span>
+            </div>
+
+            <!-- SECCIÓN 1: LA PREGUNTA (QUESTION) -->
+            <div style="background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; margin-bottom:14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+                <span style="font-size:13px; font-weight:800; color:#38bdf8; text-transform:uppercase;">
+                  ❓ Pregunta Oficial:
+                </span>
+                <button class="btn btn-secondary" style="padding:3px 10px; font-size:11.5px;" onclick="speakFourQ(${i}, 'q')">
+                  🔊 Escuchar Pregunta
+                </button>
+              </div>
+              <div style="font-size:16px; font-weight:800; color:#fff; margin-bottom:4px;">
+                "${item.qOfficial}"
+              </div>
+              <div style="font-size:13px; color:#94a3b8; font-style:italic; margin-bottom:10px;">
+                ↳ Español: ${item.qEs}
+              </div>
+
+              <!-- Blueprint de la Pregunta -->
+              <div style="background:rgba(0,0,0,0.35); border-left:3px solid #38bdf8; padding:8px 12px; border-radius:4px; font-family:monospace; font-size:12px; color:#bae6fd; margin-bottom:8px;">
+                ${item.qBlueprint}
+              </div>
+              <div style="font-size:12.5px; color:#cbd5e1; line-height:1.55; margin-bottom:12px;">
+                ${item.qFormulaExplanation}
+              </div>
+
+              <!-- Input de práctica para la Pregunta -->
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="fq-q-${i}" class="written-input" style="flex:1; min-width:240px;" placeholder="Escribe aquí la pregunta en inglés..." oninput="checkFourQ(${i}, 'q')">
+                <button class="btn btn-primary" onclick="checkFourQ(${i}, 'q')" style="font-size:12.5px; padding:8px 14px;">Comprobar</button>
+                <button class="btn btn-secondary" onclick="revealFourQ(${i}, 'q')" style="font-size:12.5px; padding:8px 14px;">👁️ Mostrar</button>
+              </div>
+              <div id="fq-fb-q-${i}" class="feedback-box"></div>
+            </div>
+
+            <!-- SECCIÓN 2: LA RESPUESTA (ANSWER) -->
+            <div style="background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+                <span style="font-size:13px; font-weight:800; color:#34d399; text-transform:uppercase;">
+                  💬 Respuesta Oficial de Examen:
+                </span>
+                <button class="btn btn-secondary" style="padding:3px 10px; font-size:11.5px;" onclick="speakFourQ(${i}, 'a')">
+                  🔊 Escuchar Respuesta
+                </button>
+              </div>
+              <div style="font-size:16px; font-weight:800; color:#fff; margin-bottom:4px;">
+                "${item.aOfficial}"
+              </div>
+              <div style="font-size:13px; color:#94a3b8; font-style:italic; margin-bottom:10px;">
+                ↳ Español: ${item.aEs}
+              </div>
+
+              <!-- Blueprint de la Respuesta -->
+              <div style="background:rgba(0,0,0,0.35); border-left:3px solid #34d399; padding:8px 12px; border-radius:4px; font-family:monospace; font-size:12px; color:#a7f3d0; margin-bottom:8px;">
+                ${item.aBlueprint}
+              </div>
+              <div style="font-size:12.5px; color:#cbd5e1; line-height:1.55; margin-bottom:12px;">
+                ${item.aFormulaExplanation}
+              </div>
+
+              <!-- Input de práctica para la Respuesta -->
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="fq-a-${i}" class="written-input" style="flex:1; min-width:240px;" placeholder="Escribe aquí la respuesta en inglés..." oninput="checkFourQ(${i}, 'a')">
+                <button class="btn btn-primary" onclick="checkFourQ(${i}, 'a')" style="font-size:12.5px; padding:8px 14px;">Comprobar</button>
+                <button class="btn btn-secondary" onclick="revealFourQ(${i}, 'a')" style="font-size:12.5px; padding:8px 14px;">👁️ Mostrar</button>
+              </div>
+              <div id="fq-fb-a-${i}" class="feedback-box"></div>
+            </div>
+
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="header-bar">
+          <div>
+            <h1>❓ 11. Las 4 Preguntas Clave de la Evaluación</h1>
+            <p>Aprende las 4 fórmulas exactas exigidas en la pauta: 2 preguntas Wh- (con Did y con Was) y 2 preguntas de Yes/No (con Did y con Was), con sus respuestas correctas y audios nativos.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="solveAllFourQ()">
+              👁️ Mostrar Todas las Respuestas
+            </button>
+            <button class="btn btn-secondary" onclick="resetAllFourQ()">
+              🔄 Limpiar Campos
+            </button>
+          </div>
+        </div>
+
+        <div class="banner-grammar" style="margin-bottom:24px;">
+          <h3>📌 Fórmulas de Oro para la Prueba Escrita:</h3>
+          <p>
+            • <b>Pregunta con DID:</b> <i>Wh- / Did + Sujeto + <b>VERBO BASE</b> (go, buy)</i>. (¡El auxiliar did absorbe el pasado; NUNCA pongas went ni bought!).<br>
+            • <b>Pregunta con WAS/WERE:</b> <i>Wh- / Was + Sujeto + Clima/Adjetivo</i>. (¡Con to be <b>NO se usa did</b>!).<br>
+            • <b>Respuestas Cortas:</b> <i>Yes, I did. / No, I didn't.</i> | <i>Yes, it was. / No, it wasn't.</i> (apóstrofe entre la 'n' y la 't').
+          </p>
+        </div>
+
+        ${cardsHtml}
+
+        <div style="display:flex; gap:10px; margin-top:20px; margin-bottom:30px;">
+          <button class="btn btn-success" style="padding:12px 24px;" onclick="solveAllFourQ()">
+            👁️ Mostrar Todo Resuelto
+          </button>
+          <button class="btn btn-secondary" style="padding:12px 20px;" onclick="resetAllFourQ()">
+            🔄 Limpiar y Reintentar
+          </button>
+        </div>
+      `;
+    }
+
     function checkFourQ(qNum, type) {
       const inputEl = document.getElementById(`fq-${type}-${qNum}`);
       const fbEl = document.getElementById(`fq-fb-${type}-${qNum}`);

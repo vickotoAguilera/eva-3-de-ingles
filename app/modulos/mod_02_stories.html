@@ -371,10 +371,12 @@
 
       area.innerHTML = `
         <div class="card" style="border:1px solid rgba(255,255,255,0.12); margin-bottom:24px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
             <h2 style="color:#60a5fa; font-size:19px; font-weight:800; margin:0;">${s.title}</h2>
-            <div style="display:flex; gap:8px;">
-              <button class="btn btn-secondary" onclick="speakStory()">🔊 Escuchar Lectura</button>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="speakStory()">▶️ Escuchar Lectura</button>
+              <button class="btn btn-secondary" onclick="stopAudio()" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#fca5a5;">⏹️ Detener</button>
+              <button class="btn btn-secondary" onclick="restartStoryAudio()" style="background:rgba(245,158,11,0.2); border-color:#f59e0b; color:#fde68a;">🔄 Reiniciar</button>
               <button class="btn btn-secondary" id="btn-toggle-es" onclick="toggleSpanish()">🌍 Ver Traducción al Español</button>
             </div>
           </div>
@@ -444,7 +446,12 @@
 
     function speakStory() {
       const s = stories.find(x => x.id === activeStoryId);
-      if (s) speak(s.audioText);
+      if (s) speak(s.audioText || s.textEn);
+    }
+
+    function restartStoryAudio() {
+      const s = stories.find(x => x.id === activeStoryId);
+      if (s) restartAudio(s.audioText || s.textEn);
     }
 
     function toggleSpanish() {

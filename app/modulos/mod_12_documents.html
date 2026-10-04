@@ -2,64 +2,200 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Módulo 12 - Centro de Documentos</title>
+  <title>Módulo 12 - Centro de Documentos & Guías PDF</title>
   <link rel="stylesheet" href="../css/common.css">
   <script src="../js/db.js"></script>
   <style>
     body { max-width: 1040px; margin: 0 auto; }
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .pdf-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .pdf-card:hover {
+      border-color: #60a5fa;
+      background: rgba(30, 41, 59, 0.9);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
   <div id="module-container"></div>
   <script>
-function renderDocsDownload(container) {
+    function renderDocsDownload(container) {
       container.innerHTML = `
         <div class="header-bar">
           <div>
-            <h1>📁 Documentos Oficiales de la Evaluación 3</h1>
-            <p>Descarga la tarea lista en formato Word (.docx), la guía completa de estudio y el PDF oficial de vocabulario Oxford.</p>
+            <h1>📁 Centro de Documentos Oficiales & Guías PDF</h1>
+            <p>Descarga la tarea oficial en Word (.docx), la guía completa de estudio y las 11 nuevas guías PDF individuales generadas para cada módulo listas para imprimir o estudiar en el celular.</p>
           </div>
         </div>
 
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <!-- SECCIÓN 1: ARCHIVOS OFICIALES WORD Y PDF ORIGINAL -->
+        <h3 style="color:#60a5fa; font-size:17px; margin-top:0; margin-bottom:12px;">
+          📝 Documentos Oficiales de la Evaluación (Word & Vocabulario):
+        </h3>
+
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
           <div>
-            <h4 style="font-size:16px; color:#fff;">📄 Tarea Oficial: 8 Oraciones de Vacaciones</h4>
-            <p style="font-size:13px; color:#9ca3af; margin-top:4px;">Archivo Word formateado con tu nombre, las 8 oraciones, conectores en negrita y las 4 preguntas de pasado.</p>
+            <h4 style="font-size:16px; color:#fff; margin:0;">📄 Tarea Oficial: 8 Oraciones de Vacaciones (.docx)</h4>
+            <p style="font-size:13px; color:#9ca3af; margin:4px 0 0 0;">Archivo Word listo para entregar con las 8 oraciones sobre Quintero y Ventanas, conectores en negrita y las 4 preguntas de pasado.</p>
             <code style="font-size:11px; color:#60a5fa;">Evaluacion_3/documentos/Tarea_8_Oraciones.docx</code>
           </div>
           <div style="display:flex; gap:8px;">
-            <a href="../documentos/Tarea_8_Oraciones.docx" download class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">⬇ Abrir Word</a>
+            <a href="../../documentos/Tarea_8_Oraciones.docx" download class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">⬇ Abrir Word</a>
             <span class="btn btn-success" style="cursor:default;">✔ En tu carpeta</span>
           </div>
         </div>
 
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
           <div>
-            <h4 style="font-size:16px; color:#fff;">📘 Guía de Estudio Imprimible: Unit 7 Simple Past</h4>
-            <p style="font-size:13px; color:#9ca3af; margin-top:4px;">Tablas de verbos regulares e irregulares, reglas de ortografía, Was/Were y conectores.</p>
+            <h4 style="font-size:16px; color:#fff; margin:0;">📘 Guía de Estudio Imprimible: Unit 7 Simple Past (.docx)</h4>
+            <p style="font-size:13px; color:#9ca3af; margin:4px 0 0 0;">Tablas de verbos regulares e irregulares, reglas de ortografía, Was/Were y conectores.</p>
             <code style="font-size:11px; color:#60a5fa;">Evaluacion_3/documentos/Guia_Estudio_Unit7.docx</code>
           </div>
           <div style="display:flex; gap:8px;">
-            <a href="../documentos/Guia_Estudio_Unit7.docx" download class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">⬇ Abrir Guía</a>
+            <a href="../../documentos/Guia_Estudio_Unit7.docx" download class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">⬇ Abrir Guía</a>
             <span class="btn btn-success" style="cursor:default;">✔ En tu carpeta</span>
           </div>
         </div>
 
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:24px;">
           <div>
-            <h4 style="font-size:16px; color:#fff;">📕 PDF Oficial Oxford: Unit 7 Word Lists</h4>
-            <p style="font-size:13px; color:#9ca3af; margin-top:4px;">Documento oficial publicado por Oxford University Press con todo el vocabulario de clima y números ordinales.</p>
+            <h4 style="font-size:16px; color:#fff; margin:0;">📕 PDF Oficial Oxford: Unit 7 Word Lists</h4>
+            <p style="font-size:13px; color:#9ca3af; margin:4px 0 0 0;">Documento oficial publicado por Oxford University Press con todo el vocabulario de clima y números ordinales.</p>
             <code style="font-size:11px; color:#60a5fa;">Evaluacion_3/documentos/WA_01_U07_word_lists.pdf</code>
           </div>
           <div style="display:flex; gap:8px;">
-            <a href="../documentos/WA_01_U07_word_lists.pdf" target="_blank" class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">📖 Ver PDF</a>
+            <a href="../../documentos/WA_01_U07_word_lists.pdf" target="_blank" class="btn btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">📖 Ver PDF</a>
             <span class="btn btn-success" style="cursor:default;">✔ En tu carpeta</span>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 2: GUÍAS PDF GENERADAS POR CADA MÓDULO -->
+        <div class="card" style="background:linear-gradient(135deg, rgba(30,58,138,0.25), rgba(15,23,42,0.9)); border:1.5px solid rgba(59,130,246,0.35); margin-bottom:24px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+            <div>
+              <span style="font-size:11px; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:0.05em;">📂 Carpeta Evaluacion_3/pdf/</span>
+              <h2 style="font-size:18px; color:#fff; margin-top:2px;">📕 Guías de Estudio PDF Generadas por Módulo</h2>
+            </div>
+            <a href="../../pdf/Guia_Maestra_Completa_Unit7_Oxford.pdf" target="_blank" class="btn btn-success" style="text-decoration:none; font-weight:700; padding:10px 18px;">
+              🌟 Descargar Guía Maestra Completa (All-in-One)
+            </a>
+          </div>
+          <p style="font-size:13.5px; color:#cbd5e1; margin-bottom:16px;">
+            Cada módulo tiene su propio archivo PDF formateado e imprimible con resúmenes, reglas gramaticales, ejemplos y trampas de examen.
+          </p>
+
+          <div class="doc-grid">
+            <!-- Módulo 1 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#fde047; font-size:14px;">☀️ Módulo 1: Weather (Clima)</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Clasificación de Nice vs Bad Weather, vocabulario Oxford y email de Joe.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_01_Weather_Clima.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 2 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#60a5fa; font-size:14px;">📖 Módulo 2: Reading & Was/Were</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">4 Historias (Scott, Quintero, Andes, Londres) y reglas Was vs Were.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_02_Stories_Was_Were.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 3 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#a78bfa; font-size:14px;">⚖️ Módulo 3: Ortografía Verbos (-ed)</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Reglas CVC (planned), terminación -e (raised), consonante + y (studied).</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_03_Regular_Verbs_Ortografia.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 4 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#34d399; font-size:14px;">📝 Módulo 4: Test Unit 7 (25 Preguntas)</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Estrategias y análisis de alternativas correctas e incorrectas.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_04_Test_Unit_7_25Q.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 5 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#38bdf8; font-size:14px;">✍️ Módulo 5: Taller de Redacción</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Pauta oficial de las 8 oraciones, rúbrica y modelos de vacaciones y semana.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_05_Writing_Studio_8_Oraciones.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 5.1 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#fbbf24; font-size:14px;">🕒 Módulo 5.1: Conectores & Last week</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Guía bilingüe: because (sin coma), but (con coma), and, so, First, Then.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_05_1_Conectores_Bilingue.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 6 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#c084fc; font-size:14px;">📚 Módulo 6: Diccionario de Verbos</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Verbos regulares e irregulares de Unit 7 con presente, pasado y español.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_06_Diccionario_Verbos.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 7.1 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#f472b6; font-size:14px;">📸 Módulo 7.1: Modelos de Fotos</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Descripciones de Viña y Alaska, There was/were y frases con because.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_07_Modelos_Fotos_Opinion.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 8 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#f87171; font-size:14px;">⚠️ Módulo 8: Cazador de Trampas</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Las 28 trampas más cobradas por los profesores y cómo evitarlas.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_08_Cazador_Trampas_Examen.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
+
+            <!-- Módulo 11 -->
+            <div class="pdf-card">
+              <div>
+                <b style="color:#67e8f9; font-size:14px;">❓ Módulo 11: Las 4 Preguntas Clave</b>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 10px 0;">Fórmulas Wh- y Yes/No con Did y Was, y respuestas correctas de examen.</p>
+              </div>
+              <a href="../../pdf/Guia_Mod_11_Las_4_Preguntas_Clave.pdf" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:12px; padding:6px 12px; justify-content:center;">📖 Ver / Descargar PDF</a>
+            </div>
           </div>
         </div>
       `;
     }
 
-document.addEventListener('DOMContentLoaded', () => { renderDocsDownload(document.getElementById('module-container')); });
+    document.addEventListener('DOMContentLoaded', () => { 
+      renderDocsDownload(document.getElementById('module-container')); 
+    });
   </script>
 </body>
 </html>

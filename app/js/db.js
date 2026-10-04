@@ -84,12 +84,77 @@ function calcChileanGrade(score, total) {
  * Síntesis de voz offline en inglés
  * @param {string} text - Texto en inglés a pronunciar
  */
+let lastSpokenText = '';
+
 function speak(text) {
   if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
+  stopAudio();
+  lastSpokenText = text;
   const clean = text.replace(/<[^>]*>?/gm, '').trim();
   const utter = new SpeechSynthesisUtterance(clean);
   utter.lang = 'en-US';
-  utter.rate = 0.9;
+  utter.rate = 0.88;
   window.speechSynthesis.speak(utter);
+}
+
+/**
+ * Detener cualquier audio en reproducción
+ */
+function stopAudio() {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+/**
+ * Reiniciar la reproducción del audio actual o texto dado
+ * @param {string} text - Texto opcional a reiniciar
+ */
+function restartAudio(text) {
+  stopAudio();
+  const t = text || lastSpokenText;
+  if (t) {
+    setTimeout(() => {
+      speak(t);
+    }, 80);
+  }
+}
+
+/**
+ * Navegación unificada entre módulos (Iframe <-> Parent Shell <-> Standalone)
+ * @param {string} moduleId - Nombre del archivo o ID del módulo (ej: 'mod_05_writing_studio')
+ */
+function navigateModule(moduleId) {
+  const cleanId = moduleId.replace(/\.html$/, '');
+  if (window.parent && window.parent.loadModule && window.parent !== window) {
+    window.parent.loadModule(cleanId);
+  } else {
+    window.location.href = cleanId + '.html';
+  }
+}
+
+/**
+ * Compatibilidad con nombres de vistas anteriores
+ * @param {string} viewName - Nombre de vista antigua
+ */
+function loadView(viewName) {
+  const map = {
+    'writing-studio': 'mod_05_writing_studio',
+    'connectors-guide': 'mod_05_1_connectors',
+    'weather-classifier': 'mod_01_weather',
+    'scott-reading': 'mod_02_stories',
+    'regular-verbs': 'mod_03_correct_incorrect',
+    'multiple-choice': 'mod_04_multiple_choice',
+    'dictionary': 'mod_06_dictionary',
+    'flashcards': 'mod_07_flashcards',
+    'image-quiz': 'mod_07_1_image_quiz',
+    'trap-game': 'mod_08_trap_game',
+    'exam-simulator': 'mod_09_exam_simulator',
+    'written-exam': 'mod_10_written_exam',
+    'four-questions': 'mod_11_four_questions',
+    'documents': 'mod_12_documents',
+    'final-exam': 'mod_13_final_exam'
+  };
+  const target = map[viewName] || viewName;
+  navigateModule(target);
 }
