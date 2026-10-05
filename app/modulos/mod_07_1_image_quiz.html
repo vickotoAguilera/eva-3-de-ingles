@@ -19,6 +19,9 @@ const imageScenes = [
         badge: "🏖️ Verano / Playa / Familia Feliz",
         img: "../img/family_beach_summer.jpg",
         description: "Una familia disfrutando junta a la orilla del mar en un día soleado de verano, con arena dorada, mar turquesa y trajes de baño.",
+        titleEn: "Scene 1: Family Vacation at a Summer Beach 🏖️",
+        badgeEn: "🏖️ Summer / Beach / Happy Family",
+        descriptionEn: "A family enjoying their summer vacation together by the sea on a sunny day, with golden sand, clear turquoise ocean, and swimwear.",
         questions: [
           {
             qId: 1,
@@ -159,6 +162,9 @@ const imageScenes = [
         badge: "❄️ Invierno / Nieve / Muñeco de Nieve",
         img: "../img/winter_snow_mountain.jpg",
         description: "Paisaje de alta montaña completamente cubierto de nieve blanca y pinos, con personas abrigadas con parkas y bufandas junto a un muñeco de nieve.",
+        titleEn: "Scene 2: Winter Vacation in the Snowy Mountains ❄️",
+        badgeEn: "❄️ Winter / Snow / Snowman",
+        descriptionEn: "A high mountain winter landscape covered in fresh white snow and pine trees, with people bundled up in warm parkas next to a snowman.",
         questions: [
           {
             qId: 1,
@@ -296,6 +302,9 @@ const imageScenes = [
         badge: "🍂 Otoño / Lluvia / Charcos y Paraguas",
         img: "../img/rainy_autumn_park.jpg",
         description: "Personas caminando por un parque con árboles de hojas amarillas y anaranjadas bajo la lluvia, sosteniendo paraguas de colores y pisando charcos de agua en el suelo.",
+        titleEn: "Scene 3: Rainy Autumn Afternoon in the Park 🍂",
+        badgeEn: "🍂 Autumn / Rain / Puddles & Umbrellas",
+        descriptionEn: "People walking through a park with autumn golden leaves under the rain, holding colorful umbrellas and stepping across puddles on the ground.",
         questions: [
           {
             qId: 1,
@@ -433,6 +442,9 @@ const imageScenes = [
         badge: "🌸 Primavera / Flores / Amigos en el Parque",
         img: "../img/spring_picnic_park.jpg",
         description: "Un grupo de jóvenes y amigos compartiendo un picnic alegre en el pasto verde y fresco de un parque florido en un día templado de primavera.",
+        titleEn: "Scene 4: Sunny Spring Picnic with Flowers 🌸",
+        badgeEn: "🌸 Spring / Flowers / Friends in the Park",
+        descriptionEn: "A group of cheerful friends sharing a sunny picnic on the green grass of a blossoming park on a mild spring day.",
         questions: [
           {
             qId: 1,
@@ -570,6 +582,9 @@ const imageScenes = [
         badge: "⛺ Camping / Montaña / Noche Estrellada",
         img: "../img/camping_tent_mountains.jpg",
         description: "Una carpa iluminada en una meseta de montaña bajo un cielo nocturno despejado y repleto de estrellas brillantes, con aire fresco y cordillera de fondo.",
+        titleEn: "Scene 5: Camping Under the Stars in the Mountains ⛺",
+        badgeEn: "⛺ Mountain Camping / Starry Night",
+        descriptionEn: "An illuminated tent on a high mountain plateau under a clear night sky full of bright stars, with cool fresh air and mountain silhouettes.",
         questions: [
           {
             qId: 1,
@@ -707,6 +722,9 @@ const imageScenes = [
         badge: "🌧️ Lluvia / Casa Cálida / Té Caliente y Relajo",
         img: "../img/cozy_rainy_window.jpg",
         description: "Gotas de lluvia deslizándose por el vidrio de una ventana grande, con la vista de una ciudad lluviosa afuera mientras adentro hay un ambiente cálido y reconfortante.",
+        titleEn: "Scene 6: Cozy Rainy Afternoon Looking Out the Window 🌧️",
+        badgeEn: "🌧️ Rainy Window / Cozy Home / Hot Tea",
+        descriptionEn: "Raindrops sliding down a large glass window overlooking a rainy city outside, while enjoying a warm, peaceful atmosphere inside.",
         questions: [
           {
             qId: 1,
@@ -844,6 +862,9 @@ const imageScenes = [
         badge: "🏊 Verano / Piscina / Diversión en el Agua",
         img: "../img/summer_swimming_pool.jpg",
         description: "Agua turquesa y cristalina de una gran piscina bajo el sol resplandeciente de un día muy caluroso de verano, con reposeras y sombrillas alrededor.",
+        titleEn: "Scene 7: Hot Summer Day at the Swimming Pool 🏊",
+        badgeEn: "🏊 Summer / Swimming Pool / Water Fun",
+        descriptionEn: "Crystal-clear turquoise water of an outdoor swimming pool under the brilliant sunshine of a hot summer afternoon, with lounge chairs and umbrellas.",
         questions: [
           {
             qId: 1,
@@ -981,6 +1002,9 @@ const imageScenes = [
         badge: "🏛️ Turismo / Ciudad Histórica / Caminata y Fotos",
         img: "../img/city_tour_travel.jpg",
         description: "Turistas con mochilas y cámaras fotográficas recorriendo calles adoquinadas, plazas y monumentos históricos en una hermosa ciudad europea durante sus vacaciones.",
+        titleEn: "Scene 8: Historic City Walking Tour on Vacation 🏛️",
+        badgeEn: "🏛️ Sightseeing / Historic City / Vacation",
+        descriptionEn: "Tourists with backpacks and cameras exploring historic cobblestone streets, monuments, and sunny plazas during their vacation.",
         questions: [
           {
             qId: 1,
@@ -1118,6 +1142,9 @@ const imageScenes = [
         badge: "🍝 Restaurante / Cena con Amigos / Comida Deliciosa",
         img: "../img/restaurant_dinner.jpg",
         description: "Amigos sentados a la mesa de un acogedor restaurante iluminado con luces cálidas, brindando con bebidas y saboreando deliciosos platos de pasta y comida gourmet.",
+        titleEn: "Scene 9: Special Dinner with Friends at a Restaurant 🍝",
+        badgeEn: "🍝 Restaurant / Dinner with Friends / Good Food",
+        descriptionEn: "Friends sitting around a table in a cozy, warm-lit restaurant, making a toast and enjoying delicious dishes together.",
         questions: [
           {
             qId: 1,
@@ -1253,7 +1280,24 @@ const imageScenes = [
 
     let imageQuizScores = {};
 
+    // Función para barajar aleatoriamente las opciones (Fisher-Yates) para que la respuesta correcta NUNCA sea siempre la primera
+    function shuffleAllOptions() {
+      imageScenes.forEach((scene) => {
+        scene.questions.forEach((q) => {
+          for (let i = q.options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = q.options[i];
+            q.options[i] = q.options[j];
+            q.options[j] = temp;
+          }
+        });
+      });
+    }
+
     function renderImageQuiz(container) {
+      if (!container) container = document.getElementById('module-container');
+      if (!container) return;
+
       let scenesHtml = '';
 
       imageScenes.forEach((scene) => {
@@ -1265,50 +1309,52 @@ const imageScenes = [
             optsHtml += `
               <label class="opt-label" id="iq-label-${scene.id}-${q.qId}-${oIdx}" style="display:block; margin-bottom:10px; cursor:pointer;" onclick="evalImageOption(${scene.id}, ${q.qId}, ${oIdx})">
                 <input type="radio" name="iq-opt-${scene.id}-${q.qId}" value="${oIdx}">
-                <span style="font-size:14px; font-weight:700; color:#fff;">${opt.text}</span>
-                <span style="display:block; font-size:12px; color:#94a3b8; margin-top:2px;">↳ <i>Español:</i> ${opt.textEs}</span>
+                <span style="font-size:14.5px; font-weight:700; color:#fff;">${opt.text}</span>
+                <span id="iq-opt-es-${scene.id}-${q.qId}-${oIdx}" style="display:none; font-size:12px; color:#94a3b8; margin-top:3px;">↳ <i>Español:</i> ${opt.textEs}</span>
               </label>
             `;
           });
 
+          // PREGUNTAS 100% EN INGLÉS DEBAJO DE LA FOTO (Traducción en español solo aparece en la retroalimentación al responder)
           qHtml += `
             <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; margin-bottom:16px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
                 <div style="font-size:15px; font-weight:800; color:#60a5fa;">
                   ${q.qId}. ${q.text}
                 </div>
-                <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speak('${q.text.replace(/'/g, "\'")}')" title="Escuchar pregunta en inglés">
-                  🔊 Escuchar
+                <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speak('${q.text.replace(/'/g, "\\'")}')" title="Listen in English">
+                  🔊 Listen
                 </button>
-              </div>
-              <div style="font-size:12.5px; color:#cbd5e1; margin-bottom:12px;">
-                ↳ <i>En español:</i> <b>${q.textEs}</b>
               </div>
 
               <div>
                 ${optsHtml}
               </div>
 
-              <div id="iq-fb-${scene.id}-${q.qId}" class="feedback-box" style="display:none; margin-top:10px;"></div>
+              <div id="iq-fb-${scene.id}-${q.qId}" class="feedback-box" style="display:none; margin-top:12px;"></div>
             </div>
           `;
         });
 
-        // Written short answer practice
+        // Written short answer practice (En inglés con soporte)
         const wp = scene.writtenPractice;
+        const targetQ = wp.expected === "Yes, they were." ? (scene.id === 1 ? "Were they happy at the beach?" : "Were the friends happy at the picnic?")
+                      : wp.expected === "Yes, it was." ? (scene.id === 2 ? "Was the weather cold and snowy in winter?" : scene.id === 6 ? "Was it rainy outside the window?" : scene.id === 7 ? "Was it sunny and hot at the pool?" : "Was the food delicious at the restaurant?")
+                      : (scene.id === 3 ? "Did they use umbrellas in the rain?" : scene.id === 5 ? "Did they camp in the mountains?" : "Did the tourists take pictures of the city?");
+
         const writtenHtml = `
           <div style="background:rgba(30, 58, 138, 0.25); border:1px solid rgba(59, 130, 246, 0.35); border-radius:10px; padding:16px; margin-top:18px;">
             <div style="font-size:14px; font-weight:800; color:#93c5fd; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
-              <span>✍️ 5. Práctica Escrita Oficial (Short Answer con Teclado):</span>
+              <span>✍️ 5. Written Practice (Short Answer):</span>
             </div>
             <div style="font-size:13.5px; color:#e2e8f0; margin-bottom:10px;">
-              ${wp.prompt}
+              Write the official short answer to: <b>'${targetQ}'</b>
             </div>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <input type="text" class="written-input" style="flex:1; min-width:240px;" id="iq-written-inp-${scene.id}" placeholder="${wp.hint.replace(/<[^>]*>?/gm, '')}" onkeydown="if(event.key==='Enter') evalImageWritten(${scene.id})">
+              <input type="text" class="written-input" style="flex:1; min-width:240px;" id="iq-written-inp-${scene.id}" placeholder="Type your short answer here..." onkeydown="if(event.key==='Enter') evalImageWritten(${scene.id})">
               <button class="btn btn-primary" style="padding:8px 14px;" onclick="evalImageWritten(${scene.id})">✓ Comprobar</button>
               <button class="btn btn-secondary" style="padding:8px 12px; color:#9ca3af;" onclick="revealImageWritten(${scene.id})">👁️ Ver</button>
-              <button class="btn btn-secondary" style="padding:8px 10px;" onclick="speak('${wp.expected.replace(/'/g, "\'")}')" title="Escuchar respuesta">🔊</button>
+              <button class="btn btn-secondary" style="padding:8px 10px;" onclick="speak('${wp.expected.replace(/'/g, "\\'")}')" title="Escuchar respuesta">🔊</button>
             </div>
             <div id="iq-written-fb-${scene.id}" class="feedback-box" style="display:none; margin-top:10px;"></div>
           </div>
@@ -1318,21 +1364,21 @@ const imageScenes = [
           <div class="card" style="margin-bottom:32px; border:1px solid rgba(255,255,255,0.12);">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;">
               <h3 style="color:#60a5fa; font-size:18px; margin:0; font-weight:800;">
-                ${scene.title}
+                ${scene.titleEn || scene.title}
               </h3>
               <span style="font-size:12px; background:rgba(59,130,246,0.18); color:#93c5fd; padding:4px 10px; border-radius:6px; font-weight:700;">
-                ${scene.badge}
+                ${scene.badgeEn || scene.badge}
               </span>
             </div>
 
             <!-- Imagen 100% Offline Centrada y Nítida -->
             <div style="text-align:center; margin-bottom:16px;">
-              <img src="${scene.img}" alt="${scene.title}" style="width:100%; max-height:440px; object-fit:cover; border-radius:12px; border:2px solid rgba(255,255,255,0.1); box-shadow:0 12px 28px rgba(0,0,0,0.5);">
+              <img src="${scene.img}" alt="${scene.titleEn || scene.title}" style="width:100%; max-height:440px; object-fit:cover; border-radius:12px; border:2px solid rgba(255,255,255,0.1); box-shadow:0 12px 28px rgba(0,0,0,0.5);">
             </div>
 
-            <!-- Observación Guiada en Español -->
+            <!-- Observación Guiada en Inglés debajo de la Foto -->
             <div style="background:rgba(15,23,42,0.85); border-left:4px solid #3b82f6; padding:12px 14px; border-radius:6px; margin-bottom:18px; font-size:13.5px; color:#cbd5e1; line-height:1.5;">
-              👁️ <b>Guía de Observación de la Foto:</b> ${scene.description}
+              👁️ <b>Photo Observation Guide:</b> ${scene.descriptionEn || scene.description}
             </div>
 
             <!-- Preguntas -->
@@ -1614,9 +1660,12 @@ const imageScenes = [
 
       const isRight = chosenOpt.correct;
 
-      // Resaltar visualmente las etiquetas de las 3 opciones
+      // Al responder, revelar la traducción en español en cada opción de la pregunta y resaltar
       q.options.forEach((opt, idx) => {
         const lbl = document.getElementById(`iq-label-${sceneId}-${qId}-${idx}`);
+        const optEs = document.getElementById(`iq-opt-es-${sceneId}-${qId}-${idx}`);
+        if (optEs) optEs.style.display = 'block';
+
         if (!lbl) return;
         lbl.classList.remove('opt-correct', 'opt-incorrect');
         if (opt.correct) {
@@ -1626,14 +1675,14 @@ const imageScenes = [
         }
       });
 
-      // Construir el análisis de las 2 alternativas que no son la correcta
+      // Construir el análisis en español de las opciones incorrectas
       let wrongAltsHtml = '';
-      q.options.forEach((opt, idx) => {
+      q.options.forEach((opt) => {
         if (!opt.correct) {
           wrongAltsHtml += `
             <div class="alt-item-box">
               <div style="font-weight:700; color:#fca5a5; font-size:13.5px;">
-                🚫 Alternativa "${opt.text}" (<i>${opt.textEs}</i>):
+                🚫 Alternativa "${opt.text}" (↳ <i>${opt.textEs}</i>):
               </div>
               <div style="font-size:13px; color:#e2e8f0; margin-top:3px; line-height:1.45;">
                 • <b>Por qué NO corresponde a esta foto:</b> ${opt.why}
@@ -1659,17 +1708,24 @@ const imageScenes = [
             : `❌ RESPUESTA INCORRECTA (Elegiste: "${chosenOpt.text}" | La correcta es: "<b>${correctOpt.text}</b>")`}
         </div>
 
+        <!-- Traducción de la Pregunta al Español -->
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:10px 12px; margin-bottom:10px; font-size:13px; color:#e2e8f0;">
+          📌 <b>Pregunta en español:</b> "${q.textEs}"
+        </div>
+
+        <!-- Explicación de la Opción Correcta en Español -->
         <div style="background:rgba(16,185,129,0.12); border-left:4px solid #10b981; padding:12px 14px; border-radius:6px; margin-bottom:12px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <div style="font-weight:800; color:#6ee7b7; font-size:14px;">🎯 ¿Por qué "${correctOpt.text}" es la respuesta correcta?</div>
-            <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('${correctOpt.text.replace(/'/g, "\'")}')">🔊 Escuchar</button>
+            <div style="font-weight:800; color:#6ee7b7; font-size:14px;">🎯 ¿Por qué "${correctOpt.text}" (↳ <i>${correctOpt.textEs}</i>) es la respuesta correcta?</div>
+            <button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="speak('${correctOpt.text.replace(/'/g, "\\'")}')">🔊 Escuchar</button>
           </div>
           <div style="font-size:13.5px; color:#f3f4f6; line-height:1.5;">${correctOpt.why}</div>
         </div>
 
+        <!-- Comparativa con las otras alternativas en Español -->
         <div class="comparative-box">
           <div style="font-weight:800; font-size:13.5px; color:#93c5fd; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em;">
-            🔍 Por qué las otras 2 opciones NO corresponden (y ejemplos de cuándo sí):
+            🔍 Por qué las otras opciones NO corresponden a la foto (en español):
           </div>
           ${wrongAltsHtml}
         </div>
@@ -1754,31 +1810,15 @@ const imageScenes = [
     }
 
     function resetAllImageQuiz() {
-      imageScenes.forEach(scene => {
-        scene.questions.forEach(q => {
-          const radios = document.querySelectorAll(`input[name="iq-opt-${scene.id}-${q.qId}"]`);
-          radios.forEach(r => r.checked = false);
-          const fb = document.getElementById(`iq-fb-${scene.id}-${q.qId}`);
-          if (fb) fb.style.display = 'none';
-          q.options.forEach((opt, idx) => {
-            const lbl = document.getElementById(`iq-label-${scene.id}-${q.qId}-${idx}`);
-            if (lbl) lbl.classList.remove('opt-correct', 'opt-incorrect');
-          });
-        });
-        const inp = document.getElementById(`iq-written-inp-${scene.id}`);
-        const fbW = document.getElementById(`iq-written-fb-${scene.id}`);
-        if (inp) {
-          inp.value = '';
-          inp.className = 'written-input';
-        }
-        if (fbW) fbW.style.display = 'none';
-      });
       imageQuizScores = {};
       LocalDB.saveModule('mod7_1_scores', {});
+      shuffleAllOptions();
+      renderImageQuiz(document.getElementById('module-container'));
       updateImageQuizScore();
     }
 
     onDOMReady( () => { 
+      shuffleAllOptions();
       renderImageQuiz(document.getElementById('module-container')); 
     });
   </script>

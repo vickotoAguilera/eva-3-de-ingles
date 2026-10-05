@@ -690,6 +690,17 @@
 
     let userChoices = LocalDB.loadModule('mod4_choices') || {};
 
+    function shuffleMCOptions() {
+      mcQuestions.forEach(q => {
+        for (let i = q.options.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const temp = q.options[i];
+          q.options[i] = q.options[j];
+          q.options[j] = temp;
+        }
+      });
+    }
+
     function renderMC() {
       const container = document.getElementById('mc-cards-container');
       let cardsHtml = '';
@@ -815,10 +826,14 @@
     function resetAllMC() {
       userChoices = {};
       LocalDB.saveModule('mod4_choices', {});
+      shuffleMCOptions();
       renderMC();
     }
 
-    onDOMReady( renderMC);
+    onDOMReady(() => {
+      shuffleMCOptions();
+      renderMC();
+    });
   </script>
 </body>
 </html>
