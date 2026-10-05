@@ -16,7 +16,13 @@ class AudioTimelinePlayer {
     this.text = options.text || '';
     this.rate = options.rate || 0.88;
     this.lang = options.lang || 'en-US';
+    this.instanceName = options.instanceName || 'activeAudioPlayer';
     this.onSentenceHighlight = options.onSentenceHighlight || null;
+
+    if (typeof window !== 'undefined') {
+      window[this.instanceName] = this;
+      window.activeAudioPlayer = this;
+    }
 
     this.sentences = [];
     this.sentenceDurations = [];
@@ -88,11 +94,12 @@ class AudioTimelinePlayer {
     const target = document.getElementById(this.textContainerId);
     if (!target) return;
 
+    const inst = this.instanceName || 'activeAudioPlayer';
     let html = '';
     this.sentences.forEach((sentence, idx) => {
       // Si la frase contiene saltos de línea en el texto original
       const formatted = sentence.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
-      html += `<span class="timeline-audio-sentence" id="atp-sent-${idx}" onclick="window['${this.instanceName || 'activeAudioPlayer'}'].jumpToSentence(${idx})" title="Haz clic para escuchar desde aquí">${formatted} </span>`;
+      html += `<span class="timeline-audio-sentence" id="atp-sent-${idx}" onclick="(window['${inst}'] || window.activeAudioPlayer).jumpToSentence(${idx})" title="Haz clic para escuchar desde aquí">${formatted} </span>`;
     });
 
     target.innerHTML = html;
@@ -304,7 +311,9 @@ class AudioTimelinePlayer {
         parent.querySelectorAll('.atp-speed-btn').forEach(b => b.classList.remove('active'));
       }
     }
-    if (btnElement) btnElement.classList.add('active');
+    if (btnElement && btnElement.classList && typeof btnElement.classList.add === 'function') {
+      btnElement.classList.add('active');
+    }
 
     if (oldPlaying) {
       this.speechTimeout = setTimeout(() => {

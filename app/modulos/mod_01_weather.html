@@ -227,10 +227,10 @@ const weatherPhrases = [
         textContainerId: 'joe-email-en-body',
         text: joeEmailTextEn,
         rate: 0.88,
-        lang: 'en-US'
+        lang: 'en-US',
+        instanceName: 'joeAudioPlayer'
       });
-      window.joeAudioPlayer.instanceName = 'joeAudioPlayer';
-      window.joeAudioPlayer.renderControls();
+      window.activeAudioPlayer = window.joeAudioPlayer;
 
       resetWeatherSort();
     }
@@ -336,6 +336,11 @@ const weatherPhrases = [
       updateBuckets();
     }
 
+    function speakWeatherPhrase(id) {
+      const p = weatherPhrases.find(x => x.id === id);
+      if (p) speak(p.text);
+    }
+
     function renderPhrasesPool() {
       const pool = document.getElementById('phrases-pool');
       if (!pool) return;
@@ -351,7 +356,7 @@ const weatherPhrases = [
             <span style="display:flex; align-items:center; gap:8px;">
               <span class="drag-handle" title="Arrastra con el mouse">⠿</span>
               <b style="font-size:14.5px; color:#ffffff;">${p.display}</b>
-              <button class="btn btn-secondary" style="padding:2px 7px; font-size:11px; margin-left:6px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();" title="Escuchar pronunciación">🔊</button>
+              <button class="btn btn-secondary" style="padding:2px 7px; font-size:11px; margin-left:6px;" onclick="speakWeatherPhrase(${p.id}); event.stopPropagation();" title="Escuchar pronunciación">🔊</button>
             </span>
             <span style="font-size:11px; color:#94a3b8; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px; pointer-events:none;">
               Arrastrar ➔
@@ -406,7 +411,7 @@ const weatherPhrases = [
             <span style="display:flex; align-items:center; gap:8px;">
               <span class="drag-handle">⠿</span>
               <b style="font-size:14px; color:#fff;">${p.display}</b>
-              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speakWeatherPhrase(${p.id}); event.stopPropagation();">🔊</button>
             </span>
             <div style="display:flex; align-items:center; gap:6px;">
               ${isCorrect ?
@@ -423,7 +428,7 @@ const weatherPhrases = [
             <span style="display:flex; align-items:center; gap:8px;">
               <span class="drag-handle">⠿</span>
               <b style="font-size:14px; color:#fff;">${p.display}</b>
-              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speakWeatherPhrase(${p.id}); event.stopPropagation();">🔊</button>
             </span>
             <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'nice'); event.stopPropagation();" title="Quitar de esta caja">↩️ Quitar</span>
           `;
@@ -452,7 +457,7 @@ const weatherPhrases = [
             <span style="display:flex; align-items:center; gap:8px;">
               <span class="drag-handle">⠿</span>
               <b style="font-size:14px; color:#fff;">${p.display}</b>
-              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speakWeatherPhrase(${p.id}); event.stopPropagation();">🔊</button>
             </span>
             <div style="display:flex; align-items:center; gap:6px;">
               ${isCorrect ?
@@ -469,7 +474,7 @@ const weatherPhrases = [
             <span style="display:flex; align-items:center; gap:8px;">
               <span class="drag-handle">⠿</span>
               <b style="font-size:14px; color:#fff;">${p.display}</b>
-              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speak('${p.text.replace(/'/g, "\\'")}'); event.stopPropagation();">🔊</button>
+              <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="speakWeatherPhrase(${p.id}); event.stopPropagation();">🔊</button>
             </span>
             <span class="chip-remove-neutral" onclick="removePhrase(${p.id}, 'bad'); event.stopPropagation();" title="Quitar de esta caja">↩️ Quitar</span>
           `;
@@ -518,7 +523,7 @@ const weatherPhrases = [
       document.getElementById('email-modal').style.display = 'none';
     }
 
-document.addEventListener('DOMContentLoaded', () => { renderWeatherSort(document.getElementById('module-container')); });
+onDOMReady( () => { renderWeatherSort(document.getElementById('module-container')); });
   </script>
 </body>
 </html>

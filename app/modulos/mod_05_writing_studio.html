@@ -814,9 +814,10 @@ const vacationSentences = [
     function copyAllSentences() {
       let t = '';
       for (let i = 1; i <= 8; i++) {
-        t += `${i}. ${document.getElementById(`sent-${i}`)?.value || ''}\n`;
+        const val = document.getElementById(`sent-${i}`) ? document.getElementById(`sent-${i}`).value : '';
+        t += `${i}. ${val}\n`;
       }
-      navigator.clipboard.writeText(t);
+      copyToClipboard(t);
       alert('¡Tus 8 oraciones han sido copiadas al portapapeles!');
     }
 
@@ -832,7 +833,7 @@ const vacationSentences = [
       speak(t);
     }
 
-    document.addEventListener('DOMContentLoaded', () => { 
+    onDOMReady( () => { 
       renderWritingStudio(document.getElementById('module-container')); 
     });
   </script>

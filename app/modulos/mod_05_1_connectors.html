@@ -263,14 +263,14 @@
             <p style="font-size:13px; color:#cbd5e1;">Estas frases le indican al lector <b>en qué momento exacto</b> ocurrió tu experiencia. Son indispensables para la Oración 1 y para ubicar los días de la semana.</p>
             
             <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px;">
-              ${timeExpressionsData.map(item => `
+              ${timeExpressionsData.map((item, idx) => `
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
                   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
                     <div>
                       <span style="font-size:16px; font-weight:800; color:#38bdf8;">${item.en}</span>
                       <span style="font-size:14px; color:#94a3b8; margin-left:8px;">(${item.es})</span>
                     </div>
-                    <button class="btn btn-secondary" onclick="speak('${item.exampleEn.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 10px;">
+                    <button class="btn btn-secondary" onclick="speakTimeExample(${idx})" style="font-size:11px; padding:3px 10px;">
                       🔊 Escuchar Ejemplo
                     </button>
                   </div>
@@ -301,7 +301,7 @@
             <p style="font-size:13px; color:#cbd5e1;">El profesor exige <b>First</b>, <b>Then</b>, <b>After that</b> y <b>Finally</b> para comprobar que sabes narrar sucesos en orden cronológico.</p>
             
             <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px;">
-              ${sequenceConnectorsData.map(item => `
+              ${sequenceConnectorsData.map((item, idx) => `
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
                   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
                     <div>
@@ -311,7 +311,7 @@
                         ${item.targetSent}
                       </span>
                     </div>
-                    <button class="btn btn-secondary" onclick="speak('${item.exampleEn.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 10px;">
+                    <button class="btn btn-secondary" onclick="speakSeqExample(${idx})" style="font-size:11px; padding:3px 10px;">
                       🔊 Escuchar Ejemplo
                     </button>
                   </div>
@@ -342,14 +342,14 @@
             <p style="font-size:13px; color:#cbd5e1;">Aprende cuándo usar <b>because</b> (causa), <b>and</b> (adición), <b>but</b> (contraste) y <b>so</b> (consecuencia) sin equivocarte en las comas.</p>
             
             <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px;">
-              ${logicConnectorsData.map(item => `
+              ${logicConnectorsData.map((item, idx) => `
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px;">
                   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
                     <div>
                       <span style="font-size:17px; font-weight:800; color:#34d399;">${item.connector}</span>
                       <span style="font-size:14px; color:#94a3b8; margin-left:8px;">(${item.es})</span>
                     </div>
-                    <button class="btn btn-secondary" onclick="speak('${item.exampleEn.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 10px;">
+                    <button class="btn btn-secondary" onclick="speakLogicExample(${idx})" style="font-size:11px; padding:3px 10px;">
                       🔊 Escuchar Ejemplo
                     </button>
                   </div>
@@ -651,6 +651,18 @@
       });
     }
 
+    function speakTimeExample(idx) {
+      if (timeExpressionsData[idx]) speak(timeExpressionsData[idx].exampleEn);
+    }
+
+    function speakSeqExample(idx) {
+      if (sequenceConnectorsData[idx]) speak(sequenceConnectorsData[idx].exampleEn);
+    }
+
+    function speakLogicExample(idx) {
+      if (logicConnectorsData[idx]) speak(logicConnectorsData[idx].exampleEn);
+    }
+
     function setBuilderPart(part, enVal, esVal, btnEl) {
       builderState[part] = enVal;
       builderState[part + 'Es'] = esVal;
@@ -658,11 +670,13 @@
       // Actualizar estilo activo de botones
       const groupBtns = document.querySelectorAll(`.builder-btn-${part}`);
       groupBtns.forEach(b => {
-        b.style.background = 'transparent';
-        b.style.borderColor = 'rgba(255,255,255,0.15)';
-        b.style.color = '#cbd5e1';
+        if (b && b.style) {
+          b.style.background = 'transparent';
+          b.style.borderColor = 'rgba(255,255,255,0.15)';
+          b.style.color = '#cbd5e1';
+        }
       });
-      if (btnEl) {
+      if (btnEl && btnEl.style) {
         btnEl.style.background = 'rgba(139, 92, 246, 0.35)';
         btnEl.style.borderColor = '#a78bfa';
         btnEl.style.color = '#fff';
@@ -686,13 +700,13 @@
 
     function copyBuilderSentence() {
       const fullEn = `${builderState.time} ${builderState.subject} ${builderState.action} ${builderState.connector}`;
-      navigator.clipboard.writeText(fullEn);
+      copyToClipboard(fullEn);
       alert('¡Oración copiada al portapapeles!\n\n' + fullEn);
     }
 
 
 
-document.addEventListener('DOMContentLoaded', () => {
+onDOMReady( () => {
   renderConnectorsGuide(document.getElementById('module-container'));
 });
   </script>

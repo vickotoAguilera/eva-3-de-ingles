@@ -238,16 +238,50 @@ function restartAudio(text) {
 }
 
 /**
+ * Pronunciar texto en español con voz en español
+ * @param {string} text - Texto en español
+ * @param {function} onEndCallback - Callback opcional al finalizar
+ */
+function speakSpanish(text, onEndCallback = null) {
+  speak(text, 'es-ES', onEndCallback);
+}
+
+/**
+ * Ejecutar callback cuando el DOM esté listo
+ * Evita pantallas en blanco si el evento DOMContentLoaded ya se disparó antes de cargar el script
+ * @param {function} fn - Función a ejecutar
+ */
+function onDOMReady(fn) {
+  if (typeof fn !== 'function') return;
+  if (document.readyState !== 'loading') {
+    setTimeout(fn, 1);
+  } else {
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+}
+
+/**
  * Navegación unificada entre módulos (Iframe <-> Parent Shell <-> Standalone)
  * @param {string} moduleId - Nombre del archivo o ID del módulo (ej: 'mod_05_writing_studio')
  */
 function navigateModule(moduleId) {
-  const cleanId = moduleId.replace(/\.html$/, '');
-  if (window.parent && window.parent.loadModule && window.parent !== window) {
-    window.parent.loadModule(cleanId);
-  } else {
-    window.location.href = cleanId + '.html';
+  const cleanId = String(moduleId || '').replace(/\.html$/, '');
+  try {
+    if (window.parent && window.parent !== window && typeof window.parent.loadModule === 'function') {
+      window.parent.loadModule(cleanId);
+      return;
+    }
+  } catch (e) {
+    console.warn('Cross-frame access failed, navigating locally:', e);
   }
+  try {
+    if (window.top && window.top !== window && typeof window.top.loadModule === 'function') {
+      window.top.loadModule(cleanId);
+      return;
+    }
+  } catch (e) {}
+
+  window.location.href = cleanId + '.html';
 }
 
 /**
@@ -274,4 +308,54 @@ function loadView(viewName) {
   };
   const target = map[viewName] || viewName;
   navigateModule(target);
+}
+
+/**
+ * Copiar texto al portapapeles con fallback para file:///, iframes o navegadores sin permisos
+ * @param {string} text - Texto a copiar
+ * @returns {boolean} Éxito de la operación
+ */
+function copyToClipboard(text) {
+  const str = String(text || '');
+  try {
+    if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      navigator.clipboard.writeText(str).catch(() => {
+        fallbackCopyText(str);
+      });
+      return true;
+    }
+  } catch (e) {}
+
+  return fallbackCopyText(str);
+
+  function fallbackCopyText(val) {
+    try {
+      const el = document.createElement('textarea');
+      el.value = val;
+      el.setAttribute('readonly', '');
+      el.style.position = 'fixed';
+      el.style.top = '0';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      el.setSelectionRange(0, 99999);
+      const ok = document.execCommand('copy');
+      document.body.removeChild(el);
+      return ok;
+    } catch (err) {
+      console.warn('Fallback copy failed:', err);
+      return false;
+    }
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.speak = speak;
+  window.speakSpanish = speakSpanish;
+  window.stopAudio = stopAudio;
+  window.restartAudio = restartAudio;
+  window.loadView = loadView;
+  window.navigateModule = navigateModule;
+  window.onDOMReady = onDOMReady;
+  window.copyToClipboard = copyToClipboard;
 }

@@ -393,7 +393,7 @@
         </a>
 
         <!-- Opción 2: Guía Maestra Completa PDF -->
-        <a href="../pdf/Guia_Maestra_Completa_Unit7_Oxford.pdf" download target="_blank" class="download-card-link" style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:rgba(30,41,59,0.7); border:1px solid rgba(16,185,129,0.3); border-radius:10px; text-decoration:none; color:#fff; transition:all 0.2s;">
+        <a href="pdf/Guia_Maestra_Completa_Unit7_Oxford.pdf" download target="_blank" class="download-card-link" style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:rgba(30,41,59,0.7); border:1px solid rgba(16,185,129,0.3); border-radius:10px; text-decoration:none; color:#fff; transition:all 0.2s;">
           <div>
             <div style="font-weight:700; font-size:14px; color:#34d399; display:flex; align-items:center; gap:6px;">
               <span>📕 Guía Maestra Completa de Estudio (.PDF)</span>
@@ -406,7 +406,7 @@
         </a>
 
         <!-- Opción 3: Tarea Oficial en Word -->
-        <a href="../documentos/Tarea_8_Oraciones.docx" download class="download-card-link" style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:rgba(30,41,59,0.7); border:1px solid rgba(245,158,11,0.3); border-radius:10px; text-decoration:none; color:#fff; transition:all 0.2s;">
+        <a href="documentos/Tarea_8_Oraciones.docx" download class="download-card-link" style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:rgba(30,41,59,0.7); border:1px solid rgba(245,158,11,0.3); border-radius:10px; text-decoration:none; color:#fff; transition:all 0.2s;">
           <div>
             <div style="font-weight:700; font-size:14px; color:#f59e0b; display:flex; align-items:center; gap:6px;">
               <span>📄 Plantilla Tarea Oficial 8 Oraciones (.docx)</span>
@@ -493,7 +493,7 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    onDOMReady(() => {
       // Restaurar el último módulo visitado o por defecto el Módulo 4
       const lastMod = LocalDB.load('active_module', 'mod_04_multiple_choice');
       loadModule(lastMod);

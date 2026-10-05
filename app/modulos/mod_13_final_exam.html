@@ -394,11 +394,10 @@
 
       finalQuestions.forEach((eq, idx) => {
         let optsHtml = '';
-        eq.opts.forEach(o => {
-          const safeId = o.replace(/\s+/g, '_');
+        eq.opts.forEach((o, oIdx) => {
           optsHtml += `
-            <label class="opt-label" id="fe-lbl-${idx}-${safeId}" onclick="selectFinalOpt(${idx}, '${o}')">
-              <input type="radio" name="fe-${idx}" value="${o}">
+            <label class="opt-label" id="fe-lbl-${idx}-${oIdx}" onclick="selectFinalOpt(${idx}, ${oIdx})">
+              <input type="radio" name="fe-${idx}" value="${oIdx}">
               <span style="font-weight:700;">${o}</span>
             </label>
           `;
@@ -421,22 +420,26 @@
       // Restaurar selección previa
       Object.keys(userFinalAnswers).forEach(idx => {
         const chosen = userFinalAnswers[idx];
-        const radio = document.querySelector(`input[name="fe-${idx}"][value="${chosen}"]`);
-        if (radio) radio.checked = true;
-        selectFinalOpt(parseInt(idx), chosen, false);
+        const optIdx = finalQuestions[idx] ? finalQuestions[idx].opts.indexOf(chosen) : -1;
+        if (optIdx !== -1) {
+          const radio = document.querySelector(`input[name="fe-${idx}"][value="${optIdx}"]`);
+          if (radio) radio.checked = true;
+          selectFinalOpt(parseInt(idx), optIdx, false);
+        }
       });
     }
 
-    function selectFinalOpt(idx, val, save = true) {
+    function selectFinalOpt(idx, optIdx, save = true) {
+      const eq = finalQuestions[idx];
+      if (!eq) return;
+      const val = (typeof optIdx === 'number' && eq.opts[optIdx] !== undefined) ? eq.opts[optIdx] : optIdx;
       userFinalAnswers[idx] = val;
       if (save) {
         LocalDB.saveModule('mod13_final_answers', userFinalAnswers);
       }
 
-      const eq = finalQuestions[idx];
-      eq.opts.forEach(o => {
-        const safeId = o.replace(/\s+/g, '_');
-        const lbl = document.getElementById(`fe-lbl-${idx}-${safeId}`);
+      eq.opts.forEach((o, oIdx) => {
+        const lbl = document.getElementById(`fe-lbl-${idx}-${oIdx}`);
         if (lbl) {
           if (o === val) {
             lbl.style.borderColor = '#60a5fa';
@@ -470,17 +473,18 @@
 
         // Mostrar retroalimentación en cada pregunta
         const fb = document.getElementById(`fe-fb-${idx}`);
-        fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
-        fb.innerHTML = `
-          <b>${isRight ? '✔️ Correcto' : '❌ Incorrecto'}</b>: Marcaste "${userChoice || 'sin responder'}". Respuesta correcta: <b>"${eq.ans}"</b>.<br>
-          💡 ${eq.exp}
-        `;
-        fb.style.display = 'block';
+        if (fb) {
+          fb.className = `feedback-box ${isRight ? 'correct' : 'incorrect'}`;
+          fb.innerHTML = `
+            <b>${isRight ? '✔️ Correcto' : '❌ Incorrecto'}</b>: Marcaste "${userChoice || 'sin responder'}". Respuesta correcta: <b>"${eq.ans}"</b>.<br>
+            💡 ${eq.exp}
+          `;
+          fb.style.display = 'block';
+        }
 
         // Resaltar opciones verde/rojo
-        eq.opts.forEach(o => {
-          const safeId = o.replace(/\s+/g, '_');
-          const lbl = document.getElementById(`fe-lbl-${idx}-${safeId}`);
+        eq.opts.forEach((o, oIdx) => {
+          const lbl = document.getElementById(`fe-lbl-${idx}-${oIdx}`);
           if (lbl) {
             if (o === eq.ans) {
               lbl.classList.add('opt-correct');
@@ -558,11 +562,16 @@
       userFinalAnswers = {};
       LocalDB.saveModule('mod13_final_answers', {});
       renderFinalExam();
-      document.getElementById('final-grade-card').style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const card = document.getElementById('final-grade-card');
+      if (card) card.style.display = 'none';
+      try {
+        if (typeof window.scrollTo === 'function') window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) {
+        try { window.scrollTo(0, 0); } catch(err) {}
+      }
     }
 
-    document.addEventListener('DOMContentLoaded', renderFinalExam);
+    onDOMReady( renderFinalExam);
   </script>
 </body>
 </html>

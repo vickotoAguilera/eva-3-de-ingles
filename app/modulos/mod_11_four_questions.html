@@ -356,7 +356,7 @@ const fourQuestionsData = {
       return s.toLowerCase().trim().replace(/['´`’]/g, "'").replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').replace(/\s+/g, ' ');
     }
 
-    document.addEventListener('DOMContentLoaded', () => { 
+    onDOMReady( () => { 
       renderFourQuestions(document.getElementById('module-container')); 
     });
   </script>

@@ -42,11 +42,10 @@ const examQuestions = [
       let qHtml = '';
       examQuestions.forEach((eq, idx) => {
         let optsHtml = '';
-        eq.opts.forEach(o => {
-          const safeId = o.replace(/\s+/g, '_');
+        eq.opts.forEach((o, oIdx) => {
           optsHtml += `
-            <label class="opt-label" id="eq-label-${idx}-${safeId}" onclick="selectExamOpt(${idx}, '${o}')">
-              <input type="radio" name="eq-${idx}" value="${o}">
+            <label class="opt-label" id="eq-label-${idx}-${oIdx}" onclick="selectExamOpt(${idx}, ${oIdx})">
+              <input type="radio" name="eq-${idx}" value="${oIdx}">
               <span>${o}</span>
             </label>
           `;
@@ -80,14 +79,16 @@ const examQuestions = [
       `;
     }
 
-    function selectExamOpt(idx, val) {
-      examAnswers[idx] = val;
+    function selectExamOpt(idx, oIdx) {
       const eq = examQuestions[idx];
-      eq.opts.forEach(o => {
-        const lbl = document.getElementById(`eq-label-${idx}-${o.replace(/\s+/g, '_')}`);
+      if (!eq) return;
+      const val = eq.opts[oIdx];
+      examAnswers[idx] = val;
+      eq.opts.forEach((o, i) => {
+        const lbl = document.getElementById(`eq-label-${idx}-${i}`);
         if (lbl) {
-          lbl.style.borderColor = (o === val) ? '#60a5fa' : 'rgba(255,255,255,0.08)';
-          lbl.style.background = (o === val) ? 'rgba(59,130,246,0.2)' : 'rgba(31, 41, 55, 0.7)';
+          lbl.style.borderColor = (i === oIdx) ? '#60a5fa' : 'rgba(255,255,255,0.08)';
+          lbl.style.background = (i === oIdx) ? 'rgba(59,130,246,0.2)' : 'rgba(31, 41, 55, 0.7)';
         }
       });
     }
@@ -120,9 +121,8 @@ const examQuestions = [
           fb.style.display = 'block';
         }
 
-        eq.opts.forEach(o => {
-          const safeId = o.replace(/\s+/g, '_');
-          const lbl = document.getElementById(`eq-label-${idx}-${safeId}`);
+        eq.opts.forEach((o, oIdx) => {
+          const lbl = document.getElementById(`eq-label-${idx}-${oIdx}`);
           if (lbl) {
             lbl.classList.remove('opt-correct', 'opt-incorrect');
             if (o === eq.ans) lbl.classList.add('opt-correct');
@@ -169,10 +169,14 @@ const examQuestions = [
       examAnswers = {};
       LocalDB.saveModule('mod9_answers', {});
       renderExamSim(document.getElementById('module-container'));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      try {
+        if (typeof window.scrollTo === 'function') window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) {
+        try { window.scrollTo(0, 0); } catch(err) {}
+      }
     }
 
-    document.addEventListener('DOMContentLoaded', () => { 
+    onDOMReady( () => { 
       renderExamSim(document.getElementById('module-container')); 
     });
   </script>

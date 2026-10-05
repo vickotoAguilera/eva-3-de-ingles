@@ -698,8 +698,8 @@
         let opts = '';
         q.options.forEach((opt, oIdx) => {
           opts += `
-            <label class="opt-label" id="mc-label-${q.id}-${oIdx}" onclick="evalMC(${q.id}, '${opt}', ${oIdx})">
-              <input type="radio" name="mc-opt-${q.id}" value="${opt}">
+            <label class="opt-label" id="mc-label-${q.id}-${oIdx}" onclick="evalMC(${q.id}, ${oIdx})">
+              <input type="radio" name="mc-opt-${q.id}" value="${oIdx}">
               <span style="font-size:14.5px; font-weight:700;">${opt}</span>
             </label>
           `;
@@ -709,7 +709,7 @@
           <div class="card" style="margin-bottom:20px; border:1px solid rgba(255,255,255,0.12);">
             <div style="font-size:16px; font-weight:800; color:#fff; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
               <span>${q.prompt}</span>
-              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speak('${q.prompt.replace(/______/g, q.correct).replace(/'/g, "\\\'")}')" title="Escuchar oración completa">🔊 Escuchar</button>
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speakMCPrompt(${q.id})" title="Escuchar oración completa">🔊 Escuchar</button>
             </div>
             <div class="options-row">${opts}</div>
             <div id="mc-fb-${q.id}" class="feedback-box"></div>
@@ -726,17 +726,30 @@
         if (q) {
           const oIdx = q.options.indexOf(chosen);
           if (oIdx !== -1) {
-            const radio = document.querySelector(`input[name="mc-opt-${q.id}"][value="${chosen}"]`);
+            const radio = document.querySelector(`input[name="mc-opt-${q.id}"][value="${oIdx}"]`);
             if (radio) radio.checked = true;
-            evalMC(q.id, chosen, oIdx, false);
+            evalMC(q.id, oIdx, false);
           }
         }
       });
     }
 
-    function evalMC(id, chosen, chosenIdx, save = true) {
+    function speakMCPrompt(id) {
       const q = mcQuestions.find(x => x.id === id);
+      if (q) {
+        const full = q.prompt.replace(/______/g, q.correct);
+        speak(full);
+      }
+    }
+
+    function evalMC(id, oIdxOrVal, save = true) {
+      const q = mcQuestions.find(x => x.id === id);
+      if (!q) return;
       const fb = document.getElementById(`mc-fb-${id}`);
+
+      let chosenIdx = typeof oIdxOrVal === 'number' ? oIdxOrVal : q.options.indexOf(oIdxOrVal);
+      if (chosenIdx === -1 && typeof oIdxOrVal === 'string') chosenIdx = 0;
+      const chosen = q.options[chosenIdx] || oIdxOrVal;
       const isRight = (chosen === q.correct);
 
       if (save) {
@@ -805,7 +818,7 @@
       renderMC();
     }
 
-    document.addEventListener('DOMContentLoaded', renderMC);
+    onDOMReady( renderMC);
   </script>
 </body>
 </html>

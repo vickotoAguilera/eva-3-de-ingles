@@ -326,8 +326,9 @@
         v.ex.toLowerCase().includes(q)
       );
 
+      window.currentFilteredVerbs = filtered;
       let html = '';
-      filtered.forEach(v => {
+      filtered.forEach((v, idx) => {
         html += `
           <tr>
             <td><strong style="color:#60a5fa;">${v.base}</strong></td>
@@ -335,7 +336,7 @@
             <td>${v.trans}</td>
             <td style="color:#e5e7eb; font-style:italic;">"${v.ex}"</td>
             <td>
-              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speak('${v.base} ... ${v.past} ... ${v.ex}')">🔊</button>
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="speakVerbByIndex(${idx})" title="Escuchar pronunciación">🔊</button>
             </td>
           </tr>
         `;
@@ -348,9 +349,15 @@
       tbody.innerHTML = html;
     }
 
+    function speakVerbByIndex(idx) {
+      const list = window.currentFilteredVerbs || masterVerbs;
+      const v = list[idx];
+      if (v) {
+        speak(`${v.base} ... ${v.past} ... ${v.ex}`);
+      }
+    }
 
-
-document.addEventListener('DOMContentLoaded', () => {
+onDOMReady( () => {
   renderVerbsDict(document.getElementById('module-container'));
 });
   </script>
