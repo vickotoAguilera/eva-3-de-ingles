@@ -188,7 +188,7 @@ const fourQuestionsData = {
 
               <!-- Input de práctica para la Pregunta -->
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="text" id="fq-q-${i}" class="written-input" style="flex:1; min-width:240px;" placeholder="Escribe aquí la pregunta en inglés..." oninput="checkFourQ(${i}, 'q')">
+                <input type="text" id="fq-q-${i}" class="written-input" style="flex:1; min-width:240px;" placeholder="Escribe aquí la pregunta en inglés..." onkeydown="if(event.key==='Enter') checkFourQ(${i}, 'q')" oninput="clearFourQFeedback(${i}, 'q')">
                 <button class="btn btn-primary" onclick="checkFourQ(${i}, 'q')" style="font-size:12.5px; padding:8px 14px;">Comprobar</button>
                 <button class="btn btn-secondary" onclick="revealFourQ(${i}, 'q')" style="font-size:12.5px; padding:8px 14px;">👁️ Mostrar</button>
               </div>
@@ -222,7 +222,7 @@ const fourQuestionsData = {
 
               <!-- Input de práctica para la Respuesta -->
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <input type="text" id="fq-a-${i}" class="written-input" style="flex:1; min-width:240px;" placeholder="Escribe aquí la respuesta en inglés..." oninput="checkFourQ(${i}, 'a')">
+                <input type="text" id="fq-a-${i}" class="written-input" style="flex:1; min-width:240px;" placeholder="Escribe aquí la respuesta en inglés..." onkeydown="if(event.key==='Enter') checkFourQ(${i}, 'a')" oninput="clearFourQFeedback(${i}, 'a')">
                 <button class="btn btn-primary" onclick="checkFourQ(${i}, 'a')" style="font-size:12.5px; padding:8px 14px;">Comprobar</button>
                 <button class="btn btn-secondary" onclick="revealFourQ(${i}, 'a')" style="font-size:12.5px; padding:8px 14px;">👁️ Mostrar</button>
               </div>
@@ -271,6 +271,15 @@ const fourQuestionsData = {
       `;
     }
 
+    function clearFourQFeedback(qNum, type) {
+      const inputEl = document.getElementById(`fq-${type}-${qNum}`);
+      const fbEl = document.getElementById(`fq-fb-${type}-${qNum}`);
+      if (fbEl) fbEl.style.display = 'none';
+      if (inputEl) {
+        inputEl.classList.remove('is-correct', 'is-tolerant', 'is-incorrect');
+      }
+    }
+
     function checkFourQ(qNum, type) {
       const inputEl = document.getElementById(`fq-${type}-${qNum}`);
       const fbEl = document.getElementById(`fq-fb-${type}-${qNum}`);
@@ -279,7 +288,12 @@ const fourQuestionsData = {
 
       const raw = inputEl.value.trim();
       if (!raw) {
-        fbEl.style.display = 'none';
+        fbEl.style.display = 'block';
+        fbEl.className = 'feedback-box incorrect';
+        fbEl.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        fbEl.style.background = 'var(--error-bg)';
+        fbEl.style.color = '#fee2e2';
+        fbEl.innerHTML = `⚠️ Por favor escribe tu ${type === 'q' ? 'pregunta' : 'respuesta'} antes de comprobar.`;
         inputEl.className = 'written-input';
         return;
       }

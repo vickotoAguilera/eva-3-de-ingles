@@ -90,14 +90,24 @@
       let practiceGridHtml = '';
       dictPracticeVerbs.forEach((v, idx) => {
         practiceGridHtml += `
-          <div class="card" style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(255,255,255,0.08); padding:14px; border-radius:10px; margin-bottom:0;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span style="font-size:16px; font-weight:800; color:#60a5fa;">${v.base}</span>
-              <span style="font-size:12px; color:#94a3b8; font-style:italic;">${v.trans}</span>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-              <input type="text" class="written-input" style="flex:1; padding:7px 10px; font-size:14px; min-width:140px;" id="vp-input-${idx}" placeholder="Pasado de ${v.base}..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkSingleVerbPractice(${idx})" oninput="checkSingleVerbPractice(${idx})">
-              <button class="btn btn-secondary" style="padding:7px 10px; font-size:12px;" onclick="speak('${v.base} ... ${v.past}')" title="Escuchar pronunciación">🔊</button>
+          <div class="card" style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(255,255,255,0.08); padding:14px; border-radius:10px; margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:16px; font-weight:800; color:#60a5fa;">${v.base}</span>
+                <span style="font-size:12px; color:#94a3b8; font-style:italic;">${v.trans}</span>
+              </div>
+              <input type="text" class="written-input" style="width:100%; box-sizing:border-box; padding:8px 12px; font-size:14px;" id="vp-input-${idx}" placeholder="Pasado de ${v.base}..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkSingleVerbPractice(${idx})" oninput="clearVerbFeedback(${idx})">
+              <div style="display:flex; gap:6px; margin-top:8px; align-items:center; flex-wrap:wrap;">
+                <button class="btn btn-primary" style="padding:6px 12px; font-size:12px; font-weight:700;" onclick="checkSingleVerbPractice(${idx})">
+                  ✓ Comprobar
+                </button>
+                <button class="btn btn-secondary" style="padding:6px 10px; font-size:12px; color:#94a3b8;" onclick="revealSingleVerbPractice(${idx})" title="Ver respuesta oficial">
+                  👁️ Ver
+                </button>
+                <button class="btn btn-secondary" style="padding:6px 10px; font-size:12px;" onclick="speak('${v.base} ... ${v.past}')" title="Escuchar pronunciación">
+                  🔊
+                </button>
+              </div>
             </div>
             <div id="vp-fb-${idx}" style="display:none; font-size:12px; margin-top:8px; padding:6px 10px; border-radius:6px; line-height:1.4;"></div>
           </div>
@@ -172,6 +182,24 @@
       filterVerbs();
     }
 
+    function clearVerbFeedback(idx) {
+      const inputEl = document.getElementById(`vp-input-${idx}`);
+      const fbEl = document.getElementById(`vp-fb-${idx}`);
+      if (fbEl) fbEl.style.display = 'none';
+      if (inputEl) {
+        inputEl.classList.remove('is-correct', 'is-tolerant', 'is-incorrect');
+      }
+    }
+
+    function revealSingleVerbPractice(idx) {
+      const v = dictPracticeVerbs[idx];
+      const inputEl = document.getElementById(`vp-input-${idx}`);
+      if (inputEl && v) {
+        inputEl.value = (v.base === 'be') ? 'was / were' : v.past;
+        checkSingleVerbPractice(idx);
+      }
+    }
+
     function checkSingleVerbPractice(idx) {
       const v = dictPracticeVerbs[idx];
       const inputEl = document.getElementById(`vp-input-${idx}`);
@@ -180,7 +208,11 @@
 
       const raw = inputEl.value.trim();
       if (!raw) {
-        fbEl.style.display = 'none';
+        fbEl.style.display = 'block';
+        fbEl.style.background = 'rgba(239, 68, 68, 0.12)';
+        fbEl.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        fbEl.style.color = '#fca5a5';
+        fbEl.innerHTML = `⚠️ Por favor escribe el pasado de <b>${v.base}</b> antes de comprobar.`;
         inputEl.className = 'written-input';
         updateVerbScoreBadge();
         return null;

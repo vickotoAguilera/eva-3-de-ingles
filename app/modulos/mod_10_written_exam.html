@@ -212,6 +212,15 @@ function normalizeWritten(s) {
         .replace(/\s+/g, ' ');
     }
 
+    function clearWrittenFeedback(idx) {
+      const inputEl = document.getElementById(`wq-input-${idx}`);
+      const fbEl = document.getElementById(`wq-fb-${idx}`);
+      if (fbEl) fbEl.style.display = 'none';
+      if (inputEl) {
+        inputEl.classList.remove('is-correct', 'is-tolerant', 'is-incorrect');
+      }
+    }
+
     function checkWrittenAnswer(idx) {
       const q = writtenExamQuestions[idx];
       const inputEl = document.getElementById(`wq-input-${idx}`);
@@ -220,7 +229,12 @@ function normalizeWritten(s) {
 
       const rawVal = inputEl.value.trim();
       if (!rawVal) {
-        fbEl.style.display = 'none';
+        fbEl.style.display = 'block';
+        fbEl.className = 'feedback-box incorrect';
+        fbEl.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        fbEl.style.background = 'var(--error-bg)';
+        fbEl.style.color = '#fee2e2';
+        fbEl.innerHTML = `⚠️ Por favor escribe tu respuesta en el espacio antes de comprobar.`;
         inputEl.className = 'written-input';
         return null;
       }
@@ -363,7 +377,7 @@ function normalizeWritten(s) {
     function renderWrittenExam(container) {
       let cardsHtml = '';
       writtenExamQuestions.forEach((q, idx) => {
-        const inputHtml = `<input type="text" class="written-input" id="wq-input-${idx}" placeholder="Escribe aquí..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkWrittenAnswer(${idx})" oninput="checkWrittenAnswer(${idx})">`;
+        const inputHtml = `<input type="text" class="written-input" id="wq-input-${idx}" placeholder="Escribe aquí..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkWrittenAnswer(${idx})" oninput="clearWrittenFeedback(${idx})">`;
         const renderedSentence = q.sentence.replace('____________', inputHtml);
 
         cardsHtml += `
@@ -376,10 +390,10 @@ function normalizeWritten(s) {
               ${renderedSentence}
             </div>
             <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-              <button class="btn btn-secondary" style="padding:6px 14px; font-size:12.5px; border-radius:6px;" onclick="checkWrittenAnswer(${idx})">
+              <button class="btn btn-primary" style="padding:8px 18px; font-size:13px; font-weight:800; border-radius:6px;" onclick="checkWrittenAnswer(${idx})">
                 ✓ Comprobar Respuesta
               </button>
-              <button class="btn btn-secondary" style="padding:6px 12px; font-size:12.5px; border-radius:6px; color:#9ca3af;" onclick="revealSingleWrittenAnswer(${idx})">
+              <button class="btn btn-secondary" style="padding:8px 14px; font-size:12.5px; border-radius:6px; color:#9ca3af;" onclick="revealSingleWrittenAnswer(${idx})">
                 👁️ Ver Oficial
               </button>
             </div>
