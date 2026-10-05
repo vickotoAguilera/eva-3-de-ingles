@@ -51,6 +51,10 @@
       <h1>📖 7.2 READING & GRAMMAR: 4 Historias en Pasado Simple</h1>
       <p>Lee cada historia completa en inglés estilo prueba de comprensión y responde las preguntas de gramática (was, were, verbos regulares/irregulares y clima). Incluye audio nativo y traducción al español.</p>
     </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <button class="btn btn-secondary" onclick="resetCurrentStory()" title="Borrar respuestas marcadas de esta historia">🔄 Reiniciar Esta Historia</button>
+      <button class="btn btn-secondary" onclick="resetAllStories()" title="Borrar respuestas marcadas de todas las historias">🔄 Reiniciar Todo</button>
+    </div>
   </div>
 
   <div class="story-nav" id="story-nav-buttons"></div>
@@ -399,11 +403,25 @@
           </div>
         </div>
 
-        <h3 style="color:#93c5fd; font-size:17px; font-weight:800; margin-bottom:14px;">
-          ✍️ Preguntas de Gramática y Comprensión de la Historia:
-        </h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <h3 style="color:#93c5fd; font-size:17px; font-weight:800; margin:0;">
+            ✍️ Preguntas de Gramática y Comprensión de la Historia:
+          </h3>
+          <button class="btn btn-secondary" style="font-size:12px; padding:5px 12px;" onclick="resetCurrentStory()">
+            🔄 Reiniciar Esta Historia
+          </button>
+        </div>
 
         ${questionsHtml}
+
+        <div style="display:flex; gap:12px; margin-top:20px; margin-bottom:30px; flex-wrap:wrap;">
+          <button class="btn btn-primary" style="padding:10px 20px; font-weight:700;" onclick="resetCurrentStory()">
+            🔄 Reiniciar Preguntas de Esta Historia
+          </button>
+          <button class="btn btn-secondary" style="padding:10px 18px;" onclick="resetAllStories()">
+            🔄 Reiniciar las 4 Historias
+          </button>
+        </div>
       `;
 
       // Inicializar el reproductor con línea de tiempo interactiva
@@ -485,6 +503,22 @@
         el.style.display = 'none';
         btn.textContent = '🌍 Ver Traducción al Español';
       }
+    }
+
+    function resetCurrentStory() {
+      const s = stories.find(x => x.id === activeStoryId);
+      if (!s) return;
+      s.questions.forEach(q => {
+        delete savedStoryChoices[q.id];
+      });
+      LocalDB.saveModule('mod2_stories', savedStoryChoices);
+      renderCurrentStory();
+    }
+
+    function resetAllStories() {
+      savedStoryChoices = {};
+      LocalDB.saveModule('mod2_stories', {});
+      renderCurrentStory();
     }
 
     onDOMReady( initStories);
