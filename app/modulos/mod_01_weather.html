@@ -248,6 +248,19 @@ const weatherPhrases = [
       }
     }
 
+    window.playJoeEmailAudio = function() {
+      if (window.joeAudioPlayer) {
+        window.joeAudioPlayer.restart();
+      } else {
+        speak(joeEmailTextEn, 'en-US');
+      }
+    };
+
+    window.playJoeEmailSpanishAudio = function() {
+      const esText = "Querida Sinai: ¿Cómo estás? ¡No puedo creer mis vacaciones! En Londres, el clima está bueno: hace calor y el sol está afuera. No hay lluvia, pero aquí en España, el clima está malo: ¡No hay sol! El cielo está lleno de nubes. Está fresco y hay mucho viento. ¡Hay nieve en las montañas! ¡No tengo ropa para este clima tan frío! ¡Ya no veo la hora de volver a casa! ¡Espero verte pronto! Joe.";
+      speak(esText, 'es-ES');
+    };
+
     function resetWeatherSort() {
       userNice = [];
       userBad = [];

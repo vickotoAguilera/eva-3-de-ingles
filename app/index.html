@@ -362,7 +362,7 @@
 
   <!-- Main Viewport Frame -->
   <main>
-    <iframe id="module-viewport" src="modulos/mod_04_multiple_choice.html"></iframe>
+    <iframe id="module-viewport" src="modulos/mod_04_multiple_choice.html" allow="autoplay; microphone"></iframe>
   </main>
 
   <!-- MODAL DE DESCARGA PARA ESTUDIANTES -->
@@ -468,6 +468,9 @@
     }
 
     function loadModule(moduleId) {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
+      }
       const frame = document.getElementById('module-viewport');
       if (!frame) return;
 

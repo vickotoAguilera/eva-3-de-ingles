@@ -28,8 +28,18 @@ class AudioTimelinePlayer {
     this.currentUtterance = null;
     this.timer = null;
     this.currentTime = 0;
+    this.speechTimeout = null;
 
     this.initText(this.text);
+  }
+
+  getSynth() {
+    if (typeof window !== 'undefined') {
+      if (window.speechSynthesis) return window.speechSynthesis;
+      if (window.parent && window.parent.speechSynthesis) return window.parent.speechSynthesis;
+      if (window.top && window.top.speechSynthesis) return window.top.speechSynthesis;
+    }
+    return null;
   }
 
   initText(rawText) {
@@ -153,7 +163,8 @@ class AudioTimelinePlayer {
   }
 
   play() {
-    if (!('speechSynthesis' in window)) {
+    const synth = this.getSynth();
+    if (!synth) {
       alert('Tu navegador no soporta síntesis de voz offline.');
       return;
     }
@@ -163,6 +174,9 @@ class AudioTimelinePlayer {
       this.isPlaying = true;
       this.startTimer();
       this.updatePlayBtn(true);
+      try {
+        if (synth.paused) synth.resume();
+      } catch (e) {}
       this.speakSentence(this.currentIndex);
       return;
     }
@@ -172,7 +186,10 @@ class AudioTimelinePlayer {
     this.isPaused = false;
     this.startTimer();
     this.updatePlayBtn(true);
-    this.speakSentence(this.currentIndex);
+
+    this.speechTimeout = setTimeout(() => {
+      this.speakSentence(this.currentIndex);
+    }, 50);
   }
 
   pause() {
@@ -211,8 +228,11 @@ class AudioTimelinePlayer {
     this.isPaused = false;
     this.startTimer();
     this.updatePlayBtn(true);
-    this.speakSentence(index);
     this.updateUI();
+
+    this.speechTimeout = setTimeout(() => {
+      this.speakSentence(index);
+    }, 50);
   }
 
   stepTime(deltaSeconds) {
@@ -248,7 +268,9 @@ class AudioTimelinePlayer {
     this.stopAudioSynthesis();
 
     if (this.isPlaying) {
-      this.speakSentence(foundIndex);
+      this.speechTimeout = setTimeout(() => {
+        this.speakSentence(foundIndex);
+      }, 50);
     } else {
       this.highlightSentence(foundIndex);
       this.updateUI();
@@ -285,7 +307,9 @@ class AudioTimelinePlayer {
     if (btnElement) btnElement.classList.add('active');
 
     if (oldPlaying) {
-      this.speakSentence(this.currentIndex);
+      this.speechTimeout = setTimeout(() => {
+        this.speakSentence(this.currentIndex);
+      }, 50);
     } else {
       this.updateUI();
     }
@@ -303,12 +327,43 @@ class AudioTimelinePlayer {
 
     const raw = this.sentences[idx];
     const clean = raw.replace(/<[^>]*>?/gm, '').trim();
+    if (!clean) {
+      this.currentIndex++;
+      this.speakSentence(this.currentIndex);
+      return;
+    }
 
-    this.currentUtterance = new SpeechSynthesisUtterance(clean);
-    this.currentUtterance.lang = this.lang;
-    this.currentUtterance.rate = this.rate;
+    const synth = this.getSynth();
+    if (!synth) return;
 
-    this.currentUtterance.onend = () => {
+    try {
+      if (synth.paused) {
+        synth.resume();
+      }
+    } catch (e) {}
+
+    const utter = new SpeechSynthesisUtterance(clean);
+    utter.lang = this.lang;
+    utter.rate = this.rate;
+
+    // Asignar mejor voz en inglés si está disponible
+    if (this.lang.startsWith('en')) {
+      let v = (typeof window !== 'undefined' && window._englishVoice) ? window._englishVoice : null;
+      if (!v && synth.getVoices) {
+        const voices = synth.getVoices();
+        if (voices && voices.length > 0) {
+          v = voices.find(item => item.lang === 'en-US') ||
+              voices.find(item => item.lang.startsWith('en')) ||
+              voices[0];
+        }
+      }
+      if (v) utter.voice = v;
+    }
+
+    utter.onend = () => {
+      this.currentUtterance = null;
+      if (typeof window !== 'undefined') window._activeTimelineUtterance = null;
+
       if (this.isPlaying && !this.isPaused) {
         this.currentIndex++;
         if (this.currentIndex < this.sentences.length) {
@@ -320,11 +375,19 @@ class AudioTimelinePlayer {
       }
     };
 
-    this.currentUtterance.onerror = (e) => {
-      console.warn('SpeechSynthesisUtterance error:', e);
+    utter.onerror = (e) => {
+      if (e && (e.error === 'canceled' || e.error === 'interrupted')) {
+        // Cancelado intencionalmente por salto de frase o botón detener
+        return;
+      }
+      console.warn('SpeechSynthesisUtterance error:', e ? e.error : e);
+      this.currentUtterance = null;
+      if (typeof window !== 'undefined') window._activeTimelineUtterance = null;
+
       if (this.isPlaying && !this.isPaused) {
         this.currentIndex++;
         if (this.currentIndex < this.sentences.length) {
+          this.currentTime = this.sentenceStartTimes[this.currentIndex];
           this.speakSentence(this.currentIndex);
         } else {
           this.stop();
@@ -332,12 +395,36 @@ class AudioTimelinePlayer {
       }
     };
 
-    window.speechSynthesis.speak(this.currentUtterance);
+    this.currentUtterance = utter;
+    if (typeof window !== 'undefined') {
+      window._activeTimelineUtterance = utter;
+      window._activeSpeechUtterance = utter; // Proteger de GC en V8
+    }
+
+    try {
+      synth.speak(utter);
+    } catch (err) {
+      console.warn('synth.speak() error:', err);
+    }
   }
 
   stopAudioSynthesis() {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    if (this.speechTimeout) {
+      clearTimeout(this.speechTimeout);
+      this.speechTimeout = null;
+    }
+    const synth = this.getSynth();
+    if (synth) {
+      try {
+        if (synth.paused) {
+          synth.resume();
+        }
+        synth.cancel();
+      } catch (e) {}
+    }
+    this.currentUtterance = null;
+    if (typeof window !== 'undefined') {
+      window._activeTimelineUtterance = null;
     }
   }
 

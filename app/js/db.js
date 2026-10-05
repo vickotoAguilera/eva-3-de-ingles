@@ -81,28 +81,145 @@ function calcChileanGrade(score, total) {
 }
 
 /**
- * Síntesis de voz offline en inglés
- * @param {string} text - Texto en inglés a pronunciar
+ * ==========================================================================
+ * MOTOR DE SÍNTESIS DE VOZ ROBUSTO OFFLINE (Chromium, Edge, Safari, WebViews)
+ * Soluciona:
+ * 1. Bug de cancelación prematura al llamar cancel() antes de speak()
+ * 2. Bug de Garbage Collection en V8 que cortaba el audio a los pocos segundos
+ * 3. Bug de estado paused congelado
+ * 4. Selección preferencial de voz en inglés americano nativo
+ * ==========================================================================
  */
 let lastSpokenText = '';
+let _activeSpeechUtterance = null;
+let _englishVoice = null;
+let _speechTimeout = null;
 
-function speak(text) {
-  if (!('speechSynthesis' in window)) return;
-  stopAudio();
+function getSpeechSynth() {
+  if (typeof window !== 'undefined') {
+    if (window.speechSynthesis) return window.speechSynthesis;
+    if (window.parent && window.parent.speechSynthesis) return window.parent.speechSynthesis;
+    if (window.top && window.top.speechSynthesis) return window.top.speechSynthesis;
+  }
+  return null;
+}
+
+function initVoices() {
+  try {
+    const synth = getSpeechSynth();
+    if (!synth) return;
+    const voices = synth.getVoices();
+    if (voices && voices.length > 0) {
+      _englishVoice = voices.find(v => v.lang === 'en-US') ||
+                      voices.find(v => v.lang.startsWith('en')) ||
+                      voices[0];
+    }
+  } catch (e) {
+    console.warn('initVoices error:', e);
+  }
+}
+
+if (typeof window !== 'undefined') {
+  const synth = getSpeechSynth();
+  if (synth) {
+    if (synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = initVoices;
+    }
+    initVoices();
+  }
+}
+
+/**
+ * Pronunciar texto con soporte bilingüe (inglés o español)
+ * @param {string} text - Texto a pronunciar
+ * @param {string} lang - Código de idioma ('en-US' o 'es-ES')
+ * @param {function} onEndCallback - Callback opcional al finalizar
+ */
+function speak(text, lang = 'en-US', onEndCallback = null) {
+  const synth = getSpeechSynth();
+  if (!synth) {
+    console.warn('SpeechSynthesis no disponible en este entorno.');
+    return;
+  }
+
+  // Detener y limpiar timeout previo
+  if (_speechTimeout) {
+    clearTimeout(_speechTimeout);
+    _speechTimeout = null;
+  }
+
+  try {
+    if (synth.paused) {
+      synth.resume();
+    }
+    synth.cancel();
+  } catch (e) {}
+
   lastSpokenText = text;
-  const clean = text.replace(/<[^>]*>?/gm, '').trim();
-  const utter = new SpeechSynthesisUtterance(clean);
-  utter.lang = 'en-US';
-  utter.rate = 0.88;
-  window.speechSynthesis.speak(utter);
+  const clean = String(text || '').replace(/<[^>]*>?/gm, '').trim();
+  if (!clean) return;
+
+  // Espera obligatoria de 50ms para permitir que el hilo de audio del navegador
+  // complete la cancelación sin abortar el nuevo utterance (Bug histórico de Chromium)
+  _speechTimeout = setTimeout(() => {
+    try {
+      if (synth.paused) {
+        synth.resume();
+      }
+
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = lang;
+      utter.rate = (lang === 'en-US') ? 0.88 : 0.95;
+
+      if (lang === 'en-US') {
+        if (!_englishVoice) initVoices();
+        if (_englishVoice) utter.voice = _englishVoice;
+      }
+
+      utter.onend = () => {
+        _activeSpeechUtterance = null;
+        if (typeof window !== 'undefined') window._activeSpeechUtterance = null;
+        if (typeof onEndCallback === 'function') onEndCallback();
+      };
+
+      utter.onerror = (e) => {
+        if (e.error !== 'canceled' && e.error !== 'interrupted') {
+          console.warn('SpeechSynthesis error:', e.error);
+        }
+        _activeSpeechUtterance = null;
+        if (typeof window !== 'undefined') window._activeSpeechUtterance = null;
+      };
+
+      // Guardar en variable global para que el Garbage Collector de V8 no lo destruya a mitad de camino
+      _activeSpeechUtterance = utter;
+      if (typeof window !== 'undefined') {
+        window._activeSpeechUtterance = utter;
+      }
+
+      synth.speak(utter);
+    } catch (err) {
+      console.warn('Error al ejecutar speak:', err);
+    }
+  }, 50);
 }
 
 /**
  * Detener cualquier audio en reproducción
  */
 function stopAudio() {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
+  const synth = getSpeechSynth();
+  if (_speechTimeout) {
+    clearTimeout(_speechTimeout);
+    _speechTimeout = null;
+  }
+  if (synth) {
+    try {
+      synth.cancel();
+    } catch (e) {}
+  }
+  _activeSpeechUtterance = null;
+  if (typeof window !== 'undefined') {
+    window._activeSpeechUtterance = null;
   }
 }
 
@@ -116,7 +233,7 @@ function restartAudio(text) {
   if (t) {
     setTimeout(() => {
       speak(t);
-    }, 80);
+    }, 90);
   }
 }
 
